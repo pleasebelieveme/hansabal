@@ -4,6 +4,18 @@
 
 ---
 
+## 📑 목차
+- [개요](#-개요)
+- [주요 기능](#-주요-기능)
+- [기술 스택](#-기술스택)
+- [와이어프레임](#-와이어프레임)
+- [ERD](#-erd)
+- [API 명세서](#-api-명세서)
+- [CI/CD](#-cicd)
+- [시스템 아키텍처](#-시스템-아키텍처)
+
+---
+
 ## 🧠 개요
 > **전통과 디지털의 만남, 막걸리 플랫폼**  
 > 막걸리는 단순한 술이 아닙니다.  
@@ -41,36 +53,34 @@
 
 ## 🛠 기술스택
 
-<img width="731" height="628" alt="스크린샷 2025-09-10 오후 3 58 47" src="https://github.com/user-attachments/assets/c0d81df3-89d6-4d1b-b83e-7bf9041e1163" />
+<img width="731" height="628" alt="기술스택" src="https://github.com/user-attachments/assets/c0d81df3-89d6-4d1b-b83e-7bf9041e1163" />
 
 ---
 
 ## 📐 와이어프레임
 
-<img width="1118" height="846" alt="image" src="https://github.com/user-attachments/assets/e57eed50-a48b-4c7b-a2ce-01a15a7235c0" />
+<img width="1118" height="846" alt="와이어프레임" src="https://github.com/user-attachments/assets/e57eed50-a48b-4c7b-a2ce-01a15a7235c0" />
 
 ---
 
 ## 🗂 ERD
 
-<img width="967" height="582" alt="스크린샷 2025-07-03 오후 4 13 04" src="https://github.com/user-attachments/assets/0a03f2c9-0e13-498b-99c4-3d96b8e65dce" />
-
+<img width="967" height="582" alt="ERD" src="https://github.com/user-attachments/assets/0a03f2c9-0e13-498b-99c4-3d96b8e65dce" />
 
 ---
 
 ## 📑 API 명세서
 
-https://documenter.getpostman.com/view/38832238/2sB34cpNFk
+👉 [포스트맨 API 문서 바로가기](https://documenter.getpostman.com/view/38832238/2sB34cpNFk)
 
 ---
 
 ## 🚀 CI/CD
 
-<img width="635" height="312" alt="스크린샷 2025-07-07 오후 3 15 53" src="https://github.com/user-attachments/assets/83b0cdc1-6a47-4296-aef7-55c8cb45a1a7" />
+<img width="635" height="312" alt="CI/CD" src="https://github.com/user-attachments/assets/83b0cdc1-6a47-4296-aef7-55c8cb45a1a7" />
 
 ---
 
 ## 🏗 시스템 아키텍처
 
-<img width="829" height="479" alt="스크린샷 2025-07-07 오후 3 16 26" src="https://github.com/user-attachments/assets/4a6bf3c7-b806-4d4d-ad5a-6318695b7848" />
-
+<img width="829" height="479" alt="시스템 아키텍처" src="https://github.com/user-attachments/assets/4a6bf3c7-b806-4d4d-ad5a-6318695b7848" />
