@@ -10,6 +10,8 @@ build/
 ### 환경 변수 및 설정 파일 ###
 .env
 *.properties
+*.yaml
+*.yml
 
 ### Eclipse / Spring Tool Suite (STS) ###
 .apt_generated/

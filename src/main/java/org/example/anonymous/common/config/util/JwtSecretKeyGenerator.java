@@ -1,4 +1,4 @@
-package org.example.anonymous.config.util;
+package org.example.anonymous.common.config.util;
 
 import java.util.Base64;
 

@@ -1,4 +1,4 @@
-package org.example.anonymous.config;
+package org.example.anonymous.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ public class SecurityConfig {
 				.requestMatchers("/api/auth/signup", "/api/users").permitAll()
 				.requestMatchers("/admin").hasRole("ADMIN")
 				.requestMatchers("/my/**").hasAnyRole("ADMIN", "USER")
-				.anyRequest().authenticated()
+				.anyRequest().permitAll()
 			);
 
 		http

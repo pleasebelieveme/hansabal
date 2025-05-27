@@ -10,6 +10,7 @@ import org.example.anonymous.jwt.constants.TokenExpiredConstants;
 
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -30,12 +31,12 @@ public class JwtTokenGenerator {
 
     private String buildToken(UserAuth userAuth, String tokenType, Date date, Date TokenExpiredTime) {
         return Jwts.builder()
-                .subject(userAuth.getEmail())
-                .id(userAuth.getId().toString())
+                .setSubject(userAuth.getEmail())
+                .setId(userAuth.getId().toString())
                 .claim(JwtConstants.TOKEN_TYPE, tokenType)
-                .expiration(TokenExpiredTime)
-                .issuedAt(date)
-                .signWith(secretKey, Jwts.SIG.HS256)
+                .setExpiration(TokenExpiredTime)
+                .setIssuedAt(date)
+                .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
     }
 

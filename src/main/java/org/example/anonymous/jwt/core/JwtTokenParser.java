@@ -20,7 +20,7 @@ public class JwtTokenParser {
 
     private Claims parseToken(String token) {
         try {
-            return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload();
+            return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
         } catch (ExpiredJwtException expiredJwtException) {
             return expiredJwtException.getClaims();
         } catch (MalformedJwtException malformedJwtException) {
