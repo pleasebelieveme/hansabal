@@ -11,8 +11,8 @@ build/
 .env
 *.properties
 application.yaml
-infra/redis/**
-infra/mysql/**
+infra/redis/
+infra/mysql/
 
 ### Eclipse / Spring Tool Suite (STS) ###
 .apt_generated/
