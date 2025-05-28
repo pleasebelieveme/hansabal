@@ -11,8 +11,9 @@ infra/**
 ### 환경 변수 및 설정 파일 ###
 .env
 *.properties
-*.yaml
-*.yml
+application.yaml
+infra/redis/
+infra/mysql/
 
 ### Eclipse / Spring Tool Suite (STS) ###
 .apt_generated/
