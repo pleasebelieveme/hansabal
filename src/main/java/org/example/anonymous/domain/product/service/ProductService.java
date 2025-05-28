@@ -17,7 +17,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     public ProductResponseDto createProduct(ProductRequestDto requestDto) {
-        Product product = new Product(requestDto.getName());
+        Product product = Product.of(requestDto.getName(), 10);
         Product savedProduct = productRepository.save(product);
         return new ProductResponseDto(savedProduct.getProductId(), savedProduct.getName());
     }
