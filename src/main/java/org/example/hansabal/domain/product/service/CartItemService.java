@@ -75,7 +75,7 @@ public class CartItemService {
     }
 
     @Transactional
-    public void ProductPayment(Long cartId) {
+    public void productPayment(Long cartId) {
         List<CartItem> cartItems = cartItemRepository.findAllByCart(cartId);
 
         if(cartItems.isEmpty()){

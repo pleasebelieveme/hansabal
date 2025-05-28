@@ -46,9 +46,9 @@ public class CartItemController {
     }
 
     @PatchMapping("/{cartId}")
-    public ResponseEntity<Void> foodPayment(@PathVariable Long cartId){
+    public ResponseEntity<Void> productPayment(@PathVariable Long cartId){
 
-        cartItemService.ProductPayment(cartId);
+        cartItemService.productPayment(cartId);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
