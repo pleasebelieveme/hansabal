@@ -1,5 +1,7 @@
 package org.example.hansabal.domain.product.entity;
 
+import org.example.hansabal.common.base.BaseEntity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "cart_item")
 @Getter
-public class CartItem {
+public class CartItem extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

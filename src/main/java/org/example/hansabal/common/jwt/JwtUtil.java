@@ -21,7 +21,7 @@ public class JwtUtil {
 	private String secretKey;
 
 	private static final long expiration = 1000L * 60 * 30;
-	// Long id, UserRole role
+
 	public String createToken(Long id, UserRole userRole){
 		return Jwts.builder()
 			.setSubject(String.valueOf(id))
