@@ -22,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 
 public class TradeController {
 	private final TradeService tradeService;
-	private final TradeRepository tradeRepository;
 	private final RequestsService requestsService;
 
 	@PostMapping
