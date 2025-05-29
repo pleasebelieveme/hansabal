@@ -1,11 +1,8 @@
 package org.example.hansabal.domain.trade.controller;
 
-import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.security.CurrentUser;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
-import org.example.hansabal.domain.trade.entity.Trade;
-import org.example.hansabal.domain.trade.exception.TradeErrorCode;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
@@ -38,9 +35,8 @@ public class TradeController {
 
 	@PostMapping("/requests")
 	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @CurrentUser User user){
-		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
-			TradeErrorCode.NoSuchThing));
-		requestsService.createRequests(user, trade);
+
+		requestsService.createRequests(user, request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }
