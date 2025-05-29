@@ -3,6 +3,7 @@ package org.example.hansabal.domain.comment.controller;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,8 +29,8 @@ public class CommentController {
 		@PathVariable Long userId,
 		@PathVariable Long boardId){
 
-		commentService.createComment(request,userId,boardId);
+		CommentResponse comment = commentService.createComment(request, userId, boardId);
 
-		return ResponseEntity.status().body();
+		return ResponseEntity.status(HttpStatus.CREATED).body(comment);
 	}
 }

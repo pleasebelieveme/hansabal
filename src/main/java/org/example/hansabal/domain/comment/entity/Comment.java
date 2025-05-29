@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.comment.entity;
 
+import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.users.entity.User;
 
 import jakarta.persistence.Column;
@@ -19,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "comment")
 @NoArgsConstructor
 @Getter
-public class Comment {
+public class Comment extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
