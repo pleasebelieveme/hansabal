@@ -36,7 +36,7 @@ public class TradeController {
 
 
 
-	@PostMapping("/{tradeId}/requestes")
+	@PostMapping("/requestes")
 	public ResponseEntity<Void> createRequestes(@RequestBody RequestsRequestDto request, @CurrentUser User user){
 		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
 			TradeErrorCode.NoSuchThing));
