@@ -3,7 +3,6 @@ package org.example.hansabal.domain.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
-import org.example.hansabal.common.exception.CommonErrorCode;
 import org.example.hansabal.domain.board.dto.response.BoardRequest;
 import org.example.hansabal.domain.board.dto.request.BoardResponse;
 import org.example.hansabal.domain.board.entity.Board;
@@ -15,8 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -32,8 +29,6 @@ public class BoardService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .viewCount(0)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
         Board saved = boardRepository.save(board);
         return toResponse(saved);
