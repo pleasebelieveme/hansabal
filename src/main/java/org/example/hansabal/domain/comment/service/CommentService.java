@@ -1,6 +1,8 @@
 package org.example.hansabal.domain.comment.service;
 
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.domain.board.entity.Board;
+import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
