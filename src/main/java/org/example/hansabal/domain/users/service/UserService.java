@@ -1,14 +1,13 @@
 package org.example.hansabal.domain.users.service;
 
 import org.example.hansabal.common.exception.BizException;
-import org.example.hansabal.domain.auth.util.PasswordEncoder;
 import org.example.hansabal.domain.users.dto.request.UserRequestDto;
 import org.example.hansabal.domain.users.dto.response.UserResponseDto;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import lombok.RequiredArgsConstructor;
