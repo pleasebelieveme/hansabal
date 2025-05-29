@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
-@EntityScan(basePackages = "org.example.anonymous.domain.users.entity")
+@EntityScan(basePackages = "org.example.hansabal.domain.users.entity")
 @Getter
 @Entity
 @Builder
