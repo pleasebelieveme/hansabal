@@ -53,8 +53,8 @@ public class CommentController {
 		@RequestParam(defaultValue = "1") int page,
 		@RequestParam(defaultValue = "100") int size){
 
-		commentService.findAllCommentsFromBoard(boardId,page,size);
+		Page<CommentResponse> responses = commentService.findAllCommentsFromBoard(boardId, page, size);
 
-		return ResponseEntity.status(HttpStatus.OK).body();
+		return ResponseEntity.status(HttpStatus.OK).body(responses);
 	}
 }

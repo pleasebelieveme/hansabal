@@ -20,20 +20,20 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public void createUser(@RequestBody UserRequestDto reqDto) {
+	public void createUser(@RequestBody UserRequestDto request) {
 
-		if (userRepository.existsByEmail(reqDto.getEmail())) {
+		if (userRepository.existsByEmail(request.getEmail())) {
 			throw new BizException(UserErrorCode.DUPLICATE_USER_ID);
 		}
 
-		String encodedPassword = passwordEncoder.encode(reqDto.getPassword());
+		String encodedPassword = passwordEncoder.encode(request.getPassword());
 
 		User user = User.builder()
-			.email(reqDto.getEmail())
+			.email(request.getEmail())
 			.password(encodedPassword)
-			.name(reqDto.getName())
-			.nickname(reqDto.getNickname())
-			.userRole(reqDto.getUserRole())
+			.name(request.getName())
+			.nickname(request.getNickname())
+			.userRole(request.getUserRole())
 			.build();
 
 		userRepository.save(user);
@@ -41,6 +41,6 @@ public class UserService {
 
 	public UserResponseDto findById(Long id) {
 		User findUser = userRepository.findByIdOrElseThrow(id);
-		return new UserResponseDto(findUser.getId(), findUser.getEmail(), findUser.getName(), findUser.getNickname());
+		return UserResponseDto.toDto(findUser);
 	}
 }
