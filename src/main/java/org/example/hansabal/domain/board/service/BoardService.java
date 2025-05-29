@@ -32,8 +32,6 @@ public class BoardService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .viewCount(0)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
                 .build();
         Board saved = boardRepository.save(board);
         return toResponse(saved);
