@@ -57,7 +57,6 @@ public class ReviewServiceImpl implements ReviewService {
             CreateReviewResponseDto reviewResponseDto = new CreateReviewResponseDto(reviews.getId(), reviews.getUser().getNickname(), reviews.getContent());
             listDto.add(reviewResponseDto);
         }
-
         return listDto;
     }
 }
