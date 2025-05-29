@@ -38,7 +38,7 @@ public class CommentController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(comment);
 	}
 
-	@PatchMapping("{commentId}")
+	@PatchMapping("/{commentId}")
 	public ResponseEntity<CommentResponse> updateComment(
 		@Valid @RequestBody CreateCommentRequest request,
 		@PathVariable Long commentId){
@@ -47,7 +47,7 @@ public class CommentController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@GetMapping("{boardId}")
+	@GetMapping("/{boardId}")
 	public ResponseEntity<Page<CommentResponse>> findAllCommentsFromBoard(
 		@PathVariable Long boardId,
 		@RequestParam(defaultValue = "1") int page,
