@@ -11,6 +11,7 @@ import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,9 +31,24 @@ public class CommentService {
 		Board board = boardRepository.findById(boardId).orElseThrow(
 			() -> new BizException(CommentErrorCode.INVALID_ID));
 
-		Comment comment = new Comment(request.content(),user,board);
+		Comment comment = new Comment(request.contents(),user,board);
 
 		commentRepository.save(comment);
+
+		return CommentResponse.from(comment);
+	}
+
+	@Transactional
+	public CommentResponse updateComment(CreateCommentRequest request, Long commentId) {
+
+		Comment comment = commentRepository.findById(commentId).orElseThrow(
+			() -> new BizException(CommentErrorCode.INVALID_ID));
+
+		// if (!comment.getUser().getId().equals(user.getId())) {
+		// 	throw new BizException(CommentErrorCode.FORBIDDEN);
+		// }
+
+		comment.updateContents(request.contents());
 
 		return CommentResponse.from(comment);
 	}

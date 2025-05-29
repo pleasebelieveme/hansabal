@@ -5,6 +5,7 @@ import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,5 +33,14 @@ public class CommentController {
 		CommentResponse comment = commentService.createComment(request, userId, boardId);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(comment);
+	}
+
+	@PatchMapping("{commentId}")
+	public ResponseEntity<CommentResponse> updateComment(
+		@Valid @RequestBody CreateCommentRequest request,
+		@PathVariable Long commentId){
+		CommentResponse response = commentService.updateComment(request, commentId);
+
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
