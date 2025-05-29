@@ -1,7 +1,6 @@
-package org.example.hansabal.domain.comment.entity;
+package org.example.hansabal.domain.trade.entity;
 
 import org.example.hansabal.common.base.BaseEntity;
-import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.users.entity.User;
 
 import jakarta.persistence.Column;
@@ -13,37 +12,36 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name = "comment")
-@NoArgsConstructor
 @Getter
-public class Comment extends BaseEntity {
-
+@Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "trade")
+public class Trade extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-
-	@Column(nullable = false)
+	private Long tradeId;
+	@Column(nullable=false)
+	private String title;
 	private String contents;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	private User user;
+	private User trader;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "board_id")
-	private Board board;
 
-	public Comment(String contents, User user, Board board) {
-		this.contents = contents;
-		this.user = user;
-		this.board = board;
+	public Trade(String title, String contents, User trader){
+		this.title=title;
+		this.contents=contents;
+		this.trader=trader;
 	}
-
-	public void updateContents(String contents){
-		this.contents = contents;
+	public void updateTrade(String title, String contents){
+		this.title=title;
+		this.contents=contents;
 	}
 }
