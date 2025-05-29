@@ -18,9 +18,9 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping()
-    public ResponseEntity<CreateReviewResponseDto> createReview(@PathVariable Long productId, @RequestBody CreateReviewRequestDto dto) {
+    public ResponseEntity<CreateReviewResponseDto> createReview(@PathVariable Long productId, @RequestBody CreateReviewRequestDto request) {
 
-        CreateReviewResponseDto reviewDto = reviewService.createReview(productId,dto.getUserId(),dto);
+        CreateReviewResponseDto reviewDto = reviewService.createReview(productId, request.getUserId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
