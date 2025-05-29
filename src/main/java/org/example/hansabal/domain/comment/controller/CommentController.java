@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -57,5 +58,13 @@ public class CommentController {
 		Page<CommentResponse> responses = commentService.findAllCommentsFromBoard(boardId, page, size);
 
 		return ResponseEntity.status(HttpStatus.OK).body(responses);
+	}
+
+	@DeleteMapping("/{commentId}")
+	public ResponseEntity<Void> deleteComment(@PathVariable Long commentId){
+
+		commentService.deleteComment(commentId);
+
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
