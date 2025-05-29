@@ -43,10 +43,7 @@ public class Product {
         this.name = name;
     }
 
-    public Product(ProductStatus productStatus) {
-        this.productStatus = productStatus;
-    }
-    public Long getId() {
+    public Long getProductId() {
         return this.productId;
     }
 
