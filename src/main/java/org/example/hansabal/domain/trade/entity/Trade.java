@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.trade.entity;
 
+import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.users.entity.User;
 
 import jakarta.persistence.Column;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "trade")
-public class Trade {
+public class Trade extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long tradeId;
