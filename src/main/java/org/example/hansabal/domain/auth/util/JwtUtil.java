@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.auth.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 import org.example.hansabal.common.exception.BizException;
@@ -34,8 +35,7 @@ public class JwtUtil {
 
 	@PostConstruct
 	public void init() {
-		byte[] bytes = Base64.getDecoder().decode(secret);
-		key = Keys.hmacShaKeyFor(bytes);
+		key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 
 	public String createAccessToken(Long userId, String email, String nickname, UserRole userRole) {
