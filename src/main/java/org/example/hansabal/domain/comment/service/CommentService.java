@@ -58,6 +58,7 @@ public class CommentService {
 		return CommentResponse.from(comment);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<CommentResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
