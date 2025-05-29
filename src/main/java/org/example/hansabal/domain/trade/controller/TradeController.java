@@ -30,6 +30,7 @@ public class TradeController {
 	}
 
 
+
 	@PostMapping
 	public ResponseEntity<Void> createRequestes(@RequestBody RequestesRequestDto request, @CurrentUser User user){
 		requestesService.createRequestes(request, user);

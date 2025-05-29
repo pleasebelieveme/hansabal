@@ -34,6 +34,7 @@ public class Trade extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User trader;
 
+
 	public Trade(String title, String contents, User trader){
 		this.title=title;
 		this.contents=contents;
