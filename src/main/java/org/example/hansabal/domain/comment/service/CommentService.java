@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.comment.service;
 
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
@@ -8,6 +9,9 @@ import org.example.hansabal.domain.comment.exception.CommentErrorCode;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,5 +55,12 @@ public class CommentService {
 		comment.updateContents(request.contents());
 
 		return CommentResponse.from(comment);
+	}
+
+	public Page<CommentResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
+		Pageable pageable = PageRequest.of(page-1,size);
+
+		commentRepository.findByBoardId(boardId,pageable);
+
 	}
 }
