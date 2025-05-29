@@ -23,18 +23,18 @@ public class ProductService {
     public ProductResponseDto createProduct(ProductRequestDto request) {
         Product product = Product.of(request.name(), 10);
         Product savedProduct = productRepository.save(product);
-        return new ProductResponseDto(savedProduct.getProductId(), savedProduct.getName());
+        return ProductResponseDto.from(savedProduct);
     }
 
     public ProductResponseDto getProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
-        return new ProductResponseDto(product.getProductId(), product.getName());
+        return ProductResponseDto.from(product);
     }
 
     public List<ProductResponseDto> getAllProducts() {
         return productRepository.findAll().stream()
-                .map(product -> new ProductResponseDto(product.getProductId(), product.getName()))
+                .map(ProductResponseDto::from)
                 .toList();
     }
 
@@ -42,7 +42,7 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
         product.updateName(request.name());
-        return new ProductResponseDto(product.getProductId(), product.getName());
+        return ProductResponseDto.from(product);
     }
 
     public void deleteProduct(Long id) {
