@@ -7,7 +7,6 @@ import org.example.hansabal.domain.trade.exception.TradeErrorCode;
 import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 
