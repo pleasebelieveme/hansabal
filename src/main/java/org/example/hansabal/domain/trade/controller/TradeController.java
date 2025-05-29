@@ -3,7 +3,6 @@ package org.example.hansabal.domain.trade.controller;
 import org.example.hansabal.common.security.CurrentUser;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
-import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
 import org.example.hansabal.domain.users.entity.User;
