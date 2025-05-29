@@ -7,6 +7,6 @@ import jakarta.validation.constraints.NotBlank;
 public record CreateCommentRequest(
 	@NotBlank
 	@Length(max = 255)
-	String content
+	String contents
 ) {
 }
