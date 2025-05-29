@@ -1,9 +1,7 @@
 package org.example.hansabal.common.exception;
 
-import org.springframework.http.HttpStatus;
-
 public interface ErrorCode {
-	HttpStatus getStatus();
+	int getStatus();
 
 	String getCode();
 

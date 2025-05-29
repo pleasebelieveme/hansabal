@@ -14,13 +14,13 @@ public enum BoardErrorCode implements ErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "C004", "해당 게시글을 찾을 수 없습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "C005", "해당 유저를 찾을 수 없습니다.");
 
-    private final HttpStatus httpStatus; // ⭐ int → HttpStatus
+    private final HttpStatus status; // ⭐ int → HttpStatus
     private final String code;
     private final String message;
 
     @Override
-    public HttpStatus getStatus() {
-        return httpStatus;
+    public int getStatus() {
+        return status.value();
     }
 
     @Override

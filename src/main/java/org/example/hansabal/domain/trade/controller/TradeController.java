@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.trade.controller;
 
+import org.example.hansabal.common.security.CurrentUser;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
 import org.example.hansabal.domain.trade.service.RequestsService;

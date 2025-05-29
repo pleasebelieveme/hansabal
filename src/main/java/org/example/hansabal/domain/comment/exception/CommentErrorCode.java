@@ -16,8 +16,8 @@ public enum CommentErrorCode implements ErrorCode {
 	private final String message;
 
 	@Override
-	public HttpStatus getStatus() {
-		return httpStatus;
+	public int getStatus() {
+		return httpStatus.value();
 	}
 
 	@Override
