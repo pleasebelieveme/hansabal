@@ -68,4 +68,12 @@ public class CommentService {
 
 		return comments.map(CommentResponse::from);
 	}
+
+	@Transactional
+	public void deleteComment(Long commentId) {
+		Comment comment = commentRepository.findById(commentId).orElseThrow(
+			() -> new BizException(CommentErrorCode.INVALID_ID));
+
+		comment.softDelete();
+	}
 }
