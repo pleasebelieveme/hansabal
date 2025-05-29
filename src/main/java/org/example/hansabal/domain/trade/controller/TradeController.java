@@ -1,15 +1,8 @@
 package org.example.hansabal.domain.trade.controller;
 
-import java.util.List;
-
-import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.security.CurrentUser;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
-import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
-import org.example.hansabal.domain.trade.entity.Trade;
-import org.example.hansabal.domain.trade.exception.TradeErrorCode;
-import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
 import org.example.hansabal.domain.users.entity.User;
@@ -32,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 
 public class TradeController {
 	private final TradeService tradeService;
-	private final TradeRepository tradeRepository;
 	private final RequestsService requestsService;
 
 	@PostMapping
@@ -48,11 +40,10 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
 	}
 
-	@PostMapping("/requestes")
+	@PostMapping("/requests")
 	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @CurrentUser User user){
-		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
-			TradeErrorCode.NoSuchThing));
-		requestsService.createRequests(user, trade);
+
+		requestsService.createRequests(user, request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 }

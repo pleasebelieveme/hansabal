@@ -6,6 +6,8 @@ import org.example.hansabal.domain.product.dto.request.ProductRequestDto;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.exception.ProductErrorCode;
 import org.example.hansabal.domain.product.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.hansabal.domain.product.dto.response.ProductResponseDto;
 
@@ -23,26 +25,25 @@ public class ProductService {
     public ProductResponseDto createProduct(ProductRequestDto request) {
         Product product = Product.of(request.name(), 10);
         Product savedProduct = productRepository.save(product);
-        return new ProductResponseDto(savedProduct.getProductId(), savedProduct.getName());
+        return ProductResponseDto.from(savedProduct);
     }
 
     public ProductResponseDto getProduct(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
-        return new ProductResponseDto(product.getProductId(), product.getName());
+        return ProductResponseDto.from(product);
     }
 
-    public List<ProductResponseDto> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(product -> new ProductResponseDto(product.getProductId(), product.getName()))
-                .toList();
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductResponseDto::from);
     }
 
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
         product.updateName(request.name());
-        return new ProductResponseDto(product.getProductId(), product.getName());
+        return ProductResponseDto.from(product);
     }
 
     public void deleteProduct(Long id) {
