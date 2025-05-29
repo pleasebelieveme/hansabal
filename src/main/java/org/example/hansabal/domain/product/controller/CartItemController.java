@@ -21,10 +21,10 @@ public class CartItemController {
     @PostMapping("/{cartId}")
     public ResponseEntity<ItemResponse> createItems(
             @PathVariable Long cartId,
-            @RequestParam Long foodId,
+            @RequestParam Long productId,
             @RequestParam(defaultValue = "1") int quantity){
 
-        ItemResponse items = cartItemService.createItems(foodId, cartId, quantity);
+        ItemResponse items = cartItemService.createItems(productId, cartId, quantity);
 
         return ResponseEntity.status(HttpStatus.OK).body(items);
     }
