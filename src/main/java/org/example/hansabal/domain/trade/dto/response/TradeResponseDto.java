@@ -5,5 +5,5 @@ import org.example.hansabal.domain.users.entity.User;
 import lombok.Builder;
 
 @Builder
-public record TradeResponseDto(Long id, String title, String contents, User trader){
+public record TradeResponseDto(Long tradeId, String title, String contents, User trader){
 	}

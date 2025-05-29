@@ -2,6 +2,7 @@ package org.example.hansabal.domain.trade.entity;
 
 import org.example.hansabal.domain.users.entity.User;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,7 +25,8 @@ import lombok.NoArgsConstructor;
 public class Trade {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long tradeId;
+	@Column(nullable=false)
 	private String title;
 	private String contents;
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -35,5 +37,9 @@ public class Trade {
 		this.title=title;
 		this.contents=contents;
 		this.trader=trader;
+	}
+	public void updateTrade(String title, String contents){
+		this.title=title;
+		this.contents=contents;
 	}
 }
