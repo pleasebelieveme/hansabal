@@ -15,7 +15,8 @@ public interface CommentRepository extends JpaRepository<Comment,Long> {
 
 	@Query("""
 		SELECT c From Comment c 
-		WHERE c.board.postId = :boardId
+		WHERE c.board.postId = :boardId 
+		AND c.deletedAt IS NULL
 	""")
 	Page<Comment> findByBoardId(Long boardId, Pageable pageable); // 추후에 쿼리 DSL로 리팩토링 및 고도화 작업 예정
 }
