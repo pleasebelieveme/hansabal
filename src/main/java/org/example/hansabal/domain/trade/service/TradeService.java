@@ -17,8 +17,8 @@ public class TradeService {
 		Trade trade= Trade.builder()
 			.title(request.title())
 			.contents(request.contents())
-			.trader(user
-		).build();
+			.trader(user)
+			.build();
 		tradeRepository.save(trade);
 	}
 }

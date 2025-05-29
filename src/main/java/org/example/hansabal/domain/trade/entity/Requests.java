@@ -23,28 +23,28 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "requestes")
-public class Requestes extends BaseEntity {
+@Table(name = "requests")
+public class Requests extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Long requestesId;
+	private Long requestsId;
 	@Enumerated(EnumType.STRING)
 	@Column(nullable=false)
 	private RequestStatus status;
 	@ManyToOne
 	@JoinColumn(name="trade_id")
-	private Trade tradeId;
+	private Trade trade;
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private User requesterId;
+	private User requester;
 
-	public Requestes(RequestStatus status, Trade tradeId, User requesterId){
+	public Requests(RequestStatus status, Trade trade, User requester){
 		this.status=status;
-		this.tradeId=tradeId;
-		this.requesterId=requesterId;
+		this.trade=trade;
+		this.requester=requester;
 	}
-	public static Requestes of(Trade tradeId, User requesterId){
-		return new Requestes(RequestStatus.AVAILABLE,tradeId, requesterId);
+	public static Requests of(Trade trade, User requester){
+		return new Requests(RequestStatus.AVAILABLE,trade, requester);
 	}
 	public void updateStatus(RequestStatus status){
 		this.status=status;
