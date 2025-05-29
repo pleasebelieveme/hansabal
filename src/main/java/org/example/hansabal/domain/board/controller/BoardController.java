@@ -1,6 +1,7 @@
 package org.example.hansabal.domain.board.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.security.CurrentUser;
 import org.example.hansabal.domain.board.dto.response.BoardRequest;
@@ -20,7 +21,7 @@ public class BoardController {
     // 게시글 등록
     @PostMapping
     public ResponseEntity<BoardResponse> createPost(
-            @RequestBody BoardRequest request,
+            @RequestBody @Valid BoardRequest request,
             @CurrentUser User user
     ) {
         BoardResponse response = boardService.createPost(user, request);
@@ -31,7 +32,7 @@ public class BoardController {
     @PutMapping("/{postId}")
     public ResponseEntity<BoardResponse> updatePost(
             @PathVariable Long postId,
-            @RequestBody BoardRequest request,
+            @RequestBody @Valid BoardRequest request,
             @CurrentUser User user
     ) {
         BoardResponse response = boardService.updatePost(user, postId, request);
