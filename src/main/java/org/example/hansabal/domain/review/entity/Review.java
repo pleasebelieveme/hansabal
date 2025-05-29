@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.common.base.BaseEntity;
+import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
 import java.util.ArrayList;
@@ -32,21 +33,14 @@ public class Review extends BaseEntity {
     private Product product;
 
 //    아직 엔티티가 없어서 주석처리하였습니다
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL ,orphanRemoval = true)
-    private List<Div> divs = new ArrayList<>();
-
+//    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL ,orphanRemoval = true)
+//    private List<Div> divs = new ArrayList<>();
 
 
     public Review(String content, User user, Product product) {
         this.content = content;
         this.user = user;
         this.product = product;
-    }
-
-
-    public Review(String content, User user) {
-        this.content = content;
-        this.user = user;
     }
 
     public void updateReview(String updateContent) {

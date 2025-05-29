@@ -6,12 +6,13 @@ import org.example.hansabal.domain.review.entity.Review;
 
 @Getter
 @AllArgsConstructor
-public class createReviewResponseDto {
+public class CreateReviewResponseDto {
 
+    private final Long id;
     private final String nickname;
     private final String content;
 
-    public static createReviewResponseDto from(Review review) {
-        return new createReviewResponseDto(review.getUser().getNickname(),review.getContent());
+    public static CreateReviewResponseDto from(Review review) {
+        return new CreateReviewResponseDto(review.getId(),review.getUser().getNickname(),review.getContent());
     }
 }

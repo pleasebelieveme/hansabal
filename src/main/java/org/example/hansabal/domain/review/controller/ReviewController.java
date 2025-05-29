@@ -1,8 +1,8 @@
 package org.example.hansabal.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.hansabal.domain.review.dto.request.createReviewRequestDto;
-import org.example.hansabal.domain.review.dto.response.createReviewResponseDto;
+import org.example.hansabal.domain.review.dto.request.CreateReviewRequestDto;
+import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
 import org.example.hansabal.domain.review.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +18,18 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping()
-    public ResponseEntity<createReviewResponseDto> createReview(@PathVariable Long productId, @RequestBody createReviewRequestDto dto) {
+    public ResponseEntity<CreateReviewResponseDto> createReview(@PathVariable Long productId, @RequestBody CreateReviewRequestDto dto) {
 
-        createReviewResponseDto reviewDto = reviewService.createReview(productId,dto);
+        CreateReviewResponseDto reviewDto = reviewService.createReview(productId,dto.getUserId(),dto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
 
     @GetMapping()
-    public ResponseEntity<List<createReviewResponseDto>> getReviews(@PathVariable Long productId) {
+    public ResponseEntity<List<CreateReviewResponseDto>> getReviews(@PathVariable Long productId) {
 
-        reviewService.findAll(productId);
+        List<CreateReviewResponseDto> findAll = reviewService.findAll(productId);
 
-        return ResponseEntity.status(HttpStatus.OK).body();
+        return ResponseEntity.status(HttpStatus.OK).body(findAll);
     }
 }
