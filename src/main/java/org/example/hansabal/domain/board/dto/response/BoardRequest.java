@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.board.dto;
+package org.example.hansabal.domain.board.dto.response;
 
 
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardRequestDto {
+public class BoardRequest {
     private String category;
     private String title;
     private String content;

@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.board.dto;
+package org.example.hansabal.domain.board.dto.request;
 
 
 import lombok.Builder;
@@ -8,9 +8,11 @@ import java.time.LocalDateTime;
 
 @Getter
 @Builder
-public class BoardResponseDto {
+public class BoardResponse {
     private Long postId;
     private Long userId;
+    private String nickname;
+    private String email;
     private String category;
     private String title;
     private String content;

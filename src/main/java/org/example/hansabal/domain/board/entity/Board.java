@@ -7,48 +7,53 @@ import org.example.hansabal.domain.users.entity.User;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "board")
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "boards")
 public class Board {
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long postId;         // 게시글ID (PK)
+    private Long postId;
 
-    @Column(nullable = false)
-    private Long userId;         // 유저식별자 (작성자)
-
-    @Column(nullable = false)
-    private Long commentWriter;  // 댓글작성자
+    // Board.userId 대신 Board.user 연관관계만 사용하는 방식이 실무 권장!
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(nullable = false, length = 30)
-    private String category;     // 게시글 카테고리
+    private String category;
 
     @Column(nullable = false, length = 100)
-    private String title;        // 게시글 제목
+    private String title;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String content;      // 내용
+    private String content;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;   // 작성시간
+    private LocalDateTime createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt;   // 수정시간
+    private LocalDateTime updatedAt;
 
     @Column(nullable = false)
-    private Integer viewCount = 0;     // 조회수
+    private Integer viewCount = 0;
 
-    // (수정/생성 편의 메서드, Setter 없이 사용하려면 아래처럼 커스텀 메서드 활용)
+    @Builder
+    public Board(User user, String category, String title, String content,
+                 LocalDateTime createdAt, LocalDateTime updatedAt, Integer viewCount) {
+        this.user = user;
+        this.category = category;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.viewCount = viewCount != null ? viewCount : 0;
+    }
+
     public void update(String category, String title, String content) {
         this.category = category;
         this.title = title;
@@ -56,5 +61,11 @@ public class Board {
         this.updatedAt = LocalDateTime.now();
     }
 
-
+    // 편의 메서드 (User의 id 바로 조회)
+    public Long getUserId() {
+        return user != null ? user.getId() : null;
+    }
 }
+
+
+
