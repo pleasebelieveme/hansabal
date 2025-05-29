@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -57,7 +58,7 @@ public class CommentService {
 
 		return CommentResponse.from(comment);
 	}
-
+  
 	@Transactional(readOnly = true)
 	public Page<CommentResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
