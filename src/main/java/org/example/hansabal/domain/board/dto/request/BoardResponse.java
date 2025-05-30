@@ -6,9 +6,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.domain.board.entity.Board;
+import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.users.entity.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -26,20 +28,27 @@ public class BoardResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    private List<CommentResponse> comments;
+    private int likeCount;
+    private boolean likedByMe;
+
     // ⭐ 정적 팩토리 메서드
-    public static BoardResponse from(Board board) {
+    public static BoardResponse from(Board board, List<CommentResponse> comments, int likeCount, boolean likedByMe) {
         User user = board.getUser();
         return BoardResponse.builder()
                 .postId(board.getPostId())
-                .userId(user != null ? user.getId() : null)
-                .nickname(user != null ? user.getNickname() : null)
-                .email(user != null ? user.getEmail() : null)
+                .userId(user.getId())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
                 .category(board.getCategory())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
+                .comments(comments)
+                .likeCount(likeCount)
+                .likedByMe(likedByMe)
                 .build();
     }
 }
