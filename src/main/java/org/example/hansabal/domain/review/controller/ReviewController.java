@@ -20,7 +20,7 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/products/{productId}")
+    @PostMapping("/products/{productId}") //리뷰생성
     public ResponseEntity<CreateReviewResponse> createReview(@Valid @PathVariable Long productId, @RequestBody CreateReviewRequest request) {
 
         CreateReviewResponse reviewDto = reviewService.createReview(productId, request.getUserId(), request);
@@ -28,7 +28,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
 
-    @GetMapping("/products/{productId}")
+    @GetMapping("/products/{productId}") //전체조회
     public ResponseEntity<List<CreateReviewResponse>> getReviews(@PathVariable Long productId) {
 
         List<CreateReviewResponse> findAll = reviewService.findAll(productId);
@@ -37,7 +37,7 @@ public class ReviewController {
     }
 
 
-    @PutMapping("/{reviewId}")
+    @PutMapping("/{reviewId}") //리뷰 수정
     public ResponseEntity<UpdateReviewResponse> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
 
         UpdateReviewResponse updateReviewResponseDto = reviewService.updateReview(reviewId, request);
@@ -46,7 +46,7 @@ public class ReviewController {
     }
 
 
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/{reviewId}") //소프트 delete
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
 
         reviewService.deleteReview(reviewId);

@@ -68,11 +68,11 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request) {
 
-        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() ->new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
         findReview.updateReview(request.getContent());
 
-        return new UpdateReviewResponse(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
+        return new UpdateReviewResponse(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent(), findReview.getUpdatedAt());
     }
 
     @Override
