@@ -8,7 +8,7 @@ import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 @Entity
 @Table(name = "reviews")

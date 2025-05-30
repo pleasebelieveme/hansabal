@@ -13,5 +13,5 @@ public interface ReviewService {
     List<CreateReviewResponseDto> findAll(Long productId);
 
 
-    UpdateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto request);
+    UpdateReviewResponseDto updateReview(Long reviewId, Long productId, UpdateReviewRequestDto request);
 }

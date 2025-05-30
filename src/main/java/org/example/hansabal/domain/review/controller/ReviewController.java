@@ -34,10 +34,11 @@ public class ReviewController {
 
         return ResponseEntity.status(HttpStatus.OK).body(findAll);
     }
-    @PutMapping("/{reviewId}")
-    public ResponseEntity<UpdateReviewResponseDto> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequestDto request) {
 
-        UpdateReviewResponseDto updateReviewResponseDto = reviewService.updateReview(reviewId, request);
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<UpdateReviewResponseDto> updateReview(@PathVariable Long reviewId, @PathVariable Long productId, @RequestBody UpdateReviewRequestDto request) {
+
+        UpdateReviewResponseDto updateReviewResponseDto = reviewService.updateReview(reviewId, productId, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(updateReviewResponseDto);
     }
