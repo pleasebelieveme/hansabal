@@ -1,13 +1,16 @@
 package org.example.hansabal.domain.review.dto.request;
 
+import jakarta.persistence.Lob;
 import lombok.Getter;
 
 @Getter
-public class UpdateReviewRequestDto {
+public class UpdateReviewRequest {
 
+
+    @Lob
     private final String content;
 
-    public UpdateReviewRequestDto(String content) {
+    public UpdateReviewRequest(String content) {
         this.content = content;
     }
 }
