@@ -1,12 +1,13 @@
 package org.example.hansabal.domain.trade.service;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 
+import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
+import org.example.hansabal.domain.trade.dto.response.TradeListResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
 import org.example.hansabal.domain.trade.entity.Trade;
+import org.example.hansabal.domain.trade.exception.TradeErrorCode;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,21 @@ public class TradeService {
 		tradeRepository.save(trade);
 	}
 
-	public List<TradeResponseDto> getTrades(Pageable pageable) {
-		Page<Trade> page = tradeRepository.findAllOrderByTradeIdDesc(pageable);
+	public TradeListResponseDto getTradeList(Pageable pageable) {
+		Page<Trade> page = tradeRepository.findAllByOrderByTradeIdDesc(pageable);
+		List<TradeResponseDto> tradeList = page.getContent()
+			.stream()
+			.map(this::convertToDto)
+			.toList();
+		Long count = page.getTotalElements();
+		return new TradeListResponseDto(count, tradeList);
+	}
+	private TradeResponseDto convertToDto(Trade trade) {
+		return TradeResponseDto.from(trade);
+	}
+
+	public TradeResponseDto getTrade(Long tradeId) {
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		return TradeResponseDto.from(trade);
 	}
 }

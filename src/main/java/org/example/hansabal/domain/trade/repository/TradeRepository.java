@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
 
-	Page<Trade> findAllOrderByTradeIdDesc(Pageable pageable);
+	Page<Trade> findAllByOrderByTradeIdDesc(Pageable pageable);
 }
