@@ -6,12 +6,14 @@ import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponseDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ReviewService {
     CreateReviewResponseDto createReview(Long productId, Long userId, CreateReviewRequestDto request);
 
     List<CreateReviewResponseDto> findAll(Long productId);
 
+    UpdateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto request);
 
-    UpdateReviewResponseDto updateReview(Long reviewId, Long productId, UpdateReviewRequestDto request);
+    void deleteReview(Long reviewId);
 }

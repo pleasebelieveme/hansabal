@@ -38,8 +38,15 @@ public class ReviewController {
     @PutMapping("/{reviewId}")
     public ResponseEntity<UpdateReviewResponseDto> updateReview(@PathVariable Long reviewId, @PathVariable Long productId, @RequestBody UpdateReviewRequestDto request) {
 
-        UpdateReviewResponseDto updateReviewResponseDto = reviewService.updateReview(reviewId, productId, request);
+        UpdateReviewResponseDto updateReviewResponseDto = reviewService.updateReview(reviewId, request);
 
         return ResponseEntity.status(HttpStatus.OK).body(updateReviewResponseDto);
+    }
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId, @PathVariable Long productId) {
+
+        reviewService.deleteReview(reviewId);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -51,7 +52,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<CreateReviewResponseDto> findAll(Long productId) {
 
-        List<Review> findReviewList = reviewRepository.findByProductId(productId);
+        Optional<Review> byId = reviewRepository.findById(productId);
+
+        List<Review> findReviewList = reviewRepository.findAllByProductId(productId);
 
         List<CreateReviewResponseDto> listDto = new ArrayList<>();
 
@@ -69,7 +72,14 @@ public class ReviewServiceImpl implements ReviewService {
 
         findReview.updateReview(request.getContent());
 
-
         return new UpdateReviewResponseDto(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
+    }
+
+    @Override
+    public void deleteReview(Long reviewId) {
+
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 리뷰가 없습니다."));
+
+        reviewRepository.delete(findReview);
     }
 }
