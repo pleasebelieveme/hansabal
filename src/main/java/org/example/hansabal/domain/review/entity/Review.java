@@ -37,7 +37,6 @@ public class Review extends BaseEntity {
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL ,orphanRemoval = true)
 //    private List<Div> divs = new ArrayList<>();
 
-
     public Review(String content, User user, Product product) {
         this.content = content;
         this.user = user;
@@ -47,4 +46,5 @@ public class Review extends BaseEntity {
     public void updateReview(String updateContent) {
         this.content = updateContent;
     }
+
 }
