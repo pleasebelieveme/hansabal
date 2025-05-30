@@ -3,11 +3,11 @@ package org.example.hansabal.domain.board.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.hansabal.common.security.CurrentUser;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.response.BoardRequest;
 import org.example.hansabal.domain.board.dto.request.BoardResponse;
 import org.example.hansabal.domain.board.service.BoardService;
-import org.example.hansabal.domain.users.entity.User;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +22,9 @@ public class BoardController {
     @PostMapping
     public ResponseEntity<BoardResponse> createPost(
             @RequestBody @Valid BoardRequest request,
-            @CurrentUser User user
+            @AuthenticationPrincipal UserAuth userAuth
     ) {
-        BoardResponse response = boardService.createPost(user, request);
+        BoardResponse response = boardService.createPost(userAuth, request);
         return ResponseEntity.status(201).body(response);
     }
 
@@ -33,9 +33,9 @@ public class BoardController {
     public ResponseEntity<BoardResponse> updatePost(
             @PathVariable Long postId,
             @RequestBody @Valid BoardRequest request,
-            @CurrentUser User user
+            @AuthenticationPrincipal UserAuth userAuth
     ) {
-        BoardResponse response = boardService.updatePost(user, postId, request);
+        BoardResponse response = boardService.updatePost(userAuth, postId, request);
         return ResponseEntity.ok(response);
     }
 
@@ -43,9 +43,9 @@ public class BoardController {
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
             @PathVariable Long postId,
-            @CurrentUser User user
+            @AuthenticationPrincipal UserAuth userAuth
     ) {
-        boardService.deletePost(user, postId);
+        boardService.deletePost(userAuth, postId);
         return ResponseEntity.ok().build();
     }
 

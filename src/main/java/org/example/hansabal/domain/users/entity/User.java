@@ -3,9 +3,6 @@ package org.example.hansabal.domain.users.entity;
 import java.util.List;
 
 import org.example.hansabal.common.base.BaseEntity;
-import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.users.dto.request.UserRequestDto;
-import org.example.hansabal.domain.users.dto.response.UserResponseDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -75,7 +72,11 @@ public class User extends BaseEntity {
 	}
 
 	public void updateUser(String nickname, String password) {
-		this.nickname = nickname;
-		this.password = password;
+		if (nickname != null) {
+			this.nickname = nickname;
+		}
+		if (password != null) {
+			this.password = password;
+		}
 	}
 }
