@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 public class UpdateReviewRequest {
 
+
     @Lob
     private final String content;
 

@@ -36,6 +36,7 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(findAll);
     }
 
+
     @PutMapping("/{reviewId}")
     public ResponseEntity<UpdateReviewResponse> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
 
@@ -43,6 +44,7 @@ public class ReviewController {
 
         return ResponseEntity.status(HttpStatus.OK).body(updateReviewResponseDto);
     }
+
 
     @DeleteMapping("/{reviewId}")
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
