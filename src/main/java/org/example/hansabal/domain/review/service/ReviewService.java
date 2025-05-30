@@ -1,7 +1,9 @@
 package org.example.hansabal.domain.review.service;
 
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequestDto;
+import org.example.hansabal.domain.review.dto.request.UpdateReviewRequestDto;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
+import org.example.hansabal.domain.review.dto.response.UpdateReviewResponseDto;
 
 import java.util.List;
 
@@ -11,4 +13,5 @@ public interface ReviewService {
     List<CreateReviewResponseDto> findAll(Long productId);
 
 
+    UpdateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto request);
 }
