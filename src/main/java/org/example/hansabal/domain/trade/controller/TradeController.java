@@ -3,13 +3,11 @@ package org.example.hansabal.domain.trade.controller;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
-import org.example.hansabal.domain.trade.dto.response.RequestsListResponseDto;
-import org.example.hansabal.domain.trade.dto.response.TradeListResponseDto;
+import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,9 +36,8 @@ public class TradeController {
 	}
 
 	@GetMapping
-	public ResponseEntity<TradeListResponseDto> getTrades(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-		Pageable pageable = PageRequest.of(page, size);
-		TradeListResponseDto tradeList = tradeService.getTradeList(pageable);
+	public ResponseEntity<Page<TradeResponseDto>> getTrades(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+		Page<TradeResponseDto> tradeList = tradeService.getTradeList(page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
 	}
 
@@ -57,9 +54,8 @@ public class TradeController {
 	}
 
 	@GetMapping("/{tradeId}/requests")
-	public ResponseEntity<RequestsListResponseDto> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="10")int size){
-		Pageable pageable = PageRequest.of(page,size);
-		RequestsListResponseDto requestsList = requestsService.getRequestList(tradeId, pageable);
+	public ResponseEntity<Page<RequestsResponseDto>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") int page, @RequestParam(defaultValue="10")int size){
+		Page<RequestsResponseDto> requestsList = requestsService.getRequestList(tradeId, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(requestsList);
 
 	}
