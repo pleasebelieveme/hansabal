@@ -2,11 +2,15 @@ package org.example.hansabal.domain.review.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.repository.ProductRepository;
-import org.example.hansabal.domain.review.dto.request.CreateReviewRequestDto;
-import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
+import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
+import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
+import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.entity.Review;
+import org.example.hansabal.domain.review.exception.ReviewErrorCode;
 import org.example.hansabal.domain.review.repository.ReviewRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
@@ -16,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -29,7 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public CreateReviewResponseDto createReview(Long productId, Long userId, CreateReviewRequestDto dto) {
+    public CreateReviewResponse createReview(Long productId, Long userId, CreateReviewRequest dto) {
 
         User findUser = userRepository.findByIdOrElseThrow(userId);
 
@@ -43,21 +48,38 @@ public class ReviewServiceImpl implements ReviewService {
         Review savedReview = reviewRepository.save(review);
 
         //다시 DB에 있는 데이터를 이용해 반환한다.
-        return CreateReviewResponseDto.from(savedReview);
+        return CreateReviewResponse.from(savedReview);
     }
 
     @Override
-    public List<CreateReviewResponseDto> findAll(Long productId) {
+    public List<CreateReviewResponse> findAll(Long productId) {
 
-        List<Review> findReviewList = reviewRepository.findByProductId(productId);
+        List<Review> findReviewList = reviewRepository.findAllByProductId(productId);
 
-        List<CreateReviewResponseDto> listDto = new ArrayList<>();
+        List<CreateReviewResponse> listDto = new ArrayList<>();
 
         for (Review reviews : findReviewList) {
-            CreateReviewResponseDto reviewResponseDto = new CreateReviewResponseDto(reviews.getId(), reviews.getUser().getNickname(), reviews.getContent());
+            CreateReviewResponse reviewResponseDto = new CreateReviewResponse(reviews.getId(), reviews.getUser().getNickname(), reviews.getContent());
             listDto.add(reviewResponseDto);
         }
-
         return listDto;
+    }
+
+    @Override
+    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request) {
+
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() ->new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        findReview.updateReview(request.getContent());
+
+        return new UpdateReviewResponse(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
+    }
+
+    @Override
+    public void deleteReview(Long reviewId) {
+
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
+
+        findReview.softDelete();
     }
 }

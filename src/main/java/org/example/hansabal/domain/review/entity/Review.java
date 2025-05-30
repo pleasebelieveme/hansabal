@@ -8,7 +8,7 @@ import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 @Entity
 @Table(name = "reviews")
@@ -21,6 +21,7 @@ public class Review extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    @Lob //text 타입
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -36,7 +37,6 @@ public class Review extends BaseEntity {
 //    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL ,orphanRemoval = true)
 //    private List<Div> divs = new ArrayList<>();
 
-
     public Review(String content, User user, Product product) {
         this.content = content;
         this.user = user;
@@ -46,4 +46,5 @@ public class Review extends BaseEntity {
     public void updateReview(String updateContent) {
         this.content = updateContent;
     }
+
 }
