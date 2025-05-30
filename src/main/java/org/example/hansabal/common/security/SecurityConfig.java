@@ -33,7 +33,8 @@ public class SecurityConfig {
 				.accessDeniedHandler(accessDeniedHandler)
 			)
 			.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/api/auth/**").permitAll()
+					.requestMatchers("/crawl").permitAll()
+					.requestMatchers("/api/auth/**").permitAll()
 				.requestMatchers("/api/admin/**").hasRole("ADMIN")
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
