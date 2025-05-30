@@ -48,6 +48,7 @@ public class TradeService {
 		return TradeResponseDto.from(trade);
 	}
 
+	@Transactional(readOnly=true)
 	public Page<TradeResponseDto> getMyTrade(UserAuth userAuth, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
