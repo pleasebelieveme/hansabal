@@ -1,6 +1,6 @@
 package org.example.hansabal.domain.trade.controller;
 
-import org.example.hansabal.common.security.CurrentUser;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsListResponseDto;
@@ -8,11 +8,11 @@ import org.example.hansabal.domain.trade.dto.response.TradeListResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
-import org.example.hansabal.domain.users.entity.User;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,8 +32,8 @@ public class TradeController {
 	private final RequestsService requestsService;
 
 	@PostMapping
-	public ResponseEntity<Void> createTrade(@RequestBody TradeRequestDto request, @CurrentUser User user) {
-		tradeService.createTrade(request, user);
+	public ResponseEntity<Void> createTrade(@RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
+		tradeService.createTrade(request, userAuth);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
@@ -51,9 +51,8 @@ public class TradeController {
 	}
 
 	@PostMapping("/requests")
-	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @CurrentUser User user){
-
-		requestsService.createRequests(user, request);
+	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+		requestsService.createRequests(userAuth, request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 

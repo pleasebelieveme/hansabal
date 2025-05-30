@@ -3,6 +3,7 @@ package org.example.hansabal.domain.trade.service;
 import java.util.List;
 
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
 import org.example.hansabal.domain.trade.dto.response.TradeListResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
@@ -10,6 +11,7 @@ import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.users.entity.User;
+import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TradeService {
 	private final TradeRepository tradeRepository;
+	private final UserRepository userRepository;
 
-	public void createTrade(TradeRequestDto request, User user) {
+	public void createTrade(TradeRequestDto request, UserAuth userAuth) {
+		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade= Trade.builder()
 			.title(request.title())
 			.contents(request.contents())
