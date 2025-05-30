@@ -44,8 +44,5 @@ public class Product extends BaseEntity {
         this.name = name;
     }
 
-    public Long getProductId() {
-        return this.productId;
-    }
 
 }
