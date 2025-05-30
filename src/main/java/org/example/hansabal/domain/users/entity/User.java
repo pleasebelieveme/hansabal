@@ -5,7 +5,6 @@ import java.util.List;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.comment.entity.Dib;
 
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
