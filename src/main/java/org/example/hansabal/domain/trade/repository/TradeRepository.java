@@ -16,7 +16,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
 	Page<Trade> findAllByOrderByTradeIdDesc(Pageable pageable);
 
 	@EntityGraph(attributePaths="users")
-	@Query(value="SELECT t FROM Trade t WHERE t.trader.id=:trader",
+	@Query(value="SELECT t FROM Trade t WHERE t.trader.id=:trader And t.deletedAt=null ORDER BY t.tradeId asc",
 		countQuery ="SELECT t FROM Trade t WHERE t.trader.id=:trader")
 	Page<Trade> findByTraderOrderByTradeIdDesc(User trader, Pageable pageable);
 }
