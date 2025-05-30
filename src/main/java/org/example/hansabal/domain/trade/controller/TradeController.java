@@ -36,7 +36,7 @@ public class TradeController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<TradeResponseDto>> getTrades(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+	public ResponseEntity<Page<TradeResponseDto>> getTrades(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size){
 		Page<TradeResponseDto> tradeList = tradeService.getTradeList(page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
 	}
@@ -45,6 +45,13 @@ public class TradeController {
 	public ResponseEntity<TradeResponseDto> getTrade(@PathVariable Long tradeId){
 		TradeResponseDto response = tradeService.getTrade(tradeId);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping("/my")
+	public ResponseEntity<Page<TradeResponseDto>> getMyTrades(
+		@RequestParam(defaultValue="1")int page, @RequestParam(defaultValue="10")int size, @AuthenticationPrincipal UserAuth userAuth){
+		Page<TradeResponseDto> myTradeList = tradeService.getMyTrade(userAuth, page, size);
+		return ResponseEntity.status(HttpStatus.OK).body(myTradeList);
 	}
 
 	@PostMapping("/requests")
