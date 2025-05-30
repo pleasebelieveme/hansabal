@@ -35,7 +35,7 @@ public class RequestsService {
 		requestsRepository.save(requests);
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public Page<RequestsResponseDto> getRequestList(Long tradeId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);

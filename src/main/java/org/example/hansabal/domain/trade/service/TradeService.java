@@ -34,7 +34,7 @@ public class TradeService {
 		tradeRepository.save(trade);
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public Page<TradeResponseDto> getTradeList(int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
@@ -42,7 +42,7 @@ public class TradeService {
 		return trades.map(TradeResponseDto::from);
 	}
 
-	@Transactional
+	@Transactional(readOnly=true)
 	public TradeResponseDto getTrade(Long tradeId) {
 		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
 		return TradeResponseDto.from(trade);
