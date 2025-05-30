@@ -21,6 +21,7 @@ public class Review extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
+    @Lob //text 타입
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
