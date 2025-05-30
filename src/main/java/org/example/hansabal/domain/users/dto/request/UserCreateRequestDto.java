@@ -27,11 +27,11 @@ public class UserCreateRequestDto {
 	private final String password;
 
 	@NotBlank(message = "이름은 필수 입력값입니다.")
-	@Size(max = 20, message = "이름 최대 20글자가 넘지 않도록 해주십시오.")
+	@Size(min = 2, max = 20, message = "이름 최대 20글자가 넘지 않도록 해주십시오.")
 	private final String name;
 
 	@NotBlank(message = "닉네임은 필수 입력값입니다.")
-	@Size(max = 30, message = "이름 최대 30글자가 넘지 않도록 해주십시오.")
+	@Size(min = 2, max = 30, message = "이름 최대 30글자가 넘지 않도록 해주십시오.")
 	private final String nickname;
 
 	private final UserRole userRole;
