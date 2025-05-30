@@ -77,6 +77,5 @@ public class UserService {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		user.softDelete();
 		// 추후 유저관련 내용 삭제 로직 추가
-		userRepository.save(user);
 	}
 }
