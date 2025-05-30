@@ -3,6 +3,7 @@ package org.example.hansabal.domain.board.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.response.BoardRequest;
 import org.example.hansabal.domain.board.dto.request.BoardResponse;
 import org.example.hansabal.domain.board.entity.Board;
@@ -15,14 +16,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final UserRepository userRepository;
 
     @Transactional
-    public BoardResponse createPost(User user, BoardRequest request) {
+    public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
+        User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Board board = Board.builder()
                 .user(user)
                 .category(request.getCategory())
@@ -35,7 +37,8 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse updatePost(User user, Long postId, BoardRequest request) {
+    public BoardResponse updatePost(UserAuth userAuth, Long postId, BoardRequest request) {
+        User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
         if (!board.getUser().getId().equals(user.getId())) {
@@ -46,7 +49,8 @@ public class BoardService {
     }
 
     @Transactional
-    public void deletePost(User user, Long postId) {
+    public void deletePost(UserAuth userAuth, Long postId) {
+        User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
         if (!board.getUser().getId().equals(user.getId())) {

@@ -1,8 +1,11 @@
 package org.example.hansabal.domain.product.entity;
 
+import org.example.hansabal.common.base.BaseEntity;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.hansabal.common.base.BaseEntity;
 
 @NoArgsConstructor
 @Entity

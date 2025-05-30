@@ -36,6 +36,18 @@ public class Board  extends BaseEntity {
     @Column(nullable = false)
     private Integer viewCount = 0;
 
+    // 좋아요 필드 및 메서드
+    @Column(nullable = false,columnDefinition = "int default 0")
+    private int dibCount = 0;
+
+    public void increaseDibs() {
+        this.dibCount++;
+    }
+
+    public void decreaseDibs() {
+        if (dibCount > 0) this.dibCount--;
+    }
+
     @Builder
     public Board(User user, String category, String title, String content, Integer viewCount) {
         this.user = user;

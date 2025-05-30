@@ -3,7 +3,11 @@ package org.example.hansabal.domain.users.entity;
 import java.util.List;
 
 import org.example.hansabal.common.base.BaseEntity;
+import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.comment.entity.Dib;
+import org.example.hansabal.domain.users.dto.request.UserRequestDto;
 import org.example.hansabal.domain.users.dto.response.UserResponseDto;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -65,10 +69,22 @@ public class User extends BaseEntity {
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Trade> trades;
 
+	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+	private List<Dib> dibs;
+
 	public User(String email, String password, String name, String nickname) {
 		this.email = email;
 		this.password = password;
 		this.name = name;
 		this.nickname = nickname;
+	}
+
+	public void updateUser(String nickname, String password) {
+		if (nickname != null) {
+			this.nickname = nickname;
+		}
+		if (password != null) {
+			this.password = password;
+		}
 	}
 }

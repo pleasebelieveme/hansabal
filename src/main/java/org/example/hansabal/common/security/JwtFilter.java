@@ -29,8 +29,22 @@ public class JwtFilter extends OncePerRequestFilter {
 	private final JwtUtil jwtUtil;
 	private final UserRepository userRepository;
 
+
+
 	@Override
 	protected void doFilterInternal(HttpServletRequest httpRequest, HttpServletResponse httpResponse, FilterChain filterChain) throws IOException, ServletException {
+
+		String uri = httpRequest.getRequestURI();
+
+		// ✅ "/crawl"은 JWT 없이도 접근 가능하게 설정
+		if (uri.equals("/crawl") ||
+				SecurityUrlMatcher.isPublicUrl(uri) ||
+				SecurityUrlMatcher.isRefreshUrl(uri)) {
+
+			filterChain.doFilter(httpRequest, httpResponse);
+			return;
+		}
+
 		if (SecurityUrlMatcher.isPublicUrl(httpRequest.getRequestURI()) ||
 			SecurityUrlMatcher.isRefreshUrl(httpRequest.getRequestURI())) {
 			filterChain.doFilter(httpRequest, httpResponse);

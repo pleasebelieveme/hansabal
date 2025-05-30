@@ -6,13 +6,13 @@ import org.example.hansabal.domain.product.dto.request.ProductRequestDto;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.exception.ProductErrorCode;
 import org.example.hansabal.domain.product.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.hansabal.domain.product.dto.response.ProductResponseDto;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import static org.example.hansabal.domain.product.exception.ProductErrorCode.INVALID_PRODUCTSTATUS;
 
 @Service
 @RequiredArgsConstructor
@@ -20,31 +20,36 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    @Transactional
     public ProductResponseDto createProduct(ProductRequestDto request) {
         Product product = Product.of(request.name(), 10);
         Product savedProduct = productRepository.save(product);
         return ProductResponseDto.from(savedProduct);
     }
 
+    @Transactional(readOnly = true)
     public ProductResponseDto getProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
+                .orElseThrow(() -> new BizException(ProductErrorCode.INVALID_PRODUCTSTATUS));
         return ProductResponseDto.from(product);
     }
 
-    public List<ProductResponseDto> getAllProducts() {
-        return productRepository.findAll().stream()
-                .map(ProductResponseDto::from)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<ProductResponseDto> getAllProducts(int page, int size) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        return productRepository.findAll(pageRequest)
+                .map(ProductResponseDto::from);
     }
 
+    @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
+                .orElseThrow(() -> new BizException(ProductErrorCode.INVALID_PRODUCTSTATUS));
         product.updateName(request.name());
         return ProductResponseDto.from(product);
     }
 
+    @Transactional
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
     }
