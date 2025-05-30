@@ -75,7 +75,11 @@ public class User extends BaseEntity {
 	}
 
 	public void updateUser(String nickname, String password) {
-		this.nickname = nickname;
-		this.password = password;
+		if (nickname != null) {
+			this.nickname = nickname;
+		}
+		if (password != null) {
+			this.password = password;
+		}
 	}
 }
