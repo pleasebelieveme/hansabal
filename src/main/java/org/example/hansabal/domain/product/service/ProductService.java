@@ -11,10 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.hansabal.domain.product.dto.response.ProductResponseDto;
 
-import java.util.List;
-import java.util.NoSuchElementException;
 
-import static org.example.hansabal.domain.product.exception.ProductErrorCode.INVALID_PRODUCTSTATUS;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +27,7 @@ public class ProductService {
 
     public ProductResponseDto getProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
+                .orElseThrow(() -> new BizException(ProductErrorCode.INVALID_PRODUCTSTATUS));
         return ProductResponseDto.from(product);
     }
 
@@ -41,7 +38,7 @@ public class ProductService {
 
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new BizException(INVALID_PRODUCTSTATUS));
+                .orElseThrow(() -> new BizException(ProductErrorCode.INVALID_PRODUCTSTATUS));
         product.updateName(request.name());
         return ProductResponseDto.from(product);
     }
