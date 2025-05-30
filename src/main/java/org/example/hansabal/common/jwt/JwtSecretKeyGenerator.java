@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.auth.util;
+package org.example.hansabal.common.jwt;
 
 import java.util.Base64;
 

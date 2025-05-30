@@ -1,4 +1,4 @@
-package org.example.hansabal.common.security;
+package org.example.hansabal.common.jwt;
 
 import java.util.Arrays;
 
