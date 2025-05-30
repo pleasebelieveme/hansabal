@@ -53,7 +53,8 @@ public class TradeService {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Page<Trade> trades = tradeRepository.findByTraderOrderByTradeIdDesc(user,pageable);
+		Long traderId=user.getId();
+		Page<Trade> trades = tradeRepository.findByTraderOrderByTradeIdAsc(traderId,pageable);
 		return trades.map(TradeResponseDto::from);
 	}
 }
