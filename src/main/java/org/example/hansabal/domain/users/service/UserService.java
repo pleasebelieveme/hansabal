@@ -71,4 +71,11 @@ public class UserService {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
 		}
 	}
+
+	@Transactional
+	public void deleteUser(UserAuth userAuth) {
+		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+		user.softDelete();
+		// 추후 유저관련 내용 삭제 로직 추가
+	}
 }

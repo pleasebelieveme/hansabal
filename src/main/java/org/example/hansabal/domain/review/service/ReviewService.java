@@ -1,17 +1,18 @@
 package org.example.hansabal.domain.review.service;
 
-import org.example.hansabal.domain.review.dto.request.CreateReviewRequestDto;
-import org.example.hansabal.domain.review.dto.request.UpdateReviewRequestDto;
-import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
-import org.example.hansabal.domain.review.dto.response.UpdateReviewResponseDto;
+import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
+import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
+import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 
 import java.util.List;
 
 public interface ReviewService {
-    CreateReviewResponseDto createReview(Long productId, Long userId, CreateReviewRequestDto request);
+    CreateReviewResponse createReview(Long productId, Long userId, CreateReviewRequest request);
 
-    List<CreateReviewResponseDto> findAll(Long productId);
+    List<CreateReviewResponse> findAll(Long productId);
 
+    UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request);
 
-    UpdateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto request);
+    void deleteReview(Long reviewId);
 }

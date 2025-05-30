@@ -47,4 +47,14 @@ public class TradeService {
 		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
 		return TradeResponseDto.from(trade);
 	}
+
+	@Transactional(readOnly=true)
+	public Page<TradeResponseDto> getMyTrade(UserAuth userAuth, int page, int size) {
+		int pageIndex = Math.max(page - 1 , 0);
+		Pageable pageable = PageRequest.of(pageIndex,size);
+		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+		Long traderId=user.getId();
+		Page<Trade> trades = tradeRepository.findByTraderOrderByTradeIdAsc(traderId,pageable);
+		return trades.map(TradeResponseDto::from);
+	}
 }
