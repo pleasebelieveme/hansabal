@@ -2,7 +2,9 @@ package org.example.hansabal.domain.review.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequestDto;
+import org.example.hansabal.domain.review.dto.request.UpdateReviewRequestDto;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
+import org.example.hansabal.domain.review.dto.response.UpdateReviewResponseDto;
 import org.example.hansabal.domain.review.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +33,12 @@ public class ReviewController {
         List<CreateReviewResponseDto> findAll = reviewService.findAll(productId);
 
         return ResponseEntity.status(HttpStatus.OK).body(findAll);
+    }
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<UpdateReviewResponseDto> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequestDto request) {
+
+        UpdateReviewResponseDto updateReviewResponseDto = reviewService.updateReview(reviewId, request);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updateReviewResponseDto);
     }
 }

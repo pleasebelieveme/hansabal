@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequestDto;
+import org.example.hansabal.domain.review.dto.request.UpdateReviewRequestDto;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponseDto;
+import org.example.hansabal.domain.review.dto.response.UpdateReviewResponseDto;
 import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.repository.ReviewRepository;
 import org.example.hansabal.domain.users.entity.User;
@@ -58,5 +60,16 @@ public class ReviewServiceImpl implements ReviewService {
             listDto.add(reviewResponseDto);
         }
         return listDto;
+    }
+
+    @Override
+    public UpdateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto request) {
+
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "수정할 리뷰가 없습니다."));
+
+        findReview.updateReview(request.getContent());
+
+
+        return new UpdateReviewResponseDto(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
     }
 }

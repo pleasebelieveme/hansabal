@@ -9,6 +9,5 @@ public class UpdateReviewRequestDto {
 
     public UpdateReviewRequestDto(String content) {
         this.content = content;
-
     }
 }
