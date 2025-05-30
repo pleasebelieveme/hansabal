@@ -72,6 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
 
         findReview.updateReview(request.getContent());
 
+
         return new UpdateReviewResponseDto(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
     }
 
@@ -81,5 +82,8 @@ public class ReviewServiceImpl implements ReviewService {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 리뷰가 없습니다."));
 
         reviewRepository.delete(findReview);
+
+        return new UpdateReviewResponseDto(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
+
     }
 }

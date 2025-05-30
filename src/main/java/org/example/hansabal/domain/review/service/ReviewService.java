@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReviewService {
-    CreateReviewResponseDto createReview(Long productId, Long userId, CreateReviewRequestDto request);
+    CreateReviewResponse createReview(Long productId, Long userId, CreateReviewRequest request);
 
-    List<CreateReviewResponseDto> findAll(Long productId);
+    List<CreateReviewResponse> findAll(Long productId);
 
-    UpdateReviewResponseDto updateReview(Long reviewId, UpdateReviewRequestDto request);
+    UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request);
 
     void deleteReview(Long reviewId);
 }
