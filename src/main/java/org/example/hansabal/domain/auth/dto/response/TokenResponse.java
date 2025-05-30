@@ -1,6 +1,5 @@
 package org.example.hansabal.domain.auth.dto.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

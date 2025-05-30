@@ -3,11 +3,7 @@ package org.example.hansabal.domain.users.entity;
 import java.util.List;
 
 import org.example.hansabal.common.base.BaseEntity;
-import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.entity.Dib;
-import org.example.hansabal.domain.users.dto.request.UserRequestDto;
-import org.example.hansabal.domain.users.dto.response.UserResponseDto;
-
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
