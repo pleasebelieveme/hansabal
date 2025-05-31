@@ -2,9 +2,9 @@ package org.example.hansabal.domain.users.service;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.users.dto.request.UserCreateRequestDto;
-import org.example.hansabal.domain.users.dto.request.UserUpdateRequestDto;
-import org.example.hansabal.domain.users.dto.response.UserResponseDto;
+import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
+import org.example.hansabal.domain.users.dto.request.UserUpdateRequest;
+import org.example.hansabal.domain.users.dto.response.UserResponse;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
@@ -23,47 +23,47 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	public void createUser(@RequestBody UserCreateRequestDto request) {
+	public void createUser(@RequestBody UserCreateRequest request) {
 
-		if (userRepository.existsByEmail(request.getEmail())) {
+		if (userRepository.existsByEmail(request.email())) {
 			throw new BizException(UserErrorCode.DUPLICATE_USER_ID);
 		}
 
-		String encodedPassword = passwordEncoder.encode(request.getPassword());
+		String encodedPassword = passwordEncoder.encode(request.password());
 
 		User user = User.builder()
-			.email(request.getEmail())
+			.email(request.email())
 			.password(encodedPassword)
-			.name(request.getName())
-			.nickname(request.getNickname())
-			.userRole(request.getUserRole() != null ? request.getUserRole() : UserRole.USER)
+			.name(request.name())
+			.nickname(request.nickname())
+			.userRole(request.userRole() != null ? request.userRole() : UserRole.USER)
 			.build();
 
 		userRepository.save(user);
 	}
 
-	public UserResponseDto findById(UserAuth userAuth) {
+	public UserResponse findById(UserAuth userAuth) {
 		User findUser = userRepository.findByIdOrElseThrow(userAuth.getId());
-		return UserResponseDto.toDto(findUser);
+		return UserResponse.from(findUser);
 	}
 
 	@Transactional
-	public void updateUser(UserUpdateRequestDto request, UserAuth userAuth) {
+	public void updateUser(UserUpdateRequest request, UserAuth userAuth) {
 		User findUser = userRepository.findByIdOrElseThrow(userAuth.getId());
-		checkPassword(request.getOldPassword(), findUser.getPassword());
+		checkPassword(request.oldPassword(), findUser.getPassword());
 
-		if (request.getNickname() == null && request.getNewPassword() == null) {
+		if (request.nickname() == null && request.newPassword() == null) {
 			throw new BizException(UserErrorCode.NO_UPDATE_TARGET);
 		}
-		if (request.getNickname() != null && findUser.getNickname().equals(request.getNickname())) {
+		if (request.nickname() != null && findUser.getNickname().equals(request.nickname())) {
 			throw new BizException(UserErrorCode.NICKNAME_NOT_CHANGED);
 		}
-		if (request.getNewPassword() != null && passwordEncoder.matches(request.getNewPassword(), findUser.getPassword())) {
+		if (request.newPassword() != null && passwordEncoder.matches(request.newPassword(), findUser.getPassword())) {
 			throw new BizException(UserErrorCode.PASSWORD_NOT_CHANGED);
 		}
 
-		String encodedPassword = passwordEncoder.encode(request.getNewPassword());
-		findUser.updateUser(request.getNickname(), encodedPassword);
+		String encodedPassword = passwordEncoder.encode(request.newPassword());
+		findUser.updateUser(request.nickname(), encodedPassword);
 	}
 
 	private void checkPassword(String rawPassword, String hashedPassword) {

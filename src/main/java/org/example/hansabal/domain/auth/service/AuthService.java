@@ -1,9 +1,8 @@
 package org.example.hansabal.domain.auth.service;
 
 import org.example.hansabal.common.exception.BizException;
-import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.common.jwt.JwtUtil;
-import org.example.hansabal.domain.auth.dto.request.LoginRequestDto;
+import org.example.hansabal.domain.auth.dto.request.LoginRequest;
 import org.example.hansabal.domain.auth.dto.response.TokenResponse;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
@@ -23,7 +22,7 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 
-	public TokenResponse login(LoginRequestDto request) {
+	public TokenResponse login(LoginRequest request) {
 		User user = userRepository.findByEmailOrElseThrow(request.email());
 
 		if (!passwordEncoder.matches(request.password(), user.getPassword())) {
