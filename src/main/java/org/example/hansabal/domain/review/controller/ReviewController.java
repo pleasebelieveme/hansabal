@@ -6,8 +6,11 @@ import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.ReviewResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -41,6 +44,17 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.OK).body(findAll);
     }
 
+    @GetMapping("products/{productId}") // 리뷰 페이징
+    public ResponseEntity<Page<ReviewResponse>> getReviews(
+            @PathVariable Long productId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<ReviewResponse> list = reviewService.getReviews(productId, page, size);
+
+        return ResponseEntity.status(HttpStatus.OK).body(list);
+    }
 
     @PutMapping("/{reviewId}") //리뷰 수정
     public ResponseEntity<UpdateReviewResponse> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
