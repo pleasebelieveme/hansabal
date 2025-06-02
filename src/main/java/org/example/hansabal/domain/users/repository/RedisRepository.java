@@ -27,4 +27,16 @@ public class RedisRepository {
 		}
 	}
 
+	public void saveBlackListToken(String token, long expirationMillis) {
+		try {
+			redisTemplate.opsForValue().set(
+				generateBlacklistKey(token),
+				"logout",
+				expirationMillis,
+				java.util.concurrent.TimeUnit.MILLISECONDS
+			);
+		} catch (Exception e) {
+			throw new BizException(UserErrorCode.INVALID_REQUEST);
+		}
+	}
 }
