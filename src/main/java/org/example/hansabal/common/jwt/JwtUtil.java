@@ -11,6 +11,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
@@ -28,7 +29,7 @@ public class JwtUtil {
 			.claim("userRole", userRole.name())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis()+expiration))
-			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
 			.compact();
 	}
 

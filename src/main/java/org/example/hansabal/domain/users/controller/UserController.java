@@ -46,5 +46,6 @@ public class UserController {
 	@DeleteMapping
 	public ResponseEntity<Void> deleteUser(@AuthenticationPrincipal UserAuth userAuth) {
 		userService.deleteUser(userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

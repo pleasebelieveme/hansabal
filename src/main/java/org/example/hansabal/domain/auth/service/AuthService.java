@@ -23,8 +23,8 @@ public class AuthService {
 	private final PasswordEncoder passwordEncoder;
 	private final JwtUtil jwtUtil;
 
-	public TokenResponse login(LoginRequestDto request, UserAuth userAuth) {
-		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+	public TokenResponse login(LoginRequestDto request) {
+		User user = userRepository.findByEmailOrElseThrow(request.email());
 
 		if (!passwordEncoder.matches(request.password(), user.getPassword())) {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
