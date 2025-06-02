@@ -82,10 +82,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<ReviewResponse> responseDtoList = new ArrayList<>();
 
-        for (Review review : reviews) {
-            responseDtoList.add(new ReviewResponse(review.getId(), review.getUser().getNickname(), review.getContent()));
-        }
-
         return reviews.map(ReviewResponse::from);
     }
 
