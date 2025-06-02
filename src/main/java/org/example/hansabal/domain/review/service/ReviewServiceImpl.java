@@ -16,7 +16,6 @@ import org.example.hansabal.domain.review.repository.ReviewRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;

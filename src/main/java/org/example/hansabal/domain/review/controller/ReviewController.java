@@ -10,7 +10,6 @@ import org.example.hansabal.domain.review.dto.response.ReviewResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
