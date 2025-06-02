@@ -60,12 +60,12 @@ public class RequestsService {
 
 	@Transactional
 	public void cancelRequests(Long requestsId, UserAuth userAuth) {
-		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(!requests.getStatus().toString().equals("AVAILABLE"))
-			throw new BizException(TradeErrorCode.ClosedCase);
-		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+			throw new BizException(TradeErrorCode.CLOSED_CASE);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(!Objects.equals(trade.getTradeId(), userAuth.getId()))
-			throw new BizException(TradeErrorCode.Unauthorized);
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.softDelete();
 	}
 }

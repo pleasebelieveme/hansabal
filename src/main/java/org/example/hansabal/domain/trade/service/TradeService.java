@@ -1,5 +1,7 @@
 package org.example.hansabal.domain.trade.service;
 
+import java.util.Objects;
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
@@ -68,9 +70,9 @@ public class TradeService {
 
 	@Transactional
 	public void cancelTrade(Long tradeId, UserAuth userAuth) {
-		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
-			throw new BizException(TradeErrorCode.Unauthorized);
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.softDelete();
 	}
 }
