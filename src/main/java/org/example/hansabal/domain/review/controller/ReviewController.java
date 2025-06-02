@@ -2,6 +2,7 @@ package org.example.hansabal.domain.review.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
@@ -9,6 +10,7 @@ import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +23,12 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     @PostMapping("/products/{productId}") //리뷰생성
-    public ResponseEntity<CreateReviewResponse> createReview(@Valid @PathVariable Long productId, @RequestBody CreateReviewRequest request) {
+    public ResponseEntity<CreateReviewResponse> createReview(
+            @AuthenticationPrincipal UserAuth userAuth,
+            @Valid @PathVariable Long productId,
+            @RequestBody CreateReviewRequest request) {
 
-        CreateReviewResponse reviewDto = reviewService.createReview(productId, request.getUserId(), request);
+        CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth.getId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
