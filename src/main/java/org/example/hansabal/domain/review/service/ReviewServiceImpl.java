@@ -80,8 +80,6 @@ public class ReviewServiceImpl implements ReviewService {
 
         Page<Review> reviews = reviewRepository.findAllByProductId(productId, pageRequest);
 
-        List<ReviewResponse> responseDtoList = new ArrayList<>();
-
         return reviews.map(ReviewResponse::from);
     }
 
