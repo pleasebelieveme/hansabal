@@ -21,7 +21,7 @@ public enum DibErrorCode implements ErrorCode {
 
 	@Override
 	public String getCode() {
-		return this.name();
+		return this.code;
 	}
 
 	@Override
