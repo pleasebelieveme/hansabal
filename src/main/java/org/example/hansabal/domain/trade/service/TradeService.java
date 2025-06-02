@@ -1,7 +1,5 @@
 package org.example.hansabal.domain.trade.service;
 
-import java.util.Objects;
-
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
@@ -46,7 +44,7 @@ public class TradeService {
 
 	@Transactional(readOnly=true)
 	public TradeResponseDto getTrade(Long tradeId) {
-		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		return TradeResponseDto.from(trade);
 	}
 
@@ -62,9 +60,9 @@ public class TradeService {
 
 	@Transactional
 	public void updateTrade(Long tradeId, TradeRequestDto request, UserAuth userAuth) {
-		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
-		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
-			throw new BizException(TradeErrorCode.Unauthorized);
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(!trade.getTrader().getId().equals(userAuth.getId()))
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.updateTrade(request.title(),request.contents());
 	}
 
