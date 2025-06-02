@@ -2,9 +2,11 @@ package org.example.hansabal.domain.comment.service;
 
 
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.exception.CommentErrorCode;
@@ -29,9 +31,9 @@ public class CommentService {
 	private final BoardRepository boardRepository;
 
 	@Transactional
-	public CommentResponse createComment(CreateCommentRequest request,Long userId,Long boardId) {
+	public CommentResponse createComment(CreateCommentRequest request, UserAuth userAuth,Long boardId) {
 
-		User user = userRepository.findById(userId).orElseThrow(
+		User user = userRepository.findById(userAuth.getId()).orElseThrow(
 			() -> new BizException(CommentErrorCode.INVALID_ID));
 
 		Board board = boardRepository.findById(boardId).orElseThrow(
@@ -60,13 +62,12 @@ public class CommentService {
 	}
   
 	@Transactional(readOnly = true)
-	public Page<CommentResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
+	public Page<CommentPageResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		// 추후에 쿼리 DSL로 리팩토링 및 고도화 작업 예정
-		Page<Comment> comments = commentRepository.findByBoardId(boardId, pageable);
 
-		return comments.map(CommentResponse::from);
+		// 쿼리 DSL로 리팩토링 및 고도화 작업 완료
+		return commentRepository.findByBoardId(boardId, pageable);
 	}
 
 	@Transactional
