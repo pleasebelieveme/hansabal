@@ -28,7 +28,8 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 		List<CommentPageResponse> content = queryFactory
 			.select(Projections.constructor(
 				CommentPageResponse.class,
-				comment.contents
+				comment.contents,
+				comment.dibCount
 			))
 			.from(comment)
 			.where(comment.board.postId.eq(boardId))

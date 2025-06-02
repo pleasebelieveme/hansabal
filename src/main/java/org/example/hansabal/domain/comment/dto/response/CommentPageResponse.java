@@ -5,4 +5,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentPageResponse {
 	private final String comments;
+	private final int dibCount;
 }

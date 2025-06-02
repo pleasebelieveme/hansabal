@@ -46,8 +46,9 @@ public class CommentController {
 	@PatchMapping("/{commentId}")
 	public ResponseEntity<CommentResponse> updateComment(
 		@Valid @RequestBody CreateCommentRequest request,
-		@PathVariable Long commentId){
-		CommentResponse response = commentService.updateComment(request, commentId);
+		@PathVariable Long commentId,
+		@AuthenticationPrincipal UserAuth userAuth){
+		CommentResponse response = commentService.updateComment(request, commentId, userAuth);
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}

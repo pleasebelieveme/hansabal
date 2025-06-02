@@ -47,14 +47,15 @@ public class CommentService {
 	}
 
 	@Transactional
-	public CommentResponse updateComment(CreateCommentRequest request, Long commentId) {
+	public CommentResponse updateComment(
+		CreateCommentRequest request, Long commentId, UserAuth userAuth ) {
 
 		Comment comment = commentRepository.findById(commentId).orElseThrow(
 			() -> new BizException(CommentErrorCode.INVALID_ID));
 
-		// if (!comment.getUser().getId().equals(user.getId())) {
-		// 	throw new BizException(CommentErrorCode.FORBIDDEN);
-		// }
+		if (!comment.getUser().getId().equals(userAuth.getId())) {
+			throw new BizException(CommentErrorCode.FORBIDDEN);
+		}
 
 		comment.updateContents(request.contents());
 
