@@ -6,5 +6,5 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record RequestsStatusDto(@NotNull RequestStatus requestStatus) {
+public record RequestsStatusRequestDto(@NotNull RequestStatus requestStatus) {
 }

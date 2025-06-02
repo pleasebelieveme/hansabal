@@ -2,7 +2,7 @@ package org.example.hansabal.domain.trade.controller;
 
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
-import org.example.hansabal.domain.trade.dto.request.RequestsStatusDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
@@ -76,7 +76,7 @@ public class TradeController {
 	}
 
 	@PatchMapping("/requests/{requestsId}")
-	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @RequestBody RequestsStatusDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.updateRequests(requestsId, request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

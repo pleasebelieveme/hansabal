@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
-import org.example.hansabal.domain.trade.dto.request.RequestsStatusDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
 import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.entity.Requests;
@@ -49,7 +49,7 @@ public class RequestsService {
 	}
 
 	@Transactional
-	public void updateRequests(Long requestsId, RequestsStatusDto request, UserAuth userAuth) {
+	public void updateRequests(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(requests.getStatus().toString().equals("DONE"))
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
