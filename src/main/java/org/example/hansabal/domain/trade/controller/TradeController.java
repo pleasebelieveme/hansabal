@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -62,6 +63,12 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
+	@DeleteMapping("{tradeId}")
+	public ResponseEntity<Void> cancelTrade(@PathVariable Long tradeId, @AuthenticationPrincipal UserAuth userAuth){
+		tradeService.cancelTrade(tradeId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
 	@PostMapping("/requests")
 	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.createRequests(userAuth, request);
@@ -78,6 +85,12 @@ public class TradeController {
 	@PatchMapping("/requests/{requestsId}")
 	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @RequestBody RequestsStatusDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.updateRequests(requestsId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@DeleteMapping("/requests/{requestsId}")
+	public ResponseEntity<Void> cancelRequests(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
+		requestsService.cancelRequests(requestsId, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

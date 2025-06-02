@@ -67,4 +67,12 @@ public class TradeService {
 			throw new BizException(TradeErrorCode.Unauthorized);
 		trade.updateTrade(request.title(),request.contents());
 	}
+
+	@Transactional
+	public void cancelTrade(Long tradeId, UserAuth userAuth) {
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
+			throw new BizException(TradeErrorCode.Unauthorized);
+		trade.softDelete();
+	}
 }

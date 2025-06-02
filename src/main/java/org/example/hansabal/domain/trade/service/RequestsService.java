@@ -60,4 +60,15 @@ public class RequestsService {
 		}catch(IllegalArgumentException e){throw new BizException(TradeErrorCode.NotSupportedType);}
 		requests.updateStatus(request.requestStatus());
 	}
+
+	@Transactional
+	public void cancelRequests(Long requestsId, UserAuth userAuth) {
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		if(requests.getStatus().toString().equals("DONE"))
+			throw new BizException(TradeErrorCode.ClosedCase);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		if(!Objects.equals(trade.getTradeId(), userAuth.getId()))
+			throw new BizException(TradeErrorCode.Unauthorized);
+		requests.softDelete();
+	}
 }
