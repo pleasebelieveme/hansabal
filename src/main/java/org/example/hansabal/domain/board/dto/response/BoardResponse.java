@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.board.dto.request;
+package org.example.hansabal.domain.board.dto.response;
 
 
 import lombok.AllArgsConstructor;
@@ -32,6 +32,25 @@ public class BoardResponse {
     private int likeCount;
     private boolean likedByMe;
 
+    public static BoardResponse from(Board board) {
+        User user = board.getUser();
+        return BoardResponse.builder()
+                .postId(board.getPostId())
+                .userId(user.getId())
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .category(board.getCategory().getDisplayName()) // or .toString()
+                .title(board.getTitle())
+                .content(board.getContent())
+                .viewCount(board.getViewCount())
+                .createdAt(board.getCreatedAt())
+                .updatedAt(board.getUpdatedAt())
+                .comments(null)
+                .likeCount(0)
+                .likedByMe(false)
+                .build();
+    }
+
     // ⭐ 정적 팩토리 메서드
     public static BoardResponse from(Board board, List<CommentResponse> comments, int likeCount, boolean likedByMe) {
         User user = board.getUser();
@@ -40,7 +59,7 @@ public class BoardResponse {
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
-                .category(board.getCategory())
+                .category(board.getCategory().getDisplayName())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())
@@ -51,4 +70,5 @@ public class BoardResponse {
                 .likedByMe(likedByMe)
                 .build();
     }
+
 }

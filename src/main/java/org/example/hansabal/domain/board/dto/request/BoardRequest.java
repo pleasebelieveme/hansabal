@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.board.dto.response;
+package org.example.hansabal.domain.board.dto.request;
 
 
 import jakarta.validation.constraints.NotBlank;

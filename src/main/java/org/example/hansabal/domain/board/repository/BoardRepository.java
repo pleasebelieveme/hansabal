@@ -1,6 +1,7 @@
 package org.example.hansabal.domain.board.repository;
 
 import org.example.hansabal.domain.board.entity.Board;
+import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -10,8 +11,8 @@ import java.util.List;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    // (1) 카테고리별 전체 조회 (비권장/필요시만)
-    List<Board> findByCategory(String category);
+    // 카테고리별 조회
+    Page<Board> findByCategory(BoardCategory category, Pageable pageable);
 
     // (2) 키워드로 전체 조회 (비권장/필요시만)
     List<Board> findByTitleContainingOrContentContaining(String title, String content);
