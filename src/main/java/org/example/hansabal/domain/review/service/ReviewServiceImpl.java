@@ -18,6 +18,7 @@ import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,7 +56,7 @@ public class ReviewServiceImpl implements ReviewService {
         return CreateReviewResponse.from(savedReview);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // 페이징 잘 실행되면 삭제할 예정입니다.
     @Override
     public List<CreateReviewResponse> findAll(Long productId) {
 
@@ -68,6 +69,24 @@ public class ReviewServiceImpl implements ReviewService {
             listDto.add(reviewResponseDto);
         }
         return listDto;
+    }
+
+    @Transactional(readOnly = true) //페이징 구현중
+    @Override
+    public Page<ReviewResponse> getReviews(Long productId, int page, int size) {
+
+        //이 객체는 페이징 처리에 필요한 정보를 쿼리조건으로 전달한다.
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC,"createdAt");
+
+        Page<Review> reviews = reviewRepository.findAllByProductId(productId, pageRequest);
+
+        List<ReviewResponse> responseDtoList = new ArrayList<>();
+
+        for (Review review : reviews) {
+            responseDtoList.add(new ReviewResponse(review.getId(), review.getUser().getNickname(), review.getContent()));
+        }
+
+        return reviews.map(ReviewResponse::from);
     }
 
     @Transactional
@@ -87,19 +106,5 @@ public class ReviewServiceImpl implements ReviewService {
         Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
         findReview.softDelete();
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public Page<ReviewResponse> getReviews(Long productId, int page, int size) {
-
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Review> reviews = reviewRepository.findById(productId, pageRequest);
-
-        List<ReviewResponse> responseDtoList = new ArrayList<>();
-        for (Review review : reviews) {
-            responseDtoList.add(new ReviewResponse(review.getId(), review.getUser().getNickname(), review.getContent()));
-        }
-        return reviews.map(ReviewResponse::from);
     }
 }

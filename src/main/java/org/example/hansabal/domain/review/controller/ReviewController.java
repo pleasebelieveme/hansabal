@@ -51,9 +51,9 @@ public class ReviewController {
             @RequestParam(defaultValue = "10") int size
     ) {
 
-        Page<ReviewResponse> list = reviewService.getReviews(productId, page, size);
+        Page<ReviewResponse> reviewsList = reviewService.getReviews(productId, page, size);
 
-        return ResponseEntity.status(HttpStatus.OK).body(list);
+        return ResponseEntity.status(HttpStatus.OK).body(reviewsList);
     }
 
     @PutMapping("/{reviewId}") //리뷰 수정
