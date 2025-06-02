@@ -60,6 +60,7 @@ public class CommentTest {
 		CommentResponse response = commentService.createComment(request, userAuth, boardId);
 
 		// then
+		// pr 확인용 주석
 		assertThat(response).isNotNull();
 		assertThat(response.contents().equals("테스트 댓글"));
 	}
