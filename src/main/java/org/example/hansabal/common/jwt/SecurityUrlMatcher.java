@@ -5,7 +5,8 @@ import java.util.Arrays;
 public class SecurityUrlMatcher {
 	public static final String[] PUBLIC_URLS = {
 		"/api/users",
-		"/api/auth/login"
+		"/api/auth/login",
+		"/crawl"
 	};
 
 	public static final String[] ADMIN_URLS = {
