@@ -34,7 +34,7 @@ public class RequestsService {
 	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
-			TradeErrorCode.NoSuchThing));
+			TradeErrorCode.NO_SUCH_THING));
 		Requests requests = Requests.of(trade,user);
 		requestsRepository.save(requests);
 	}
@@ -50,14 +50,14 @@ public class RequestsService {
 
 	@Transactional
 	public void updateRequests(Long requestsId, RequestsStatusDto request, UserAuth userAuth) {
-		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(requests.getStatus().toString().equals("DONE"))
-			throw new BizException(TradeErrorCode.ClosedCase);
-		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+			throw new BizException(TradeErrorCode.CLOSED_CASE);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(!Objects.equals(trade.getTradeId(), userAuth.getId()))
-			throw new BizException(TradeErrorCode.Unauthorized);
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		try{RequestStatus.valueOf(String.valueOf(request.requestStatus()));
-		}catch(IllegalArgumentException e){throw new BizException(TradeErrorCode.NotSupportedType);}
+		}catch(IllegalArgumentException e){throw new BizException(TradeErrorCode.NOT_SUPPORTED_TYPE);}
 		requests.updateStatus(request.requestStatus());
 	}
 }
