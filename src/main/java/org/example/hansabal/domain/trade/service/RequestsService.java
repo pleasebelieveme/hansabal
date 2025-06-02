@@ -7,7 +7,6 @@ import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
-import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.entity.Requests;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
@@ -54,10 +53,8 @@ public class RequestsService {
 		if(requests.getStatus().toString().equals("DONE"))
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
 		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(!Objects.equals(trade.getTradeId(), userAuth.getId()))
+		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
-		try{RequestStatus.valueOf(String.valueOf(request.requestStatus()));
-		}catch(IllegalArgumentException e){throw new BizException(TradeErrorCode.NOT_SUPPORTED_TYPE);}
 		requests.updateStatus(request.requestStatus());
 	}
 }
