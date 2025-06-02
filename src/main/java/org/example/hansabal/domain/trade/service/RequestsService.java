@@ -64,7 +64,7 @@ public class RequestsService {
 	@Transactional
 	public void cancelRequests(Long requestsId, UserAuth userAuth) {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
-		if(requests.getStatus().toString().equals("DONE"))
+		if(!requests.getStatus().toString().equals("AVAILABLE"))
 			throw new BizException(TradeErrorCode.ClosedCase);
 		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
 		if(!Objects.equals(trade.getTradeId(), userAuth.getId()))
