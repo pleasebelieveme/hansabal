@@ -10,7 +10,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TradeErrorCode implements ErrorCode {
 	Unauthorized(HttpStatus.FORBIDDEN,"T001","본인이 게시한 거래글만 관리할 수 있습니다."),
-	NoSuchThing(HttpStatus.NOT_FOUND,"T002","입력값 중 찾을 수 없는 개체가 있습니다.");
+	NoSuchThing(HttpStatus.NOT_FOUND,"T002","입력값 중 찾을 수 없는 개체가 있습니다."),
+	NotSupportedType(HttpStatus.BAD_REQUEST,"T003","올바르지 않은 입력값입니다."),
+	ClosedCase(HttpStatus.BAD_REQUEST,"T004","이미 완료된 거래입니다.");
+
 
 	private final HttpStatus httpStatus;
 	private final String code;

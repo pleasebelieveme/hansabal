@@ -1,9 +1,13 @@
 package org.example.hansabal.domain.trade.service;
 
+import java.util.Objects;
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
+import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.entity.Requests;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
@@ -44,4 +48,16 @@ public class RequestsService {
 
 	}
 
+	@Transactional
+	public void updateRequests(Long requestsId, RequestsStatusDto request, UserAuth userAuth) {
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		if(requests.getStatus().toString().equals("DONE"))
+			throw new BizException(TradeErrorCode.ClosedCase);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NoSuchThing));
+		if(!Objects.equals(trade.getTradeId(), userAuth.getId()))
+			throw new BizException(TradeErrorCode.Unauthorized);
+		try{RequestStatus.valueOf(String.valueOf(request.requestStatus()));
+		}catch(IllegalArgumentException e){throw new BizException(TradeErrorCode.NotSupportedType);}
+		requests.updateStatus(request.requestStatus());
+	}
 }
