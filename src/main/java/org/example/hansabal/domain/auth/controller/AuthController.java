@@ -1,7 +1,6 @@
 package org.example.hansabal.domain.auth.controller;
 
 import org.example.hansabal.domain.auth.dto.request.LoginRequest;
-import org.example.hansabal.domain.auth.dto.request.RefreshTokenRequest;
 import org.example.hansabal.domain.auth.dto.response.TokenResponse;
 import org.example.hansabal.domain.auth.service.AuthService;
 import org.springframework.http.HttpStatus;
@@ -29,8 +28,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<TokenResponse> reissue(@Valid @RequestBody RefreshTokenRequest request) {
-		TokenResponse tokenResponse = authService.reissue(request.refreshToken());
-		return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
+	public ResponseEntity<TokenResponse> reissue(@RequestHeader("Authorization") String refreshToken) {
+		TokenResponse tokenResponse = authService.reissue(refreshToken);
+		return ResponseEntity.ok(tokenResponse);
 	}
 }

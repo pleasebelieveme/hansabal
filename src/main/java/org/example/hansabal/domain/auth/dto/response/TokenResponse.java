@@ -8,7 +8,7 @@ public class TokenResponse {
 	private final String refreshToken;
 
 	public TokenResponse(String accessToken, String refreshToken) {
-		this.accessToken = "Bearer " + accessToken;
-		this.refreshToken = "Bearer " + refreshToken;
+		this.accessToken = accessToken;
+		this.refreshToken = refreshToken;
 	}
 }
