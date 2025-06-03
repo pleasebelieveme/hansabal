@@ -1,7 +1,7 @@
 package org.example.hansabal.domain.comment.dto.response;
 
 import org.example.hansabal.domain.comment.entity.Comment;
-import org.hibernate.validator.constraints.Length;
+
 
 
 

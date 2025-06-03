@@ -6,7 +6,7 @@ import lombok.*;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.users.entity.User;
 
-import java.time.LocalDateTime;
+
 
 @Getter
 @Entity
