@@ -13,6 +13,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
+    //JPQL은 추후에 더 수정하겠습니다.
     @EntityGraph(attributePaths = "product")
     Page<Review> findAllByProductId(Long productId, Pageable pageable);
 
