@@ -27,7 +27,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
         List<ProductResponseDto> content = queryFactory
                 .select(Projections.constructor(ProductResponseDto.class,
-                        product.productId,
+                        product.id,
                         product.name))
                 .from(product)
                 .offset(pageable.getOffset())
