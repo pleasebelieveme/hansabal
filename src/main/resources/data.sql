@@ -1,1 +1,0 @@
-#INSERT INTO users (email, name, password, created_at, updated_at) VALUES ('test@test.com', 'testman', 'Test1234!@', NOW(), NOW());

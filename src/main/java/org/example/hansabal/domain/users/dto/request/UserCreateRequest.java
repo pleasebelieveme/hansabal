@@ -4,6 +4,7 @@ import org.example.hansabal.domain.users.entity.UserRole;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
@@ -28,6 +29,7 @@ public record UserCreateRequest(
 	@Size(min = 2, max = 30, message = "이름 최대 30글자가 넘지 않도록 해주십시오.")
 	String nickname,
 
+	@NotNull
 	UserRole userRole
 
 ) {

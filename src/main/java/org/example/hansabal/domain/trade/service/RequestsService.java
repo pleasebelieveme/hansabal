@@ -7,6 +7,7 @@ import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
 import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
+import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.entity.Requests;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
@@ -56,5 +57,16 @@ public class RequestsService {
 		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.updateStatus(request.requestStatus());
+	}
+
+	@Transactional
+	public void cancelRequests(Long requestsId, UserAuth userAuth) {
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(requests.getStatus()!= RequestStatus.AVAILABLE)
+			throw new BizException(TradeErrorCode.CLOSED_CASE);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(trade.getTradeId()!=userAuth.getId())
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
+		requests.softDelete();
 	}
 }
