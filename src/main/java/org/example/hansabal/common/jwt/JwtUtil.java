@@ -30,8 +30,6 @@ public class JwtUtil {
 			.claim("userRole", userRole.name())
 			.setIssuedAt(new Date())
 
-			.setExpiration(new Date(System.currentTimeMillis()+expiration))
-
 			.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
 
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
