@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.comment.integration;
+package org.example.hansabal.domain.comment.service.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -6,15 +6,14 @@ import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
-import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
 import org.example.hansabal.domain.comment.service.CommentService;
+import org.example.hansabal.domain.review.service.ReviewServiceImpl;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +44,9 @@ public class CommentTest {
 	@Autowired
 	private CommentService commentService;
 
+	@Autowired
+	private ReviewServiceImpl reviewService;
+
 	@BeforeAll
 	public static void beforeAll() {
 
@@ -73,8 +75,33 @@ public class CommentTest {
 		UserAuth userAuth = new UserAuth(2L, UserRole.USER);
 
 		assertThatThrownBy( () -> {
-			CommentResponse response = commentService.createComment(request, userAuth, boardId);
+			commentService.createComment(request, userAuth, boardId);
 		}).isInstanceOf(BizException.class)
 			.hasMessageContaining("유효하지 않은 id 입니다.");
 	}
+
+	@Test
+	void 댓글_생성_보드정보_불일치_예외() {
+		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
+		Long boardId = 2L;
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+
+		assertThatThrownBy( () -> {
+			commentService.createComment(request, userAuth, boardId);
+		}).isInstanceOf(BizException.class)
+			.hasMessageContaining("유효하지 않은 id 입니다.");
+	}
+
+	@Test
+	void 댓글_수정(){
+		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
+		Long commentId = 1L;
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+
+		CommentResponse response = commentService.updateComment(request, commentId, userAuth);
+
+		assertThat(response.contents().equals("수정된 댓글"));
+	}
+
+
 }
