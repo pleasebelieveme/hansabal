@@ -1,6 +1,6 @@
 package org.example.hansabal.domain.review.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.product.entity.Product;
@@ -8,24 +8,27 @@ import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.ReviewResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.exception.ReviewErrorCode;
 import org.example.hansabal.domain.review.repository.ReviewRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
@@ -33,6 +36,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ProductRepository productRepository;
 
 
+    @Transactional
     @Override
     public CreateReviewResponse createReview(Long productId, Long userId, CreateReviewRequest dto) {
 
@@ -51,6 +55,7 @@ public class ReviewServiceImpl implements ReviewService {
         return CreateReviewResponse.from(savedReview);
     }
 
+    @Transactional(readOnly = true) // 페이징 잘 실행되면 삭제할 예정입니다.
     @Override
     public List<CreateReviewResponse> findAll(Long productId) {
 
@@ -65,14 +70,27 @@ public class ReviewServiceImpl implements ReviewService {
         return listDto;
     }
 
+    @Transactional(readOnly = true) //페이징 구현중
+    @Override
+    public Page<ReviewResponse> getReviews(Long productId, int page, int size) {
+
+        //이 객체는 페이징 처리에 필요한 정보를 쿼리조건으로 전달한다.
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC,"createdAt");
+
+        Page<Review> reviews = reviewRepository.findAllByProductId(productId, pageRequest);
+
+        return reviews.map(ReviewResponse::from);
+    }
+
+    @Transactional
     @Override
     public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request) {
 
-        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() ->new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
+        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
 
         findReview.updateReview(request.getContent());
 
-        return new UpdateReviewResponse(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent());
+        return new UpdateReviewResponse(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent(), findReview.getUpdatedAt());
     }
 
     @Override
