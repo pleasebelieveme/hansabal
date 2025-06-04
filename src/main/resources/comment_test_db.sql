@@ -1,6 +1,6 @@
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS comment;
-SET FOREIGN_KEY_CHECKS = 1;
+
 
 CREATE TABLE comment (
     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -9,7 +9,7 @@ CREATE TABLE comment (
     user_id BIGINT NOT NULL ,
     board_id BIGINT NOT NULL ,
     FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (board_id) REFERENCES boards(post_id),
+    FOREIGN KEY (board_id) REFERENCES boards(id),
     created_at DATETIME(6),
     updated_at DATETIME(6),
     deleted_at DATETIME(6)
@@ -217,3 +217,5 @@ VALUES (1, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (199, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (200, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (201,'test comment', 0, 1, 1, NOW(), NOW(), NULL);
+
+SET FOREIGN_KEY_CHECKS = 1;
