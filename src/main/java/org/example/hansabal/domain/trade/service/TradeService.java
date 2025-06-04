@@ -37,10 +37,12 @@ public class TradeService {
 	}
 
 	@Transactional(readOnly=true)
-	public Page<TradeResponseDto> getTradeList(int page, int size) {
+	public Page<TradeResponseDto> getTradeListByTitle(int page, int size, String title) {
+		if(title==null)
+			title="";
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Trade> trades = tradeRepository.findAllByOrderByTradeIdDesc(pageable);
+		Page<Trade> trades = tradeRepository.findAllByTitleContainingOrderByTradeIdDesc(pageable, title);
 		return trades.map(TradeResponseDto::from);
 	}
 

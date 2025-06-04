@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,14 +35,14 @@ public class TradeController {
 	private final RequestsService requestsService;
 
 	@PostMapping
-	public ResponseEntity<Void> createTrade(@RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
+	public ResponseEntity<Void> createTrade(@Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
 		tradeService.createTrade(request, userAuth);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<TradeResponseDto>> getTrades(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size){
-		Page<TradeResponseDto> tradeList = tradeService.getTradeList(page, size);
+	public ResponseEntity<Page<TradeResponseDto>> getTradesByTitle(@RequestParam(defaultValue = "1") @Positive int page, @RequestParam(defaultValue = "10") @Positive int size, @RequestParam(required=false, value="title") String title){
+		Page<TradeResponseDto> tradeList = tradeService.getTradeListByTitle(page, size, title);
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
 	}
 
@@ -52,13 +54,13 @@ public class TradeController {
 
 	@GetMapping("/my")
 	public ResponseEntity<Page<TradeResponseDto>> getMyTrades(
-		@RequestParam(defaultValue="1")int page, @RequestParam(defaultValue="10")int size, @AuthenticationPrincipal UserAuth userAuth){
+		@RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size, @AuthenticationPrincipal UserAuth userAuth){
 		Page<TradeResponseDto> myTradeList = tradeService.getMyTrade(userAuth, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(myTradeList);
 	}
 
 	@PatchMapping("/{tradeId}")
-	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		tradeService.updateTrade(tradeId, request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -70,20 +72,20 @@ public class TradeController {
 	}
 
 	@PostMapping("/requests")
-	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> createRequests(@Valid @RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.createRequests(userAuth, request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
 	@GetMapping("/{tradeId}/requests")
-	public ResponseEntity<Page<RequestsResponseDto>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") int page, @RequestParam(defaultValue="10")int size){
+	public ResponseEntity<Page<RequestsResponseDto>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size){
 		Page<RequestsResponseDto> requestsList = requestsService.getRequestList(tradeId, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(requestsList);
 
 	}
 
 	@PatchMapping("/requests/{requestsId}")
-	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.updateRequests(requestsId, request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

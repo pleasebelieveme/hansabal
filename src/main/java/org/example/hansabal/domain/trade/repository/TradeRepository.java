@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
 
-	Page<Trade> findAllByOrderByTradeIdDesc(Pageable pageable);
+	Page<Trade> findAllByTitleContainingOrderByTradeIdDesc(Pageable pageable,String title);
 
 	@EntityGraph(attributePaths="users")
 	@Query(value="SELECT t FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null ORDER BY t.tradeId asc",
