@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Trade extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long tradeId;
+	private Long id;
 	@Column(nullable=false)
 	private String title;
 	private String contents;

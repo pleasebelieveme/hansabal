@@ -51,7 +51,7 @@ public class RequestsService {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(requests.getStatus()==RequestStatus.DONE)
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
-		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(trade.getTrader().getId()!=userAuth.getId())
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.updateStatus(request.requestStatus());
@@ -64,8 +64,8 @@ public class RequestsService {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(requests.getStatus()!= RequestStatus.AVAILABLE)
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
-		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(trade.getTradeId()!=userAuth.getId())
+		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(trade.getId()!=userAuth.getId())
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.softDelete();
 	}

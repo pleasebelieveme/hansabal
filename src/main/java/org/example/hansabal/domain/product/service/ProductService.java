@@ -42,7 +42,6 @@ public class ProductService {
         return productRepository.getAllProducts(pageable);
     }
 
-
     @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
         Product product = productRepository.findById(id)
