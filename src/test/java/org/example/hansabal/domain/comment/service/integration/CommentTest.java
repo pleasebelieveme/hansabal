@@ -11,6 +11,7 @@ import org.example.hansabal.domain.comment.service.CommentService;
 import org.example.hansabal.domain.review.service.ReviewServiceImpl;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -93,6 +94,7 @@ public class CommentTest {
 	}
 
 	@Test
+	@DisplayName("여기다가 직관적이게 적기!!")
 	void 댓글_수정(){
 		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
 		Long commentId = 1L;
@@ -102,6 +104,8 @@ public class CommentTest {
 
 		assertThat(response.contents().equals("수정된 댓글"));
 	}
+
+
 
 
 }
