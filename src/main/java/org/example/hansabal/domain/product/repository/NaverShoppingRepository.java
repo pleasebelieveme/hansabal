@@ -1,6 +1,6 @@
 package org.example.hansabal.domain.product.repository;
 
-import
+import org.springframework.beans.factory.annotation.Value;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpEntity;

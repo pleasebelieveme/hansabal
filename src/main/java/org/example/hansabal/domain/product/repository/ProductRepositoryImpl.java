@@ -35,7 +35,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                 .fetch();
 
         Long countResult = queryFactory
-                .select(product.productId.count())
+                .select(product.id.count())
                 .from(product)
                 .fetchOne();
 
