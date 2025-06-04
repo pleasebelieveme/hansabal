@@ -12,6 +12,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    @Query("SELECT r FROM Review r WHERE r.product.id = :productId")
+   @Query("SELECT r FROM Review r JOIN FETCH r.product WHERE r.product.id= :productId")
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 }
