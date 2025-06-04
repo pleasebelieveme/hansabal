@@ -27,7 +27,7 @@ import lombok.NoArgsConstructor;
 public class Requests extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
-	private Long requestsId;
+	private Long id;
 	@Enumerated(EnumType.STRING)
 	@Column(nullable=false)
 	private RequestStatus status;

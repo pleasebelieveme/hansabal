@@ -42,7 +42,7 @@ public class TradeService {
 			title="";
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Trade> trades = tradeRepository.findAllByTitleContainingOrderByTradeIdDesc(pageable, title);
+		Page<Trade> trades = tradeRepository.findAllByTitleContainingOrderByIdDesc(pageable, title);
 		return trades.map(TradeResponseDto::from);
 	}
 

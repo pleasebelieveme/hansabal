@@ -13,10 +13,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
 
-	Page<Trade> findAllByTitleContainingOrderByTradeIdDesc(Pageable pageable,String title);
+	Page<Trade> findAllByTitleContainingOrderByIdDesc(Pageable pageable,String title);
 
 	@EntityGraph(attributePaths="users")
-	@Query(value="SELECT t FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null ORDER BY t.tradeId asc",
+	@Query(value="SELECT t FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null ORDER BY t.id asc",
 		countQuery ="SELECT t FROM Trade t WHERE t.trader.id=:traderId")
 	Page<Trade> findByTraderOrderByTradeIdAsc(@Param("traderId")Long traderId, Pageable pageable);
 }
