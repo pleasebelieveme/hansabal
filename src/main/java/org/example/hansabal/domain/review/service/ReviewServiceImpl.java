@@ -60,7 +60,7 @@ public class ReviewServiceImpl implements ReviewService {
         //이 객체는 페이징 처리에 필요한 정보를 쿼리조건으로 전달한다.
         PageRequest pageRequest = PageRequest.of(pageIndex, size);
 
-        Page<Review> reviews = reviewRepository.findAllByProductId(productId, pageRequest);
+        Page<Review> reviews = reviewRepository.findReviewsByProductId(productId, pageRequest);
 
         return reviews.map(ReviewResponse::from);
     }
