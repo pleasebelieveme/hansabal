@@ -14,9 +14,7 @@ public class RedisRepository {
 	private final RedisTemplate<String,String> redisTemplate;
 
 	public String generateBlacklistKey(String token){
-		String blacklistKey = "blacklist:" + token;
-
-		return blacklistKey;
+		return "blacklist:" + token;
 	}
 
 	public boolean validateKey(String token){
@@ -27,4 +25,16 @@ public class RedisRepository {
 		}
 	}
 
+	public void saveBlackListToken(String token, long expirationMillis) {
+		try {
+			redisTemplate.opsForValue().set(
+				generateBlacklistKey(token),
+				"logout",
+				expirationMillis,
+				java.util.concurrent.TimeUnit.MILLISECONDS
+			);
+		} catch (Exception e) {
+			throw new BizException(UserErrorCode.INVALID_REQUEST);
+		}
+	}
 }
