@@ -13,8 +13,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-
-    @EntityGraph(attributePaths = "product")
     @Query("SELECT r FROM Review r JOIN FETCH r.product WHERE r.product.productId = :productId")
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
