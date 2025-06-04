@@ -1,46 +1,32 @@
 package org.example.hansabal.domain.product.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import com.fasterxml.jackson.databind.JsonNode;
+import org.example.hansabal.domain.product.dto.response.ProductNaverDto;
+import org.example.hansabal.domain.product.repository.NaverShoppingRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class NaverShoppingService {
 
-    @Value("${naver.client-id}")
-    private String clientId;
+    private final NaverShoppingRepository repository;
 
-    @Value("${naver.client-secret}")
-    private String clientSecret;
-
-    private final RestTemplate restTemplate;
-
-    public NaverShoppingService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public NaverShoppingService(NaverShoppingRepository repository) {
+        this.repository = repository;
     }
 
-    public String searchProduct(String query) {
-        try {
-            String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-            String url = "https://openapi.naver.com/v1/search/shop.json?query=" + encodedQuery;
+    public List<ProductNaverDto> searchProduct(String query) {
+        JsonNode items = repository.search(query);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("X-Naver-Client-Id", clientId);
-            headers.set("X-Naver-Client-Secret", clientSecret);
-
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-            ResponseEntity<String> response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class);
-
-            return response.getBody();
-        } catch (Exception e) {
-            return "API 호출 중 오류 발생: " + e.getMessage();
+        List<ProductNaverDto> results = new ArrayList<>();
+        for (JsonNode item : items) {
+            String title = item.path("title").asText().replaceAll("<.*?>", "");
+            String lprice = item.path("lprice").asText();
+            results.add(new ProductNaverDto(title, lprice));
         }
+
+        return results;
     }
 }
