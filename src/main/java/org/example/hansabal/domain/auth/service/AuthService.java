@@ -6,11 +6,13 @@ import org.example.hansabal.domain.auth.dto.request.LoginRequest;
 import org.example.hansabal.domain.auth.dto.response.TokenResponse;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
+import org.example.hansabal.domain.users.repository.RedisRepository;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -20,6 +22,7 @@ public class AuthService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final RedisRepository redisRepository;
 	private final JwtUtil jwtUtil;
 
 	public TokenResponse login(LoginRequest request) {
@@ -32,4 +35,15 @@ public class AuthService {
 		String accessToken = jwtUtil.createToken(user.getId(), user.getUserRole());
 		return new TokenResponse(accessToken);
 	}
+
+	public void logout(HttpServletRequest request) {
+		String token = jwtUtil.extractToken(request);
+
+		// 토큰이 유효한 경우만 블랙리스트에 등록
+		if (token != null && jwtUtil.validateToken(token)) {
+			long expiration = jwtUtil.getExpiration(token);
+			redisRepository.saveBlackListToken(token, expiration);
+		}
+	}
+
 }

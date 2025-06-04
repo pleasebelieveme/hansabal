@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -24,5 +25,11 @@ public class AuthController {
 	public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
 		TokenResponse tokenResponse = authService.login(request);
 		return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
+	}
+
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(HttpServletRequest request) {
+		authService.logout(request);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
