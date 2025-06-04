@@ -6,5 +6,5 @@ import org.springframework.data.domain.Pageable;
 
 
 public interface ProductRepositoryCustom {
-    Page<ProductResponseDto> getAllProducts(Long productId, Pageable pageable);
+    Page<ProductResponseDto> getAllProducts(Pageable pageable);
 }
