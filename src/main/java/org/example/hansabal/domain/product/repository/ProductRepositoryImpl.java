@@ -22,7 +22,7 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     }
 
     @Override
-    public Page<ProductResponseDto> getAllProducts(Long productId, Pageable pageable) {
+    public Page<ProductResponseDto> getAllProducts(Pageable pageable) {
         QProduct product = QProduct.product;
 
         List<ProductResponseDto> content = queryFactory
@@ -30,7 +30,6 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
                         product.productId,
                         product.name))
                 .from(product)
-                .where(product.productId.eq(productId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

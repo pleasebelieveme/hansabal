@@ -29,13 +29,12 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(product);
     }
 
-    @GetMapping("/filter/{productId}")
+    @GetMapping
     public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
-            @PathVariable Long productId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "100") int size) {
 
-        Page<ProductResponseDto> responses = productService.getAllProducts(productId, page, size);
+        Page<ProductResponseDto> responses = productService.getAllProducts(page, size);
 
         return ResponseEntity.status(HttpStatus.OK).body(responses);
     }

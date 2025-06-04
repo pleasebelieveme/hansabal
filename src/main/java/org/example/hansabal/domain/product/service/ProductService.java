@@ -35,11 +35,11 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> getAllProducts(Long productId, int page, int size) {
+    public Page<ProductResponseDto> getAllProducts( int page, int size) {
         int pageIndex = Math.max(page - 1, 0);
         Pageable pageable = PageRequest.of(pageIndex, size);
 
-        return productRepository.getAllProducts(productId, pageable);
+        return productRepository.getAllProducts(pageable);
     }
 
 
