@@ -30,7 +30,7 @@ public class ProductController {
     }
 
     @GetMapping("/filter/{productId}")
-    public ResponseEntity<Page<ProductResponseDto>> getAllProductsByFilter(
+    public ResponseEntity<Page<ProductResponseDto>> getAllProducts(
             @PathVariable Long productId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "100") int size) {
