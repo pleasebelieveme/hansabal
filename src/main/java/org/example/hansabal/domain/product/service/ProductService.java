@@ -35,11 +35,13 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductResponseDto> getAllProducts(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        return productRepository.findAll(pageRequest)
-                .map(ProductResponseDto::from);
+    public Page<ProductResponseDto> getAllProducts( int page, int size) {
+        int pageIndex = Math.max(page - 1, 0);
+        Pageable pageable = PageRequest.of(pageIndex, size);
+
+        return productRepository.getAllProducts(pageable);
     }
+
 
     @Transactional
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
