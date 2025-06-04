@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -34,7 +35,9 @@ public class AuthService {
 		}
 
 		String accessToken = jwtUtil.createToken(user.getId(), user.getUserRole());
-		return new TokenResponse(accessToken);
+		String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getUserRole());
+		redisRepository.saveRefreshToken(user.getId(), refreshToken, jwtUtil.getRefreshExpiration(refreshToken));
+		return new TokenResponse(accessToken, refreshToken);
 	}
 
 	public void logout(HttpServletRequest request) {
@@ -74,33 +77,4 @@ public class AuthService {
 
 		return new TokenResponse(newAccessToken, refreshToken);
 	}
-
-
-	public TokenResponse reissue(String bearerToken) {
-		// 1. Bearer 제거
-		if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
-			throw new BizException(AuthErrorCode.MISMATCHED_REFRESH_TOKEN);
-		}
-		String refreshToken = bearerToken.substring(7);
-
-		// 2. 토큰 유효성 검증
-		if (!jwtUtil.validateToken(refreshToken)) {
-			throw new BizException(AuthErrorCode.MISMATCHED_REFRESH_TOKEN);
-		}
-
-		// 3. 유저 정보 추출
-		UserAuth userAuth = jwtUtil.extractUserAuth(refreshToken);
-		Long userId = userAuth.getId();
-
-		// 4. Redis에 저장된 Refresh Token과 일치하는지 확인
-		if (!redisRepository.validateRefreshToken(userId, refreshToken)) {
-			throw new BizException(AuthErrorCode.MISMATCHED_REFRESH_TOKEN);
-		}
-
-		// 5. 새로운 Access Token 발급
-		String newAccessToken = jwtUtil.createToken(userId, userAuth.getUserRole());
-
-		return new TokenResponse(newAccessToken, refreshToken);
-	}
-
 }
