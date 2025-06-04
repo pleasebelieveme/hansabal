@@ -1,9 +1,13 @@
 package org.example.hansabal.domain.trade.service;
 
+import java.util.Objects;
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
+import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.entity.Requests;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
@@ -30,7 +34,7 @@ public class RequestsService {
 	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
-			TradeErrorCode.NoSuchThing));
+			TradeErrorCode.NO_SUCH_THING));
 		Requests requests = Requests.of(trade,user);
 		requestsRepository.save(requests);
 	}
@@ -44,4 +48,25 @@ public class RequestsService {
 
 	}
 
+	@Transactional
+	public void updateRequests(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(requests.getStatus().toString().equals("DONE"))
+			throw new BizException(TradeErrorCode.CLOSED_CASE);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
+		requests.updateStatus(request.requestStatus());
+	}
+
+	@Transactional
+	public void cancelRequests(Long requestsId, UserAuth userAuth) {
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(requests.getStatus()!= RequestStatus.AVAILABLE)
+			throw new BizException(TradeErrorCode.CLOSED_CASE);
+		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(trade.getTradeId()!=userAuth.getId())
+			throw new BizException(TradeErrorCode.UNAUTHORIZED);
+		requests.softDelete();
+	}
 }

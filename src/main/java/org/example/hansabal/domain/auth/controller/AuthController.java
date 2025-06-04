@@ -1,12 +1,10 @@
 package org.example.hansabal.domain.auth.controller;
 
-import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.auth.dto.request.LoginRequestDto;
+import org.example.hansabal.domain.auth.dto.request.LoginRequest;
 import org.example.hansabal.domain.auth.dto.response.TokenResponse;
 import org.example.hansabal.domain.auth.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +21,8 @@ public class AuthController {
 	private final AuthService authService;
 
 	@PostMapping("/login")
-	public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
-		TokenResponse tokenResponse = authService.login(request, userAuth);
+	public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
+		TokenResponse tokenResponse = authService.login(request);
 		return ResponseEntity.status(HttpStatus.OK).body(tokenResponse);
 	}
 }

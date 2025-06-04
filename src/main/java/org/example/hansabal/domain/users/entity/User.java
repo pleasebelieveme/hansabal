@@ -3,11 +3,7 @@ package org.example.hansabal.domain.users.entity;
 import java.util.List;
 
 import org.example.hansabal.common.base.BaseEntity;
-import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.entity.Dib;
-
-import org.example.hansabal.domain.users.dto.response.UserResponseDto;
-
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,7 +34,7 @@ public class User extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String email;
 
 	@Column(nullable = false)
@@ -47,7 +43,7 @@ public class User extends BaseEntity {
 	@Column(nullable = false)
 	private String name;
 
-	@Column(nullable = false)
+	@Column(nullable = false, unique = true)
 	private String nickname;
 
 	@Enumerated(EnumType.STRING)
