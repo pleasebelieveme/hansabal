@@ -1,7 +1,5 @@
 package org.example.hansabal.domain.trade.service;
 
-import java.util.Objects;
-
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;

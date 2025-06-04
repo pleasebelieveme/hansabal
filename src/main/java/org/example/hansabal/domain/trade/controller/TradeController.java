@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -40,8 +41,8 @@ public class TradeController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Page<TradeResponseDto>> getTrades(@RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "10") int size){
-		Page<TradeResponseDto> tradeList = tradeService.getTradeList(page, size);
+	public ResponseEntity<Page<TradeResponseDto>> getTradesByTitle(@RequestParam(defaultValue = "1") @Positive int page, @RequestParam(defaultValue = "10") @Positive int size, @RequestParam(required=false, value="title") String title){
+		Page<TradeResponseDto> tradeList = tradeService.getTradeListByTitle(page, size, title);
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
 	}
 
@@ -53,7 +54,7 @@ public class TradeController {
 
 	@GetMapping("/my")
 	public ResponseEntity<Page<TradeResponseDto>> getMyTrades(
-		@RequestParam(defaultValue="1")int page, @RequestParam(defaultValue="10")int size, @AuthenticationPrincipal UserAuth userAuth){
+		@RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size, @AuthenticationPrincipal UserAuth userAuth){
 		Page<TradeResponseDto> myTradeList = tradeService.getMyTrade(userAuth, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(myTradeList);
 	}
@@ -77,7 +78,7 @@ public class TradeController {
 	}
 
 	@GetMapping("/{tradeId}/requests")
-	public ResponseEntity<Page<RequestsResponseDto>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") int page, @RequestParam(defaultValue="10")int size){
+	public ResponseEntity<Page<RequestsResponseDto>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size){
 		Page<RequestsResponseDto> requestsList = requestsService.getRequestList(tradeId, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(requestsList);
 
