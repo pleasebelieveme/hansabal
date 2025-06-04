@@ -2,6 +2,8 @@ package org.example.hansabal.domain.board.entity;
 
 
 import lombok.Getter;
+import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.domain.board.exception.BoardErrorCode;
 
 @Getter
 public enum BoardCategory {
@@ -25,6 +27,6 @@ public enum BoardCategory {
                 return category;
             }
         }
-        throw new IllegalArgumentException("존재하지 않는 카테고리: " + displayName);
+        throw new BizException(BoardErrorCode.INVALID_CATEGORY);
     }
 }
