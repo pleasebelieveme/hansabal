@@ -1,0 +1,66 @@
+package org.example.hansabal.domain.comment.integration;
+
+import static org.assertj.core.api.Assertions.*;
+
+import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
+import org.example.hansabal.domain.comment.dto.response.CommentResponse;
+import org.example.hansabal.domain.comment.entity.Comment;
+import org.example.hansabal.domain.comment.repository.CommentRepository;
+import org.example.hansabal.domain.comment.service.CommentService;
+import org.example.hansabal.domain.users.entity.UserRole;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import lombok.extern.slf4j.Slf4j;
+
+@SpringBootTest
+@Testcontainers
+@Transactional
+@ActiveProfiles("test")
+@Sql(scripts = {"/user_test_db.sql","/board_test_db.sql","/comment_test_db.sql"}
+	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Slf4j
+public class CommentTest {
+
+	@Container
+	static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
+		.withDatabaseName("testdb")
+		.withUsername("testuser")
+		.withPassword("testpass");
+
+	@Autowired
+	private CommentRepository commentRepository;
+
+	@Autowired
+	private CommentService commentService;
+
+	@BeforeAll
+	public static void beforeAll() {
+
+	}
+
+	@Test
+	void 댓글_생성(){
+		// given
+		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
+		Long boardId = 1L;
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+
+		// when
+		CommentResponse response = commentService.createComment(request, userAuth, boardId);
+
+		// then
+		assertThat(response).isNotNull();
+		assertThat(response.contents().equals("테스트 댓글"));
+	}
+}

@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum CommentErrorCode implements ErrorCode {
-	INVALID_ID(HttpStatus.BAD_REQUEST,"C001","유효하지 않은 id 입니다.");
+	INVALID_ID(HttpStatus.BAD_REQUEST,"C001","유효하지 않은 id 입니다."),
+	FORBIDDEN(HttpStatus.UNAUTHORIZED,"C002","해당 권한이 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

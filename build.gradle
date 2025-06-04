@@ -58,6 +58,8 @@ dependencies {
     testImplementation 'org.assertj:assertj-core:3.24.2'
     //jsoup추가
     implementation 'org.jsoup:jsoup:1.15.4'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
