@@ -10,6 +10,11 @@ import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.exception.BoardErrorCode;
 import org.example.hansabal.domain.board.repository.BoardRepository;
+import org.example.hansabal.domain.comment.dto.response.CommentResponse;
+import org.example.hansabal.domain.comment.entity.Comment;
+import org.example.hansabal.domain.comment.repository.CommentRepository;
+import org.example.hansabal.domain.comment.service.CommentService;
+import org.example.hansabal.domain.comment.service.DibService;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
@@ -18,11 +23,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final CommentService commentService;
+    private final DibService dibService;
+    private final CommentRepository commentRepository;
 
     @Transactional
     public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
@@ -62,10 +72,24 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public BoardResponse getPost(Long postId) {
+    public BoardResponse getPost(Long postId, Pageable pageable) {
+        // 1. 게시글 엔티티 조회
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
-        return toResponse(board);
+
+        // 2. 댓글 리스트 (페이징 적용)
+        Page<Comment> commentPage = commentRepository.findByBoardId(postId, pageable);
+        List<CommentResponse> comments = commentPage
+                .stream()
+                .map(CommentResponse::from)
+                .toList();
+
+        // 3. 좋아요(찜) 개수 - Board 엔티티의 필드값 사용
+        int likeCount = board.getDibCount();
+
+
+        // 5. 응답 조립 및 반환
+        return BoardResponse.from(board, comments, likeCount, false /* likedByMe: 구현 시 교체 */);
     }
 
     @Transactional(readOnly = true)
