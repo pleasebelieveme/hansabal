@@ -4,8 +4,9 @@ package org.example.hansabal.domain.board.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.board.dto.response.BoardRequest;
-import org.example.hansabal.domain.board.dto.request.BoardResponse;
+import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardResponse;
+import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.service.BoardService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
@@ -59,11 +60,12 @@ public class BoardController {
     // 게시글 목록 조회 (페이징)
     @GetMapping
     public ResponseEntity<Page<BoardResponse>> getPosts(
-            @RequestParam String category,
+            @RequestParam String category, // "ALL" 또는 "DAILY" 등
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<BoardResponse> list = boardService.getPosts(category, page, size);
+        BoardCategory boardCategory = BoardCategory.valueOf(category.toUpperCase());
+        Page<BoardResponse> list = boardService.getPosts(boardCategory, page, size);
         return ResponseEntity.ok(list);
     }
 

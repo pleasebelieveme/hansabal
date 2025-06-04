@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -26,6 +27,8 @@ public class QUser extends EntityPathBase<User> {
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
+
+    public final ListPath<org.example.hansabal.domain.comment.entity.Dib, org.example.hansabal.domain.comment.entity.QDib> dibs = this.<org.example.hansabal.domain.comment.entity.Dib, org.example.hansabal.domain.comment.entity.QDib>createList("dibs", org.example.hansabal.domain.comment.entity.Dib.class, org.example.hansabal.domain.comment.entity.QDib.class, PathInits.DIRECT2);
 
     public final StringPath email = createString("email");
 
