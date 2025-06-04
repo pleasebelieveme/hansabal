@@ -51,12 +51,14 @@ public class RequestsService {
 	@Transactional
 	public void updateRequests(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(requests.getStatus().toString().equals("DONE"))
+		if(requests.getStatus()==RequestStatus.DONE)
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
 		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
+		if(trade.getTrader().getId()!=userAuth.getId())
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.updateStatus(request.requestStatus());
+		if(requests.getStatus()==RequestStatus.DONE)
+			trade.softDelete();
 	}
 
 	@Transactional

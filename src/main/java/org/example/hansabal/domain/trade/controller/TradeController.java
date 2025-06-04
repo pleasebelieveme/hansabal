@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -33,7 +34,7 @@ public class TradeController {
 	private final RequestsService requestsService;
 
 	@PostMapping
-	public ResponseEntity<Void> createTrade(@RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
+	public ResponseEntity<Void> createTrade(@Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
 		tradeService.createTrade(request, userAuth);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -58,7 +59,7 @@ public class TradeController {
 	}
 
 	@PatchMapping("/{tradeId}")
-	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		tradeService.updateTrade(tradeId, request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
@@ -70,7 +71,7 @@ public class TradeController {
 	}
 
 	@PostMapping("/requests")
-	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> createRequests(@Valid @RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.createRequests(userAuth, request);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
@@ -83,7 +84,7 @@ public class TradeController {
 	}
 
 	@PatchMapping("/requests/{requestsId}")
-	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.updateRequests(requestsId, request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
