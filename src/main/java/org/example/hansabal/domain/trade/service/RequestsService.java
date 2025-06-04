@@ -1,7 +1,5 @@
 package org.example.hansabal.domain.trade.service;
 
-import java.util.Objects;
-
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
@@ -51,12 +49,14 @@ public class RequestsService {
 	@Transactional
 	public void updateRequests(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(requests.getStatus().toString().equals("DONE"))
+		if(requests.getStatus()==RequestStatus.DONE)
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
-		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(!Objects.equals(trade.getTrader().getId(), userAuth.getId()))
+		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(trade.getTrader().getId()!=userAuth.getId())
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.updateStatus(request.requestStatus());
+		if(requests.getStatus()==RequestStatus.DONE)
+			trade.softDelete();
 	}
 
 	@Transactional
@@ -64,8 +64,8 @@ public class RequestsService {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
 		if(requests.getStatus()!= RequestStatus.AVAILABLE)
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
-		Trade trade = tradeRepository.findById(requests.getTrade().getTradeId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(trade.getTradeId()!=userAuth.getId())
+		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		if(trade.getId()!=userAuth.getId())
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.softDelete();
 	}
