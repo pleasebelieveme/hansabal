@@ -2,13 +2,17 @@ package org.example.hansabal.domain.review.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.ReviewResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,24 +24,30 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @PostMapping("/products/{productId}")
-    public ResponseEntity<CreateReviewResponse> createReview(@Valid @PathVariable Long productId, @RequestBody CreateReviewRequest request) {
+    @PostMapping("/products/{productId}") //리뷰생성
+    public ResponseEntity<CreateReviewResponse> createReview(
+            @AuthenticationPrincipal UserAuth userAuth,
+            @Valid @PathVariable Long productId,
+            @RequestBody CreateReviewRequest request) {
 
-        CreateReviewResponse reviewDto = reviewService.createReview(productId, request.getUserId(), request);
+        CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth.getId(), request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
 
-    @GetMapping("/products/{productId}")
-    public ResponseEntity<List<CreateReviewResponse>> getReviews(@PathVariable Long productId) {
+    @GetMapping("products/{productId}") // 리뷰 페이징
+    public ResponseEntity<Page<ReviewResponse>> getReviews(
+            @PathVariable Long productId,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
 
-        List<CreateReviewResponse> findAll = reviewService.findAll(productId);
+        Page<ReviewResponse> reviewsList = reviewService.getReviews(productId, page, size);
 
-        return ResponseEntity.status(HttpStatus.OK).body(findAll);
+        return ResponseEntity.status(HttpStatus.OK).body(reviewsList);
     }
 
-
-    @PutMapping("/{reviewId}")
+    @PutMapping("/{reviewId}") //리뷰 수정
     public ResponseEntity<UpdateReviewResponse> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
 
         UpdateReviewResponse updateReviewResponseDto = reviewService.updateReview(reviewId, request);
@@ -46,7 +56,7 @@ public class ReviewController {
     }
 
 
-    @DeleteMapping("/{reviewId}")
+    @DeleteMapping("/{reviewId}") //소프트 delete
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
 
         reviewService.deleteReview(reviewId);

@@ -4,15 +4,17 @@ package org.example.hansabal.domain.board.service;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.board.dto.response.BoardRequest;
-import org.example.hansabal.domain.board.dto.request.BoardResponse;
+import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.entity.Board;
+import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.exception.BoardErrorCode;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +29,7 @@ public class BoardService {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Board board = Board.builder()
                 .user(user)
-                .category(request.getCategory())
+                .category(BoardCategory.valueOf(request.getCategory().toUpperCase())) // 반드시 enum으로 변환
                 .title(request.getTitle())
                 .content(request.getContent())
                 .viewCount(0)
@@ -44,7 +46,7 @@ public class BoardService {
         if (!board.getUser().getId().equals(user.getId())) {
             throw new BizException(BoardErrorCode.FORBIDDEN);
         }
-        board.update(request.getCategory(), request.getTitle(), request.getContent());
+        board.update(BoardCategory.valueOf(request.getCategory().toUpperCase()), request.getTitle(), request.getContent());
         return toResponse(board);
     }
 
@@ -67,10 +69,16 @@ public class BoardService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardResponse> getPosts(String category, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Board> boards = boardRepository.findByCategory(category, pageRequest);
-        return boards.map(this::toResponse);
+    public Page<BoardResponse> getPosts(BoardCategory category, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Board> boardPage;
+        if (category == BoardCategory.ALL) {
+            boardPage = boardRepository.findAll(pageable);
+        } else {
+            boardPage = boardRepository.findByCategory(category, pageable);
+        }
+        // Board → BoardResponse 변환 예시
+        return boardPage.map(BoardResponse::from);
     }
 
     @Transactional(readOnly = true)
@@ -88,7 +96,7 @@ public class BoardService {
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
-                .category(board.getCategory())
+                .category(board.getCategory().getDisplayName()) // ★ 여기만 getDisplayName()으로 수정
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())

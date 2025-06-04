@@ -21,14 +21,19 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	private String secretKey;
 
-	private static final long expiration = 1000L * 60 * 30;
+	private static final long EXPIRATION = 1000L * 60 * 30;
+	private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 14;
 
 	public String createToken(Long id, UserRole userRole){
 		return Jwts.builder()
 			.setSubject(String.valueOf(id))
 			.claim("userRole", userRole.name())
 			.setIssuedAt(new Date())
+
 			.setExpiration(new Date(System.currentTimeMillis()+expiration))
+
+			.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
+
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
 			.compact();
 	}
@@ -65,6 +70,26 @@ public class JwtUtil {
 			.setSigningKey(secretKey.getBytes())
 			.build()
 			.parseClaimsJws(token)
+			.getBody();
+
+		return claims.getExpiration().getTime() - System.currentTimeMillis();
+	}
+
+	public String createRefreshToken(Long id, UserRole role) {
+		return Jwts.builder()
+			.setSubject(String.valueOf(id))
+			.claim("userRole", role.name())
+			.setIssuedAt(new Date())
+			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
+			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+			.compact();
+	}
+
+	public long getRefreshExpiration(String refreshToken) {
+		Claims claims = Jwts.parserBuilder()
+			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
+			.build()
+			.parseClaimsJws(refreshToken)
 			.getBody();
 
 		return claims.getExpiration().getTime() - System.currentTimeMillis();
