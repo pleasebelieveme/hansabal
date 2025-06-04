@@ -42,9 +42,9 @@ public class JwtFilter extends OncePerRequestFilter {
 				// id 혹은 UserRole 검증
 				UserAuth userAuth = jwtUtil.extractUserAuth(token);
 
-				// List<SimpleGrantedAuthority> authorities = List.of(
-				// 	new SimpleGrantedAuthority("ROLE_"+userAuth.getRole().name())
-				// );
+				List<SimpleGrantedAuthority> authorities = List.of(
+					new SimpleGrantedAuthority("ROLE_" + userAuth.getUserRole().name())
+				);
 
 				List<SimpleGrantedAuthority> authorities = List.of(
 					new SimpleGrantedAuthority("ROLE_" + userAuth.getUserRole().name())

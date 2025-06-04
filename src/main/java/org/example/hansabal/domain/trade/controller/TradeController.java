@@ -2,6 +2,7 @@ package org.example.hansabal.domain.trade.controller;
 
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
 import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
 import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
@@ -11,7 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -54,6 +57,18 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.OK).body(myTradeList);
 	}
 
+	@PatchMapping("/{tradeId}")
+	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+		tradeService.updateTrade(tradeId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@DeleteMapping("{tradeId}")
+	public ResponseEntity<Void> cancelTrade(@PathVariable Long tradeId, @AuthenticationPrincipal UserAuth userAuth){
+		tradeService.cancelTrade(tradeId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
 	@PostMapping("/requests")
 	public ResponseEntity<Void> createRequests(@RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.createRequests(userAuth, request);
@@ -65,5 +80,17 @@ public class TradeController {
 		Page<RequestsResponseDto> requestsList = requestsService.getRequestList(tradeId, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(requestsList);
 
+	}
+
+	@PatchMapping("/requests/{requestsId}")
+	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+		requestsService.updateRequests(requestsId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@DeleteMapping("/requests/{requestsId}")
+	public ResponseEntity<Void> cancelRequests(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
+		requestsService.cancelRequests(requestsId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
