@@ -116,7 +116,7 @@ public class BoardService {
     private BoardResponse toResponse(Board board) {
         User user = board.getUser();
         return BoardResponse.builder()
-                .postId(board.getPostId())
+                .postId(board.getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())

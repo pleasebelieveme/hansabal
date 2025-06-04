@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.product WHERE r.product.productId = :productId")
+    @Query("SELECT r FROM Review r JOIN FETCH r.product WHERE r.product.id= :productId")
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
 }

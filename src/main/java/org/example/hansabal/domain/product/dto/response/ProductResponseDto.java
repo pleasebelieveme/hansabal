@@ -8,7 +8,7 @@ public record ProductResponseDto(
 ) {
     public static ProductResponseDto from(Product product) {
         return new ProductResponseDto(
-                product.getProductId(),
+                product.getId(),
                 product.getName()
         );
     }

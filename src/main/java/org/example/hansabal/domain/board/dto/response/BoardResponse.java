@@ -35,7 +35,7 @@ public class BoardResponse {
     public static BoardResponse from(Board board) {
         User user = board.getUser();
         return BoardResponse.builder()
-                .postId(board.getPostId())
+                .postId(board.getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
@@ -55,7 +55,7 @@ public class BoardResponse {
     public static BoardResponse from(Board board, List<CommentResponse> comments, int likeCount, boolean likedByMe) {
         User user = board.getUser();
         return BoardResponse.builder()
-                .postId(board.getPostId())
+                .postId(board.getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())

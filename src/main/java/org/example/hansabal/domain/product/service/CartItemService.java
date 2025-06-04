@@ -86,7 +86,7 @@ public class CartItemService {
             Product product = cartItem.getProduct();
             int quantity = cartItem.getQuantity();
 
-            String lockKey = PRODUCT_LOCK_PREFIX + product.getProductId(); // 락 키를  "LOCK:STOCK:{id}" 형태로 생성
+            String lockKey = PRODUCT_LOCK_PREFIX + product.getId(); // 락 키를  "LOCK:STOCK:{id}" 형태로 생성
             RLock lock = redissonClient.getLock(lockKey); // 분산 락 객체
 
             boolean isLocked = false;
