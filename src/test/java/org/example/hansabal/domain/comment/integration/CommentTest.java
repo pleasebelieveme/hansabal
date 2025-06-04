@@ -2,6 +2,7 @@ package org.example.hansabal.domain.comment.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
@@ -60,7 +61,20 @@ public class CommentTest {
 		CommentResponse response = commentService.createComment(request, userAuth, boardId);
 
 		// then
+		// pr 확인용 주석
 		assertThat(response).isNotNull();
 		assertThat(response.contents().equals("테스트 댓글"));
+	}
+
+	@Test
+	void 댓글_생성_유저정보_불일치_예외(){
+		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
+		Long boardId = 1L;
+		UserAuth userAuth = new UserAuth(2L, UserRole.USER);
+
+		assertThatThrownBy( () -> {
+			CommentResponse response = commentService.createComment(request, userAuth, boardId);
+		}).isInstanceOf(BizException.class)
+			.hasMessageContaining("유효하지 않은 id 입니다.");
 	}
 }

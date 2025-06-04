@@ -32,7 +32,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 				comment.dibCount
 			))
 			.from(comment)
-			.where(comment.board.postId.eq(boardId))
+			.where(comment.board.id.eq(boardId))
 			.orderBy(comment.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -41,7 +41,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 		long total = queryFactory
 			.select(comment.id)
 			.from(comment)
-			.where(comment.board.postId.eq(boardId))
+			.where(comment.board.id.eq(boardId))
 			.fetch()
 			.size();
 
