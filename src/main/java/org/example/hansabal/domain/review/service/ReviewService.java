@@ -12,8 +12,6 @@ import java.util.List;
 public interface ReviewService {
     CreateReviewResponse createReview(Long productId, Long userId, CreateReviewRequest request);
 
-    List<CreateReviewResponse> findAll(Long productId);
-
     UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request);
 
     void deleteReview(Long reviewId);

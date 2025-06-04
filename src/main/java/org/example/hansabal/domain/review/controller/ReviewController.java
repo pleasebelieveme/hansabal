@@ -35,18 +35,10 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
 
-    @GetMapping("/products/{productId}") //전체조회
-    public ResponseEntity<List<CreateReviewResponse>> getReviews(@PathVariable Long productId) {
-
-        List<CreateReviewResponse> findAll = reviewService.findAll(productId);
-
-        return ResponseEntity.status(HttpStatus.OK).body(findAll);
-    }
-
     @GetMapping("products/{productId}") // 리뷰 페이징
     public ResponseEntity<Page<ReviewResponse>> getReviews(
             @PathVariable Long productId,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 

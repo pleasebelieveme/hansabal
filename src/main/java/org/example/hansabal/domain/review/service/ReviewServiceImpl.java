@@ -17,14 +17,10 @@ import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @Service
@@ -55,27 +51,14 @@ public class ReviewServiceImpl implements ReviewService {
         return CreateReviewResponse.from(savedReview);
     }
 
-    @Transactional(readOnly = true) // 페이징 잘 실행되면 삭제할 예정입니다.
-    @Override
-    public List<CreateReviewResponse> findAll(Long productId) {
 
-        List<Review> findReviewList = reviewRepository.findAllByProductId(productId);
-
-        List<CreateReviewResponse> listDto = new ArrayList<>();
-
-        for (Review reviews : findReviewList) {
-            CreateReviewResponse reviewResponseDto = new CreateReviewResponse(reviews.getId(), reviews.getUser().getNickname(), reviews.getContent());
-            listDto.add(reviewResponseDto);
-        }
-        return listDto;
-    }
-
-    @Transactional(readOnly = true) //페이징 구현중
+    @Transactional(readOnly = true) //페이징
     @Override
     public Page<ReviewResponse> getReviews(Long productId, int page, int size) {
 
+        int pageIndex = Math.max(page - 1, 0);
         //이 객체는 페이징 처리에 필요한 정보를 쿼리조건으로 전달한다.
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC,"createdAt");
+        PageRequest pageRequest = PageRequest.of(pageIndex, size);
 
         Page<Review> reviews = reviewRepository.findAllByProductId(productId, pageRequest);
 

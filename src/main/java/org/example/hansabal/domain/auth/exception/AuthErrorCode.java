@@ -10,8 +10,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AuthErrorCode implements ErrorCode {
 	NOT_FOUND_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED,"액세스 토큰이 유효한 형태가 아닙니다."),
-	NOT_FOUND_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"리프레시 토큰이 유효한 형태가 아닙니다.");
-
+	NOT_FOUND_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED,"리프레시 토큰이 유효한 형태가 아닙니다."),
+	INVALID_REFRESH_TOKEN_SIGNATURE(HttpStatus.UNAUTHORIZED, "리프레시 토큰 서명이 유효하지 않습니다."),
+	EXPIRED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다."),
+	MISMATCHED_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "리프레시 토큰 정보가 일치하지 않습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
