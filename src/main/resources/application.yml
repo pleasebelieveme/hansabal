@@ -22,6 +22,16 @@ spring:
         order_updates: true
     open-in-view: false
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_ID}
+            client-secret: ${OAUTH2_GOOGLE_SECRET}
+            scope:
+              - email
+              - profile
   #  sql:
   #    init:
   #      mode: always                    # 항상 SQL 초기화 실행
@@ -40,3 +50,4 @@ jwt:
   secret: ${SPRING_JWT_SECRET}
   access-token-expiration: 900000        # 15분 (밀리초)
   refresh-token-expiration: 21600000     # 6시간 (밀리초)
+
