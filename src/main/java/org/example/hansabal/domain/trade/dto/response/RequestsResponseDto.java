@@ -9,7 +9,7 @@ import lombok.Builder;
 @Builder
 public record RequestsResponseDto(Long requestsId, RequestStatus status, Long tradeId, Long requesterId){
 	public static RequestsResponseDto from(Requests requests){
-		return new RequestsResponseDto(requests.getRequestsId(), requests.getStatus(),
-			requests.getTrade().getTradeId(), requests.getRequester().getId());
+		return new RequestsResponseDto(requests.getId(), requests.getStatus(),
+			requests.getTrade().getId(), requests.getRequester().getId());
 	}
 }
