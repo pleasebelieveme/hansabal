@@ -16,6 +16,10 @@ public class UpdateReviewResponse {
     private final LocalDateTime updatedAt;
 
     public static UpdateReviewResponse from(Review review) {
-        return new UpdateReviewResponse(review.getId(),review.getUser().getNickname(),review.getContent(),review.getUpdatedAt());
+        return new UpdateReviewResponse(
+                review.getId(),
+                review.getUser().getNickname(),
+                review.getContent(),
+                review.getUpdatedAt());
     }
 }

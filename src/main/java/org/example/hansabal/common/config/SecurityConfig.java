@@ -2,6 +2,8 @@ package org.example.hansabal.common.config;
 
 import org.example.hansabal.common.jwt.JwtFilter;
 import org.example.hansabal.common.jwt.SecurityUrlMatcher;
+import org.example.hansabal.common.oauth2.CustomOAuth2UserService;
+import org.example.hansabal.common.oauth2.OAuth2LoginSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,6 +23,8 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final JwtFilter jwtFilter;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
@@ -40,6 +44,10 @@ public class SecurityConfig {
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
 				.anyRequest().authenticated()
+			)
+			.oauth2Login(oauth -> oauth
+				.userInfoEndpoint(user -> user.userService(customOAuth2UserService))
+				.successHandler(oAuth2LoginSuccessHandler)
 			)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

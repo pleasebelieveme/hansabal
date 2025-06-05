@@ -2,7 +2,6 @@ package org.example.hansabal.domain.wallet.service;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.trade.entity.Requests;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.users.entity.User;
