@@ -6,6 +6,7 @@ import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.exception.ReviewErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +17,8 @@ import java.util.Optional;
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.product WHERE r.product.id= :productId")
+    @EntityGraph(attributePaths = "product")
+    @Query("SELECT r FROM Review r WHERE r.product.id= :productId")
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
     default Review findByIdOrThrow(Long id) {
