@@ -51,3 +51,6 @@ jwt:
   access-token-expiration: 900000        # 15분 (밀리초)
   refresh-token-expiration: 21600000     # 6시간 (밀리초)
 
+naver:
+  client-id: "oZzdyk_N0TEa6HyXjfwg"
+  client-secret: "j_3pQgBaa0"
