@@ -29,31 +29,45 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
-
+		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 		Map<String, Object> attributes = oAuth2User.getAttributes();
 
-		log.info("OAuth2 attributes: {}", attributes);
+		log.info("OAuth2 [{}] attributes: {}", registrationId, attributes);
 
-		// 구글의 경우 기본 필드
-		String email = (String) attributes.get("email");
-		String name = (String) attributes.get("name");
+		Map<String, Object> userInfo;
+		if ("naver".equals(registrationId)) {
+			userInfo = (Map<String, Object>) attributes.get("response");
+		} else {
+			userInfo = attributes;
+		}
 
-		// 이메일 기반으로 유저 조회 or 신규 생성
+		String email = (String) userInfo.get("email");
+		String name = (String) userInfo.get("name");
+
+		if (email == null) {
+			throw new IllegalArgumentException("OAuth2 로그인에 이메일 정보가 없습니다.");
+		}
+
 		User user = userRepository.findByEmail(email)
-			.orElseGet(() -> {
-				return userRepository.save(User.builder()
-					.email(email)
-					.password("") // 비밀번호는 OAuth2 로그인 시 사용 안 하므로 빈 문자열
-					.name(name)
-					.nickname(generateUniqueNickname(name)) // 중복 피하기 위한 처리
-					.userRole(UserRole.USER)
-					.build());
-			});
+			.orElseGet(() -> userRepository.save(User.builder()
+				.email(email)
+				.password("")
+				.name(name)
+				.nickname(generateUniqueNickname(name))
+				.userRole(UserRole.USER)
+				.build()
+			));
+
+		Map<String, Object> customAttributes = Map.of(
+			"email", email,
+			"name", name,
+			"registrationId", registrationId
+		);
 
 		return new DefaultOAuth2User(
 			Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getUserRole())),
-			attributes,
-			"email" // OAuth2User.getName() 시 반환될 키
+			customAttributes,
+			"email"
 		);
 	}
 
