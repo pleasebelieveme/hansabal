@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
-
+	// 의존성 주입(AOP를 활용하는건데)
 	private final CommentRepository commentRepository;
 	private final UserRepository userRepository;
 	private final BoardRepository boardRepository;
