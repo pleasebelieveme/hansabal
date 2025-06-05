@@ -86,13 +86,25 @@ public class TradeController {
 
 	@PatchMapping("/requests/{requestsId}")
 	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.updateRequests(requestsId, request, userAuth);
+		requestsService.updateRequestsByTrader(requestsId, request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@DeleteMapping("/requests/{requestsId}")
 	public ResponseEntity<Void> cancelRequests(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
 		requestsService.cancelRequests(requestsId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@PostMapping("/requests/{requestsId}")
+	public ResponseEntity<Void> payTradeFee(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
+		requestsService.payTradeFee(requestsId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@PostMapping("/requests/{requestsId}/confirm")
+	public ResponseEntity<Void> confirmGoods(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
+		requestsService.confirmGoods(requestsId, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

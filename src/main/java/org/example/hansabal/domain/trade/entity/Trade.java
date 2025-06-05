@@ -33,6 +33,7 @@ public class Trade extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	private User trader;
+	private Long price;
 
 
 	public Trade(String title, String contents, User trader){
@@ -40,8 +41,9 @@ public class Trade extends BaseEntity {
 		this.contents=contents;
 		this.trader=trader;
 	}
-	public void updateTrade(String title, String contents){
+	public void updateTrade(String title, String contents, Long price){
 		this.title=title;
 		this.contents=contents;
+		this.price=price;
 	}
 }
