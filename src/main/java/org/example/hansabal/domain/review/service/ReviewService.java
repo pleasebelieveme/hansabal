@@ -13,7 +13,7 @@ import org.springframework.data.domain.Page;
 public interface ReviewService {
     CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest request);
 
-    UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request);
+    UpdateReviewResponse updateReview(Long reviewId, @Valid UpdateReviewRequest request, UserAuth userAuth);
 
     void deleteReview(Long reviewId);
 

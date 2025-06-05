@@ -10,6 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -17,7 +20,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
     default Review findByIdOrThrow(Long id) {
-        return findById(id).orElseThrow(() -> new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
+        return findById(id).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
     }
 
+    Optional<Review> findByProductId(Long productId);
+
+    default Review findByProductIdOrThrow(Long productId) {
+        return findByProductId(productId).orElseThrow(()->new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
+    }
 }

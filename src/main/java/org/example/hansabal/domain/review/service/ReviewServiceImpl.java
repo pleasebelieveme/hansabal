@@ -36,51 +36,38 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     @Override
     public CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest dto) {
-
-        //일단 유저가 있는지 확인한다.
         User findUser = userRepository.findByIdOrElseThrow(userAuth.getId());
-
-        Product findProduct = productRepository.findById(productId).orElseThrow(() -> new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
-
-        //엔티티에 정보를 넣어준다.
-        Review review = new Review(findUser.getNickname(), findUser, findProduct);
-
-        //엔티티에 넣은 정보를 DB에 넣어준다.
+        Product findProduct = productRepository.findByIdOrElseThrow(productId);
+        Review review = new Review(dto.getContent(), findUser, findProduct);
         Review savedReview = reviewRepository.save(review);
-
-        //다시 DB에 있는 데이터를 이용해 반환한다.
         return CreateReviewResponse.from(savedReview);
     }
 
     @Transactional(readOnly = true) //페이징
     @Override
     public Page<ReviewResponse> getReviews(Long productId, int page, int size) {
-
         int pageIndex = Math.max(page - 1, 0);
         //이 객체는 페이징 처리에 필요한 정보를 쿼리조건으로 전달한다.
         PageRequest pageRequest = PageRequest.of(pageIndex, size);
-
-        Page<Review> reviews = reviewRepository.findReviewsByProductId(productId, pageRequest);
-
-        return reviews.map(ReviewResponse::from);
+        Page<Review> findReviews = reviewRepository.findReviewsByProductId(productId, pageRequest);
+        return findReviews.map(ReviewResponse::from);
     }
 
     @Transactional
     @Override
-    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request) {
-
-        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
-
-        findReview.updateReview(request.getContent());
-
-        return new UpdateReviewResponse(findReview.getId(), findReview.getUser().getNickname(), findReview.getContent(), findReview.getUpdatedAt());
+    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request, UserAuth userAuth) {
+        Review review = reviewRepository.findByIdOrThrow(reviewId);
+        User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+        if (!review.getUser().getId().equals(user.getId())) {
+            throw new BizException(ReviewErrorCode.REVIEW_FORBIDDEN);
+        }
+        review.updateReview(request.getContent());
+        return UpdateReviewResponse.from(review);
     }
 
     @Override
     public void deleteReview(Long reviewId) {
-
-        Review findReview = reviewRepository.findById(reviewId).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
-
+        Review findReview = reviewRepository.findByIdOrThrow(reviewId);
         findReview.softDelete();
     }
 }
