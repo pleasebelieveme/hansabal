@@ -3,9 +3,9 @@ spring:
     name: Hansabal
 
   datasource:
-    url: ${MYSQL_URL:jdbc:mysql://localhost:3306/hansabal?rewriteBatchedStatements=true}
-    username: ${MYSQL_USERNAME:testuser}
-    password: ${MYSQL_PASSWORD:testpass}
+    url: ${MYSQL_URL}
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
 
   jpa:
     hibernate:
@@ -55,8 +55,8 @@ spring:
 
   data:
     redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
   batch:
     job:
