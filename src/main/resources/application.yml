@@ -36,6 +36,7 @@ spring:
     job:
       enabled: false
 
+
 jwt:
   secret: ${SPRING_JWT_SECRET}
   access-token-expiration: 900000        # 15분 (밀리초)
