@@ -10,6 +10,7 @@ import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.exception.BoardErrorCode;
 import org.example.hansabal.domain.board.repository.BoardRepository;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
@@ -49,9 +50,9 @@ public class BoardService {
     }
 
     @Transactional
-    public BoardResponse updatePost(UserAuth userAuth, Long postId, BoardRequest request) {
+    public BoardResponse updatePost(UserAuth userAuth, Long Id, BoardRequest request) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-        Board board = boardRepository.findById(postId)
+        Board board = boardRepository.findById(Id)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
         if (!board.getUser().getId().equals(user.getId())) {
             throw new BizException(BoardErrorCode.FORBIDDEN);
@@ -61,9 +62,9 @@ public class BoardService {
     }
 
     @Transactional
-    public void deletePost(UserAuth userAuth, Long postId) {
+    public void deletePost(UserAuth userAuth, Long Id) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-        Board board = boardRepository.findById(postId)
+        Board board = boardRepository.findById(Id)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
         if (!board.getUser().getId().equals(user.getId())) {
             throw new BizException(BoardErrorCode.FORBIDDEN);
@@ -78,11 +79,8 @@ public class BoardService {
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
 
         // 2. 댓글 리스트 (페이징 적용)
-        Page<Comment> commentPage = commentRepository.findByBoardId(postId, pageable);
-        List<CommentResponse> comments = commentPage
-                .stream()
-                .map(CommentResponse::from)
-                .toList();
+        Page<CommentPageResponse> commentPage = commentRepository.findByBoardId(postId, pageable);
+        List<CommentPageResponse> comments = commentPage.getContent();
 
         // 3. 좋아요(찜) 개수 - Board 엔티티의 필드값 사용
         int likeCount = board.getDibCount();
@@ -116,7 +114,7 @@ public class BoardService {
     private BoardResponse toResponse(Board board) {
         User user = board.getUser();
         return BoardResponse.builder()
-                .postId(board.getId())
+                .id(board.getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())

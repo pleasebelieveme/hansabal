@@ -30,9 +30,9 @@ public class QRequests extends EntityPathBase<Requests> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
 
-    public final org.example.hansabal.domain.users.entity.QUser requester;
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> requestsId = createNumber("requestsId", Long.class);
+    public final org.example.hansabal.domain.users.entity.QUser requester;
 
     public final EnumPath<RequestStatus> status = createEnum("status", RequestStatus.class);
 

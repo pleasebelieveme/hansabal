@@ -32,9 +32,9 @@ public class QTrade extends EntityPathBase<Trade> {
     //inherited
     public final DateTimePath<java.time.LocalDateTime> deletedAt = _super.deletedAt;
 
-    public final StringPath title = createString("title");
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Long> tradeId = createNumber("tradeId", Long.class);
+    public final StringPath title = createString("title");
 
     public final org.example.hansabal.domain.users.entity.QUser trader;
 

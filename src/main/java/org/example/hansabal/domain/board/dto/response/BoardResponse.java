@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.domain.board.entity.Board;
-import org.example.hansabal.domain.comment.dto.response.CommentResponse;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.users.entity.User;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class BoardResponse {
-    private Long postId;
+    private Long id;
     private Long userId;
     private String nickname;
     private String email;
@@ -28,14 +28,14 @@ public class BoardResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    private List<CommentResponse> comments;
+    private List<CommentPageResponse> comments;
     private int likeCount;
     private boolean likedByMe;
 
     public static BoardResponse from(Board board) {
         User user = board.getUser();
         return BoardResponse.builder()
-                .postId(board.getId())
+                .id(board.getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
@@ -52,10 +52,10 @@ public class BoardResponse {
     }
 
     // ⭐ 정적 팩토리 메서드
-    public static BoardResponse from(Board board, List<CommentResponse> comments, int likeCount, boolean likedByMe) {
+    public static BoardResponse from(Board board, List<CommentPageResponse> comments, int likeCount, boolean likedByMe) {
         User user = board.getUser();
         return BoardResponse.builder()
-                .postId(board.getId())
+                .id(board.getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())

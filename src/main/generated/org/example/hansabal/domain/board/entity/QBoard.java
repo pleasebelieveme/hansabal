@@ -36,7 +36,7 @@ public class QBoard extends EntityPathBase<Board> {
 
     public final NumberPath<Integer> dibCount = createNumber("dibCount", Integer.class);
 
-    public final NumberPath<Long> postId = createNumber("postId", Long.class);
+    public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath title = createString("title");
 
