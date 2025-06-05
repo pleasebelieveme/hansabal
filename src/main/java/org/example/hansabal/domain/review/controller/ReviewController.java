@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -29,9 +28,7 @@ public class ReviewController {
             @AuthenticationPrincipal UserAuth userAuth,
             @Valid @PathVariable Long productId,
             @RequestBody CreateReviewRequest request) {
-
-        CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth.getId(), request);
-
+        CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
 
@@ -41,24 +38,22 @@ public class ReviewController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-
         Page<ReviewResponse> reviewsList = reviewService.getReviews(productId, page, size);
-
         return ResponseEntity.status(HttpStatus.OK).body(reviewsList);
     }
 
     @PutMapping("/{reviewId}") //리뷰 수정
-    public ResponseEntity<UpdateReviewResponse> updateReview(@PathVariable Long reviewId, @RequestBody UpdateReviewRequest request) {
-
-        UpdateReviewResponse updateReviewResponseDto = reviewService.updateReview(reviewId, request);
-
+    public ResponseEntity<UpdateReviewResponse> updateReview(
+            @PathVariable Long reviewId,
+            @RequestBody @Valid UpdateReviewRequest request,
+            @AuthenticationPrincipal UserAuth userAuth
+    ) {
+        UpdateReviewResponse updateReviewResponseDto = reviewService.updateReview(reviewId, request, userAuth);
         return ResponseEntity.status(HttpStatus.OK).body(updateReviewResponseDto);
     }
 
-
     @DeleteMapping("/{reviewId}") //소프트 delete
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
-
         reviewService.deleteReview(reviewId);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
