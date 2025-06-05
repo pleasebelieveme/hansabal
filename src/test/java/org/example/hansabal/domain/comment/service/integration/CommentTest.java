@@ -2,10 +2,14 @@ package org.example.hansabal.domain.comment.service.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Optional;
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
+import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
 import org.example.hansabal.domain.comment.service.CommentService;
 import org.example.hansabal.domain.review.service.ReviewServiceImpl;
@@ -15,7 +19,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
@@ -45,8 +51,6 @@ public class CommentTest {
 	@Autowired
 	private CommentService commentService;
 
-	@Autowired
-	private ReviewServiceImpl reviewService;
 
 	@BeforeAll
 	public static void beforeAll() {
@@ -105,7 +109,39 @@ public class CommentTest {
 		assertThat(response.contents().equals("수정된 댓글"));
 	}
 
+	@Test
+	void 댓글_수정_권한없음_예외(){
+		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
+		Long commentId = 1L;
+		UserAuth userAuth = new UserAuth(2L, UserRole.USER);
 
+		assertThatThrownBy( () -> {
+			commentService.updateComment(request, commentId, userAuth);
+		}).isInstanceOf(BizException.class)
+			.hasMessageContaining("해당 권한이 없습니다.");
+	}
+
+	@Test
+	void 댓글_삭제(){
+		Long commentId = 1L;
+
+		commentService.deleteComment(commentId);
+
+		Optional<Comment> comment = commentRepository.findById(commentId);
+
+		assertThat(comment).isNotEmpty();
+		assertThat(comment.get().getDeletedAt()).isNotNull();
+	}
+
+	@Test
+	void 댓글_조회(){
+		Page<CommentPageResponse> result = commentService.findAllCommentsFromBoard(1L, 1, 100);
+
+		assertThat(result.getContent()).hasSize(100);
+		assertThat(result.getTotalElements()).isEqualTo(201);
+		assertThat(result.getContent().get(0).getComments()).contains("test comment");
+		assertThat(result.getContent().get(99).getDibCount()).isEqualTo(0);
+	}
 
 
 }

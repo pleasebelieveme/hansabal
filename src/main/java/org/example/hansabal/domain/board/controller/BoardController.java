@@ -8,6 +8,8 @@ import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.service.BoardService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -32,28 +34,31 @@ public class BoardController {
     // 게시글 수정
     @PutMapping("/{postId}")
     public ResponseEntity<BoardResponse> updatePost(
-            @PathVariable Long postId,
+            @PathVariable Long Id,
             @RequestBody @Valid BoardRequest request,
             @AuthenticationPrincipal UserAuth userAuth
     ) {
-        BoardResponse response = boardService.updatePost(userAuth, postId, request);
+        BoardResponse response = boardService.updatePost(userAuth, Id, request);
         return ResponseEntity.ok(response);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(
-            @PathVariable Long postId,
+            @PathVariable Long Id,
             @AuthenticationPrincipal UserAuth userAuth
     ) {
-        boardService.deletePost(userAuth, postId);
+        boardService.deletePost(userAuth, Id);
         return ResponseEntity.ok().build();
     }
 
     // 게시글 단건 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<BoardResponse> getPost(@PathVariable Long postId) {
-        BoardResponse response = boardService.getPost(postId);
+    public ResponseEntity<BoardResponse> getPost(
+            @PathVariable Long Id,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        BoardResponse response = boardService.getPost(Id, pageable);
         return ResponseEntity.ok(response);
     }
 
