@@ -60,6 +60,8 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.15.4'
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
+    // O'Auth2
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 }
 
 tasks.named('test') {
