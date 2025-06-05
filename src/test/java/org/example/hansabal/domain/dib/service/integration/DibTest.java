@@ -122,4 +122,9 @@ public class DibTest {
 		log.info("좋아요 최종 수: {}", board.getDibCount());
 		log.info("성공 요청 수: {}", increaseCount.get());
 	}
+
+	@Test
+	void 좋아요_감소_테스트(){
+
+	}
 }
