@@ -28,7 +28,7 @@ public class RequestsService {
 	private final RequestsRepository requestsRepository;
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
-	private final WalletService walletService;
+	//private final WalletService walletService;
 
 	@Transactional
 	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
@@ -54,7 +54,7 @@ public class RequestsService {
 		if(requests.getStatus()==RequestStatus.DONE)
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
 		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
-		if(trade.getTrader().getId().equals(userAuth.getId()))
+		if(!trade.getTrader().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()==RequestStatus.AVAILABLE)//거래상태가 '가능'이고 가격이 무료가 아닐 때 배송단계로 넘기는것을 금지.
 			if(request.requestStatus()==RequestStatus.SHIPPING&&trade.getPrice()!=0L)
@@ -85,10 +85,11 @@ public class RequestsService {
 		if(requests.getStatus()!=RequestStatus.PENDING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
 		Long price = trade.getPrice();
-		walletService.walletPay(user, requestsId, price);
+		//walletService.walletPay(user, requestsId, price);
 		requests.updateStatus(RequestStatus.PAID);
 	}
 
+	@Transactional
 	public void confirmGoods(Long requestsId, UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
@@ -97,7 +98,7 @@ public class RequestsService {
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.SHIPPING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
-		walletService.walletConfirm(user,requestsId);
+		//walletService.walletConfirm(user,requestsId);
 		requests.updateStatus(RequestStatus.DONE);
 		trade.softDelete();
 	}
