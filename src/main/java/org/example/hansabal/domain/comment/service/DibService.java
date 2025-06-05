@@ -62,4 +62,5 @@ public class DibService {
 				.ifPresent(Board::increaseDibs);
 		}
 	}
+
 }
