@@ -4,8 +4,10 @@ import org.example.hansabal.domain.comment.service.DibService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.service.UserService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,8 +24,9 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @ActiveProfiles("test")
 @Slf4j
-@Sql(scripts = {"/user_test_db.sql","/board_test_db.sql","/comment_test_db.sql"},
+@Sql(scripts = "/board_test_db.sql",
 	executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DibTest {
 
 	@Container
@@ -38,10 +41,23 @@ public class DibTest {
 	@Autowired
 	private UserService userService;
 
-	@BeforeEach
+	@BeforeAll
 	void creatUser(){
-		UserCreateRequest request = new UserCreateRequest("Test1@email.com","@Aa123456","이름","닉네임", UserRole.USER);
-		userService.createUser(request);
+
+		for(int i = 0; i < 1000; i++){
+			String email = "user" + i + "@exmaple.com";
+			String nickname = "nickname" + i;
+
+			UserCreateRequest request = new UserCreateRequest(
+				email,
+				"@Aa123456",
+				"테스트이름",
+				nickname,
+				UserRole.USER
+			);
+
+			userService.createUser(request);
+		}
 	}
 
 	@Test
