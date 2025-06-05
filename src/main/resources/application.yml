@@ -40,3 +40,48 @@ jwt:
   secret: ${SPRING_JWT_SECRET}
   access-token-expiration: 900000        # 15분 (밀리초)
   refresh-token-expiration: 21600000     # 6시간 (밀리초)
+
+  spring:
+    application:
+      name: Hansabal
+
+    datasource:
+      url: jdbc:mysql://localhost:3306/hansabal
+      username: ${MYSQL_USERNAME:testuser}
+      password: ${MYSQL_PASSWORD:testpass}
+
+    data:
+      redis:
+        host: ${REDIS_HOST:localhost}
+        port: ${REDIS_PORT:6379}
+
+    jpa:
+      hibernate:
+        ddl-auto: create
+      properties:
+        hibernate:
+          show_sql: true
+          format_sql: true
+          use_sql_comments: true
+          dialect: org.hibernate.dialect.MySQLDialect
+          jdbc.batch_size: 100
+          order_inserts: true
+          order_updates: true
+      open-in-view: false
+
+    ##sql:
+    ##  init:
+    ##    mode: always  # 항상 실행되도록 설정
+    ##    data-locations: classpath:data.sql  # (기본값이지만 명시적으로 지정)#
+    batch:
+      job:
+        enabled: false
+
+  jwt:
+    secret: ${SPRING_JWT_SECRET}
+    access-token-expiration: 900000        # 15분 (밀리초)
+    refresh-token-expiration: 21600000     # 6시간 (밀리초)
+
+  naver:
+    client-id: "oZzdyk_N0TEa6HyXjfwg"
+    client-secret: "j_3pQgBaa0"

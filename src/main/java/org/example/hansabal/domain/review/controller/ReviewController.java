@@ -15,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -29,16 +28,14 @@ public class ReviewController {
             @AuthenticationPrincipal UserAuth userAuth,
             @Valid @PathVariable Long productId,
             @RequestBody CreateReviewRequest request) {
-
-        CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth.getId(), request);
-
+        CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
 
     @GetMapping("products/{productId}") // 리뷰 페이징
     public ResponseEntity<Page<ReviewResponse>> getReviews(
             @PathVariable Long productId,
-            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
 
@@ -60,6 +57,7 @@ public class ReviewController {
     public ResponseEntity<Void> deleteReview(@PathVariable Long reviewId) {
 
         reviewService.deleteReview(reviewId);
+
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }

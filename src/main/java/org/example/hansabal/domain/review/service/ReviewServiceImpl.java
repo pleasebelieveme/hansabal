@@ -1,8 +1,10 @@
 package org.example.hansabal.domain.review.service;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
@@ -31,15 +33,14 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final ProductRepository productRepository;
 
-
     @Transactional
     @Override
-    public CreateReviewResponse createReview(Long productId, Long userId, CreateReviewRequest dto) {
-
-        User findUser = userRepository.findByIdOrElseThrow(userId);
+    public CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest dto) {
 
         //일단 유저가 있는지 확인한다.
-        Product findProduct = productRepository.findById(productId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "해당 리뷰유저가 없습니다."));
+        User findUser = userRepository.findByIdOrElseThrow(userAuth.getId());
+
+        Product findProduct = productRepository.findById(productId).orElseThrow(() -> new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
 
         //엔티티에 정보를 넣어준다.
         Review review = new Review(findUser.getNickname(), findUser, findProduct);
@@ -50,7 +51,6 @@ public class ReviewServiceImpl implements ReviewService {
         //다시 DB에 있는 데이터를 이용해 반환한다.
         return CreateReviewResponse.from(savedReview);
     }
-
 
     @Transactional(readOnly = true) //페이징
     @Override
