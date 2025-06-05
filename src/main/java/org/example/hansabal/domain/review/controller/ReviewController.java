@@ -35,7 +35,7 @@ public class ReviewController {
     @GetMapping("products/{productId}") // 리뷰 페이징
     public ResponseEntity<Page<ReviewResponse>> getReviews(
             @PathVariable Long productId,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<ReviewResponse> reviewsList = reviewService.getReviews(productId, page, size);

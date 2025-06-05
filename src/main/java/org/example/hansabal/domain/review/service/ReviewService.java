@@ -11,9 +11,9 @@ import org.springframework.data.domain.Page;
 
 
 public interface ReviewService {
-    CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest request);
+    CreateReviewResponse createReview(Long productId, UserAuth userAuth, CreateReviewRequest request);
 
-    UpdateReviewResponse updateReview(Long reviewId, @Valid UpdateReviewRequest request, UserAuth userAuth);
+    UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request, UserAuth userAuth);
 
     void deleteReview(Long reviewId);
 
