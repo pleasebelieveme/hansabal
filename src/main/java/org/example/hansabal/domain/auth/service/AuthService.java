@@ -65,16 +65,18 @@ public class AuthService {
 
 		// 3. 유저 정보 추출
 		UserAuth userAuth = jwtUtil.extractUserAuth(refreshToken);
-		Long userId = userAuth.getId();
 
 		// 4. Redis에 저장된 Refresh Token과 일치하는지 확인
-		if (!redisRepository.validateRefreshToken(userId, refreshToken)) {
-			throw new BizException(AuthErrorCode.MISMATCHED_REFRESH_TOKEN);
+		if (!redisRepository.validateRefreshToken(userAuth.getId(), refreshToken)) {
+			throw new BizException(AuthErrorCode.REUSED_REFRESH_TOKEN);
 		}
 
-		// 5. 새로운 Access Token 발급
-		String newAccessToken = jwtUtil.createToken(userId, userAuth.getUserRole());
+		redisRepository.deleteRefreshToken(userAuth.getId());
 
-		return new TokenResponse(newAccessToken, refreshToken);
+		// 5. 새로운 Access Token 발급
+		String newAccessToken = jwtUtil.createToken(userAuth.getId(), userAuth.getUserRole());
+		String newRefreshToken = jwtUtil.createRefreshToken(userAuth.getId(), userAuth.getUserRole());
+
+		return new TokenResponse(newAccessToken, newRefreshToken);
 	}
 }
