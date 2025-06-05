@@ -16,11 +16,11 @@ public class RedisRepository {
 
 	private final RedisTemplate<String,String> redisTemplate;
 	private static final String REFRESH_TOKEN_PREFIX = "refresh:";
-	private static final String BLACKLIST_PREFIX_PREFIX = "blacklist:";
+	private static final String BLACKLIST_PREFIX = "blacklist:";
 
 	public boolean validateKey(String token){
 		try {
-			return redisTemplate.hasKey(BLACKLIST_PREFIX_PREFIX + token);
+			return redisTemplate.hasKey(BLACKLIST_PREFIX + token);
 		} catch (Exception e) {
 			throw new BizException(UserErrorCode.INVALID_REQUEST);
 		}
@@ -29,7 +29,7 @@ public class RedisRepository {
 	public void saveBlackListToken(String token, long expirationMillis) {
 		try {
 			redisTemplate.opsForValue().set(
-				BLACKLIST_PREFIX_PREFIX + token,
+				BLACKLIST_PREFIX + token,
 				"logout",
 				expirationMillis,
 				java.util.concurrent.TimeUnit.MILLISECONDS
