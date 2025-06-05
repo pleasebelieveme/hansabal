@@ -56,7 +56,7 @@ public class WalletService {
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	public void walletConfirm(Trade trade, Long requestsId) {
-		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		requestsRepository.findById(requestsId).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
 		User trader= trade.getTrader();
 		Wallet wallet = walletRepository.findByUserId(trader.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
 		wallet.updateWallet(wallet.getCash()+trade.getPrice());
