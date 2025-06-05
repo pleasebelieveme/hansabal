@@ -22,6 +22,16 @@ spring:
         order_updates: true
     open-in-view: false
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH2_GOOGLE_ID}
+            client-secret: ${OAUTH2_GOOGLE_SECRET}
+            scope:
+              - email
+              - profile
   #  sql:
   #    init:
   #      mode: always                    # 항상 SQL 초기화 실행
