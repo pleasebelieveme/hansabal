@@ -4,6 +4,7 @@ package org.example.hansabal.domain.board.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.hansabal.common.base.BaseEntity;
+import org.example.hansabal.common.redisson.DistributedLock;
 import org.example.hansabal.domain.users.entity.User;
 
 
@@ -40,6 +41,7 @@ public class Board  extends BaseEntity {
     // 좋아요 필드 및 메서드
     @Column(nullable = false,columnDefinition = "int default 0")
     private int dibCount = 0;
+
 
     public void increaseDibs() {
         this.dibCount++;
