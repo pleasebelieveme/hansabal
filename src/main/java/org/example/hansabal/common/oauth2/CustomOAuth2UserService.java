@@ -81,19 +81,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	}
 
 	private String generateUniqueNickname(String name) {
-		String nickname;
-		int tryCount = 0;
 		final int MAX_TRY = 5;
 
-		do {
-			nickname = name + "_" + UUID.randomUUID().toString().substring(0, 8);
-			tryCount++;
-		} while (userRepository.existsByNickname(nickname) && tryCount < MAX_TRY);
-
-		if (userRepository.existsByNickname(nickname)) {
-			throw new BizException(UserErrorCode.DUPLICATED_NICKNAME);
+		for (int i = 0; i < MAX_TRY; i++) {
+			String nickname = String.format("%s_%s", name, UUID.randomUUID().toString().substring(0, 8));
+			if (!userRepository.existsByNickname(nickname)) {
+				return nickname;
+			}
 		}
 
-		return nickname;
+		throw new BizException(UserErrorCode.DUPLICATED_NICKNAME);
 	}
 }
