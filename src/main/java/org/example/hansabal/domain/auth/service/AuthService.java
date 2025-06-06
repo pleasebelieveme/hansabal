@@ -25,6 +25,7 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final RedisRepository redisRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final TokenService tokenService;
 	private final JwtUtil jwtUtil;
 
 	public TokenResponse login(LoginRequest request) {
@@ -34,10 +35,7 @@ public class AuthService {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
 		}
 
-		String accessToken = jwtUtil.createToken(user.getId(), user.getUserRole());
-		String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getUserRole());
-		redisRepository.saveRefreshToken(user.getId(), refreshToken, jwtUtil.getRefreshExpiration(refreshToken));
-		return new TokenResponse(accessToken, refreshToken);
+		return tokenService.createTokens(user.getId(), user.getUserRole());
 	}
 
 	public void logout(HttpServletRequest request) {
@@ -49,7 +47,6 @@ public class AuthService {
 			redisRepository.saveBlackListToken(token, expiration);
 		}
 	}
-
 
 	public TokenResponse reissue(String bearerToken) {
 		// 1. Bearer 제거
@@ -73,10 +70,6 @@ public class AuthService {
 
 		redisRepository.deleteRefreshToken(userAuth.getId());
 
-		// 5. 새로운 Access Token 발급
-		String newAccessToken = jwtUtil.createToken(userAuth.getId(), userAuth.getUserRole());
-		String newRefreshToken = jwtUtil.createRefreshToken(userAuth.getId(), userAuth.getUserRole());
-
-		return new TokenResponse(newAccessToken, newRefreshToken);
+		return tokenService.createTokens(userAuth.getId(), userAuth.getUserRole());
 	}
 }
