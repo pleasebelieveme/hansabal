@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.domain.auth.exception.AuthErrorCode;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 	private final UserRepository userRepository;
+	private final OAuth2UserInfoExtractor extractor;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) {
@@ -34,33 +36,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		log.info("OAuth2 [{}] attributes: {}", registrationId, attributes);
 
-		Map<String, Object> userInfo;
+		OAuth2UserInfo userInfo = extractor.extract(registrationId, attributes);
 
-		if ("naver".equals(registrationId)) {
-			userInfo = (Map<String, Object>) attributes.get("response");
-		} else if ("kakao".equals(registrationId)) {
-			Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
-			Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
-
-			userInfo = Map.of(
-				"email", kakaoAccount.get("email"),
-				"name", profile.get("nickname")
-			);
-		} else {
-			userInfo = attributes;
-		}
-
-		String email = (String) userInfo.get("email");
-		String name = (String) userInfo.get("name");
+		String email = userInfo.email();
+		String name = userInfo.name();
 
 		if (email == null) {
-			throw new IllegalArgumentException("OAuth2 로그인에 이메일 정보가 없습니다.");
+			throw new BizException(AuthErrorCode.OAUTH2_EMAIL_NOT_FOUND);
 		}
 
 		User user = userRepository.findByEmail(email)
 			.orElseGet(() -> userRepository.save(User.builder()
 				.email(email)
-				.password("")
+				.password("") // OAuth는 비밀번호 필요 없음
 				.name(name)
 				.nickname(generateUniqueNickname(name))
 				.userRole(UserRole.USER)
@@ -93,3 +81,5 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		throw new BizException(UserErrorCode.DUPLICATED_NICKNAME);
 	}
 }
+
+
