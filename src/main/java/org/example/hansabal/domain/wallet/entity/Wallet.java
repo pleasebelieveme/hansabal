@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "trade")
+@Table(name = "wallet")
 public class Wallet extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +29,7 @@ public class Wallet extends BaseEntity {
 	@JoinColumn(name="users_id", unique=true)
 	private User userId;
 	private Long cash;
-	public Wallet(User userId, Long cash){
-		this.userId=userId;
-		this.cash=cash;
-	}
+
 	public void updateWallet(Long cash){
 		this.cash=cash;
 	}

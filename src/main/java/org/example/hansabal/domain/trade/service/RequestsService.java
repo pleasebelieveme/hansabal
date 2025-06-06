@@ -85,7 +85,7 @@ public class RequestsService {
 		if(requests.getStatus()!=RequestStatus.PENDING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
 		Long price = trade.getPrice();
-		walletService.walletPay(user, requestsId, price);
+		walletService.walletPay(user, trade.getId(), price);
 		requests.updateStatus(RequestStatus.PAID);
 	}
 

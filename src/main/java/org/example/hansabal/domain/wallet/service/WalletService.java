@@ -9,7 +9,9 @@ import org.example.hansabal.domain.users.repository.UserRepository;
 import org.example.hansabal.domain.wallet.dto.request.ChargeRequestDto;
 import org.example.hansabal.domain.wallet.dto.response.WalletResponseDto;
 import org.example.hansabal.domain.wallet.entity.Wallet;
+import org.example.hansabal.domain.wallet.entity.WalletHistory;
 import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
+import org.example.hansabal.domain.wallet.repository.WalletHistoryRepository;
 import org.example.hansabal.domain.wallet.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -24,6 +26,8 @@ public class WalletService {
 	private final UserRepository userRepository;
 	private final WalletRepository walletRepository;
 	private final RequestsRepository requestsRepository;
+	private final WalletHistoryService walletHistoryService;
+	private final WalletHistoryRepository walletHistoryRepository;
 
 	@Transactional
 	public void createWallet(UserAuth userAuth) {
@@ -43,23 +47,29 @@ public class WalletService {
 		Wallet wallet = walletRepository.findById(request.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
 		//연결 후 구현 예정 -ㅅ-(실제 결제가 일어나는 구간)
 		wallet.updateWallet(wallet.getCash()+request.cash());
+		walletHistoryService.historySaver(wallet,0L, request.cash());
 		return new WalletResponseDto(user.getName(),wallet.getCash());
 	}
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public void walletPay(User user, Long requestsId, Long price){
-		Wallet wallet = walletRepository.findByUserId(user.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+	public void walletPay(User user, Long tradeId, Long price){//trade 에서 비용 지불시 사용(거래 상태 PAID 으로 바꿀 때 작동)
+		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
 		wallet.updateWallet(wallet.getCash()-price);
-		//History구간, 나중에 구현예정, requestId는 여기에서 쓰입니당
+		walletHistoryService.historySaver(wallet,tradeId,price);
 	}
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public void walletConfirm(Trade trade, Long requestsId) {
+	public void walletConfirm(Trade trade, Long requestsId) {//trade 에서 거래 물품 확인시 사용(거래상태 DONE 으로 바꿀 때 작동)
 		requestsRepository.findById(requestsId).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
 		User trader= trade.getTrader();
-		Wallet wallet = walletRepository.findByUserId(trader.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		Wallet wallet = walletRepository.findByUserId(trader).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		WalletHistory walletHistory = walletHistoryRepository.findByTradeId(trade.getId());
+		if(walletHistory==null)
+			throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
+		if(!walletHistory.getPrice().equals(trade.getPrice()))
+			throw new BizException(WalletErrorCode.DATA_MISSMATCH);
 		wallet.updateWallet(wallet.getCash()+trade.getPrice());
-		//History구간, 나중에 구현예정
+		walletHistoryService.historySaver(wallet,trade.getId(),trade.getPrice());
 	}
 
 	@Transactional(readOnly=true)
