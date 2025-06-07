@@ -44,7 +44,7 @@ public class WalletService {
 	@Transactional
 	public WalletResponseDto chargeWallet(ChargeRequestDto request, UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Wallet wallet = walletRepository.findById(request.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		Wallet wallet = walletRepository.findById(request.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		//연결 후 구현 예정 -ㅅ-(실제 결제가 일어나는 구간)
 		wallet.updateWallet(wallet.getCash()+request.cash());
 		walletHistoryService.historySaver(wallet,0L, request.cash());
@@ -53,21 +53,21 @@ public class WalletService {
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	public void walletPay(User user, Long tradeId, Long price){//trade 에서 비용 지불시 사용(거래 상태 PAID 으로 바꿀 때 작동)
-		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		wallet.updateWallet(wallet.getCash()-price);
 		walletHistoryService.historySaver(wallet,tradeId,price);
 	}
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	public void walletConfirm(Trade trade, Long requestsId) {//trade 에서 거래 물품 확인시 사용(거래상태 DONE 으로 바꿀 때 작동)
-		requestsRepository.findById(requestsId).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		requestsRepository.findById(requestsId).orElseThrow(()->new BizException(WalletErrorCode.WRONG_REQUESTS_CONNECTED));
 		User trader= trade.getTrader();
-		Wallet wallet = walletRepository.findByUserId(trader).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
-		WalletHistory walletHistory = walletHistoryRepository.findByTradeId(trade.getId());
+		Wallet wallet = walletRepository.findByUserId(trader).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		WalletHistory walletHistory = walletHistoryRepository.findByTradeId(trade.getId());//혹시 이부분 묵시적 null check가 따로 되고 있나요? 아니면 null check가 아니라 empty check가 더 적절할까요?
 		if(walletHistory==null)
 			throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
 		if(!walletHistory.getPrice().equals(trade.getPrice()))
-			throw new BizException(WalletErrorCode.DATA_MISSMATCH);
+			throw new BizException(WalletErrorCode.DATA_MISMATCH);
 		wallet.updateWallet(wallet.getCash()+trade.getPrice());
 		walletHistoryService.historySaver(wallet,trade.getId(),trade.getPrice());
 	}
@@ -75,7 +75,7 @@ public class WalletService {
 	@Transactional(readOnly=true)
 	public WalletResponseDto getWallet(UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Wallet wallet = walletRepository.findById(user.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		Wallet wallet = walletRepository.findById(user.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		return new WalletResponseDto(user.getName(),wallet.getCash());
 	}
 

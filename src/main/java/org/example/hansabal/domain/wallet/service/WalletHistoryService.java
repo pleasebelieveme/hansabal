@@ -3,6 +3,7 @@ package org.example.hansabal.domain.wallet.service;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.users.entity.User;
+import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.example.hansabal.domain.wallet.dto.response.HistoryResponseDto;
 import org.example.hansabal.domain.wallet.entity.Wallet;
@@ -51,8 +52,8 @@ public class WalletHistoryService {
 
 	@Transactional(readOnly=true)
 	public Page<HistoryResponseDto> getHistory(int page, int size, UserAuth userAuth) {
-		User user = userRepository.findById(userAuth.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
-		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_SUCH_THING));
+		User user = userRepository.findById(userAuth.getId()).orElseThrow(()->new BizException(UserErrorCode.NOT_FOUND_USER));
+		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		Page<WalletHistory> walletHistory = walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet);
