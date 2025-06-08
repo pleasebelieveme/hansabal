@@ -83,7 +83,7 @@ public class DibTest {
 	}
 
 	@Test
-	void 좋아요_증가_테스트() throws InterruptedException{
+	void 좋아요_증가_및_감소_테스트() throws InterruptedException{
 		int threadCount = 1000;
 		ExecutorService executor = Executors.newFixedThreadPool(50);
 		CountDownLatch latch = new CountDownLatch(threadCount);
@@ -121,10 +121,40 @@ public class DibTest {
 
 		log.info("좋아요 최종 수: {}", board.getDibCount());
 		log.info("성공 요청 수: {}", increaseCount.get());
+
+		AtomicInteger cancelCount = new AtomicInteger();
+		CountDownLatch cancelLatch = new CountDownLatch(threadCount);
+
+		Thread.sleep(10000);
+
+		for (int i = 0; i < threadCount; i++) {
+			long userId = i + 1L;
+			executor = Executors.newFixedThreadPool(50);
+			executor.submit(() -> {
+				try {
+					dibService.modifyDibs(userId, request);
+					cancelCount.incrementAndGet();
+				} catch (BizException e){
+					e.printStackTrace();
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					cancelLatch.countDown();
+				}
+			});
+		}
+
+		cancelLatch.await();
+		executor.shutdown();
+
+		Board boardAfterCancel = boardRepository.findById(1L).orElseThrow();
+		List<Dib> dibsAfterCancel = dibRepository.findAll();
+
+		assertThat(boardAfterCancel.getDibCount()).isEqualTo(0);
+		assertThat(dibsAfterCancel).hasSize(0);
+
+		log.info("취소 후 좋아요 수: {}", boardAfterCancel.getDibCount());
+		log.info("취소 성공 수: {}", cancelCount.get());
 	}
 
-	@Test
-	void 좋아요_감소_테스트(){
-
-	}
 }
