@@ -29,7 +29,7 @@ public enum AuthErrorCode implements ErrorCode {
 
 	@Override
 	public String getCode() {
-		return code;
+		return this.code;
 	}
 
 	@Override
