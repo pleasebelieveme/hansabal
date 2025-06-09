@@ -41,7 +41,7 @@ public class TradeService {
 			title="";
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Trade> trades = tradeRepository.findAllByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
+		Page<Trade> trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
 		return trades.map(TradeResponseDto::from);
 	}
 
