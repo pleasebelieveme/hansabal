@@ -39,14 +39,6 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
         return CreateReviewResponse.from(savedReview);
     }
-    @Transactional
-    public CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest dto) {
-        User findUser = userRepository.findByIdOrElseThrow(userAuth.getId());
-        Product findProduct = productRepository.findByIdOrElseThrow(productId);
-        Review review = new Review(dto.getContent(), findUser, findProduct);
-        Review savedReview = reviewRepository.save(review);
-        return CreateReviewResponse.from(savedReview);
-    }
 
     @Transactional(readOnly = true) //페이징
     public Page<ReviewResponse> getReviews(Long productId, int page, int size) {
@@ -67,22 +59,6 @@ public class ReviewService {
         review.updateReview(request.getContent());
         return UpdateReviewResponse.from(review);
     }
-    @Transactional
-    public UpdateReviewResponse updateReview(Long reviewId, UpdateReviewRequest request, UserAuth userAuth) {
-        Review review = reviewRepository.findByIdOrThrow(reviewId);
-        User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-        if (!review.getUser().getId().equals(user.getId())) {
-            throw new BizException(ReviewErrorCode.REVIEW_FORBIDDEN);
-        }
-        review.updateReview(request.getContent());
-        return UpdateReviewResponse.from(review);
-    }
-
-    public void deleteReview(Long reviewId) {
-        Review findReview = reviewRepository.findByIdOrThrow(reviewId);
-        findReview.softDelete();
-    }
-}
 
     public void deleteReview(Long reviewId) {
         Review findReview = reviewRepository.findByIdOrThrow(reviewId);
