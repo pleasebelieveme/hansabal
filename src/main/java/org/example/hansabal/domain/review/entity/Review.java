@@ -24,6 +24,9 @@ public class Review extends BaseEntity {
     @Lob //text 타입
     private String content;
 
+    @Column(nullable = false)
+    private Integer rating;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -32,12 +35,9 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-//    아직 엔티티가 없어서 주석처리하였습니다
-//    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL ,orphanRemoval = true)
-//    private List<Div> divs = new ArrayList<>();
-
-    public Review(String content, User user, Product product) {
+    public Review(String content, Integer rating, User user, Product product) {
         this.content = content;
+        this.rating = rating;
         this.user = user;
         this.product = product;
     }
