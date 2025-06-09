@@ -20,7 +20,7 @@ public class DibServiceUtil {
 	private final BoardRepository boardRepository;
 
 
-	@DistributedLock(key = "DIB:' + #dibType.name() + ':' + #targetId")
+	@DistributedLock(key = "'DIB:' + #dibType.name() + ':' + #targetId")
 	public void dibMethod(DibType dibType,Long targetId, boolean flag){
 		switch (dibType) {
 			case COMMENT -> {
@@ -44,7 +44,6 @@ public class DibServiceUtil {
 					board.increaseDibs();
 				}
 			}
-
 		}
 	}
 }

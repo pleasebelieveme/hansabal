@@ -12,5 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface DibRepository extends JpaRepository<Dib,Long> {
 	Optional<Dib> findByUserAndDibTypeAndTargetId(User user, DibType dibType, Long targetId);
 
+	Optional<Dib> findByDibTypeAndTargetId(DibType dibType, Long targetId);
 
 }

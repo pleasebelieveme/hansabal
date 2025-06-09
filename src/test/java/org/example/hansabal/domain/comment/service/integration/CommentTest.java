@@ -86,7 +86,7 @@ public class CommentTest {
 	@Test
 	void 댓글_생성_보드정보_불일치_예외() {
 		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
-		Long boardId = 2L;
+		Long boardId = 3L;
 		UserAuth userAuth = new UserAuth(1L, UserRole.USER);
 
 		assertThatThrownBy( () -> {

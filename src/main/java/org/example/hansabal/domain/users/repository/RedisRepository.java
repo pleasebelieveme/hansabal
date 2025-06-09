@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.users.repository;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.example.hansabal.common.exception.BizException;
@@ -14,16 +15,12 @@ import lombok.RequiredArgsConstructor;
 public class RedisRepository {
 
 	private final RedisTemplate<String,String> redisTemplate;
-
-	public String generateBlacklistKey(String token){
-		String blacklistKey = "blacklist:" + token;
-
-		return blacklistKey;
-	}
+	private static final String REFRESH_TOKEN_PREFIX = "refresh:";
+	private static final String BLACKLIST_PREFIX = "blacklist:";
 
 	public boolean validateKey(String token){
 		try {
-			return redisTemplate.hasKey(generateBlacklistKey(token));
+			return redisTemplate.hasKey(BLACKLIST_PREFIX + token);
 		} catch (Exception e) {
 			throw new BizException(UserErrorCode.INVALID_REQUEST);
 		}
@@ -32,7 +29,7 @@ public class RedisRepository {
 	public void saveBlackListToken(String token, long expirationMillis) {
 		try {
 			redisTemplate.opsForValue().set(
-				generateBlacklistKey(token),
+				BLACKLIST_PREFIX + token,
 				"logout",
 				expirationMillis,
 				java.util.concurrent.TimeUnit.MILLISECONDS
@@ -44,7 +41,7 @@ public class RedisRepository {
 
 	public void saveRefreshToken(Long userId, String refreshToken, long expirationMillis) {
 		try {
-			String key = "refresh:" + userId;
+			String key = REFRESH_TOKEN_PREFIX + userId;
 			redisTemplate.opsForValue().set(key, refreshToken, expirationMillis, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			throw new BizException(UserErrorCode.INVALID_REQUEST);
@@ -52,9 +49,13 @@ public class RedisRepository {
 	}
 
 	public boolean validateRefreshToken(Long userId, String refreshToken) {
-		String key = "refresh:" + userId;
+		String key = REFRESH_TOKEN_PREFIX + userId;
 		String savedToken = redisTemplate.opsForValue().get(key);
-		return savedToken != null && savedToken.equals(refreshToken);
+		return Objects.equals(savedToken, refreshToken);
 	}
 
+	public void deleteRefreshToken(Long userId) {
+		String key = REFRESH_TOKEN_PREFIX + userId;
+		redisTemplate.delete(key);
+	}
 }
