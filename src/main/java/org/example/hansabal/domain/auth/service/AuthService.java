@@ -25,6 +25,7 @@ public class AuthService {
 	private final UserRepository userRepository;
 	private final RedisRepository redisRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final TokenService tokenService;
 	private final JwtUtil jwtUtil;
 
 	public TokenResponse login(LoginRequest request) {
@@ -34,10 +35,7 @@ public class AuthService {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
 		}
 
-		String accessToken = jwtUtil.createToken(user.getId(), user.getUserRole());
-		String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getUserRole());
-		redisRepository.saveRefreshToken(user.getId(), refreshToken, jwtUtil.getRefreshExpiration(refreshToken));
-		return new TokenResponse(accessToken, refreshToken);
+		return tokenService.createTokens(user.getId(), user.getUserRole());
 	}
 
 	public void logout(HttpServletRequest request) {
@@ -49,7 +47,6 @@ public class AuthService {
 			redisRepository.saveBlackListToken(token, expiration);
 		}
 	}
-
 
 	public TokenResponse reissue(String bearerToken) {
 		// 1. Bearer 제거
@@ -65,16 +62,14 @@ public class AuthService {
 
 		// 3. 유저 정보 추출
 		UserAuth userAuth = jwtUtil.extractUserAuth(refreshToken);
-		Long userId = userAuth.getId();
 
 		// 4. Redis에 저장된 Refresh Token과 일치하는지 확인
-		if (!redisRepository.validateRefreshToken(userId, refreshToken)) {
-			throw new BizException(AuthErrorCode.MISMATCHED_REFRESH_TOKEN);
+		if (!redisRepository.validateRefreshToken(userAuth.getId(), refreshToken)) {
+			throw new BizException(AuthErrorCode.REUSED_REFRESH_TOKEN);
 		}
 
-		// 5. 새로운 Access Token 발급
-		String newAccessToken = jwtUtil.createToken(userId, userAuth.getUserRole());
+		redisRepository.deleteRefreshToken(userAuth.getId());
 
-		return new TokenResponse(newAccessToken, refreshToken);
+		return tokenService.createTokens(userAuth.getId(), userAuth.getUserRole());
 	}
 }
