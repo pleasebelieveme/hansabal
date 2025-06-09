@@ -63,7 +63,7 @@ public class ShopSearchService {
         }
     }
 
-    private String readBody(InputStream body){
+    public String readBody(InputStream body){
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(body, StandardCharsets.UTF_8))) {
             StringBuilder responseBody = new StringBuilder();
