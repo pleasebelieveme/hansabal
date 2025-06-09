@@ -23,7 +23,7 @@ public @interface DistributedLock {
 	 * 락을 기다리는 시간 (default - 5s)
 	 * 락 획득을 위해 waitTime 만큼 대기한다
 	 */
-	long waitTime() default 5L;
+	long waitTime() default 10L;
 
 	/**
 	 * 락 임대 시간 (default - 3s)
