@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RequestsRepository extends JpaRepository<Requests, Long> {
 	@EntityGraph(attributePaths = "trade")
-	@Query(value="SELECT r FROM Requests r WHERE r.trade.id=:tradeId ORDER BY r.id asc")
+	@Query(value="SELECT r FROM Requests r WHERE r.trade.id=:tradeId ORDER BY r.id asc",
+		countQuery= "SELECT COUNT(r) FROM Requests r WHERE r.trade.id=:tradeId")
 	Page<Requests> findByTradeIdOrderByRequestsIdAsc(@Param("tradeId")Long tradeId,Pageable pageable);
 }
