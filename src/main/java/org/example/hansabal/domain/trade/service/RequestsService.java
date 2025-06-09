@@ -27,7 +27,7 @@ public class RequestsService {
 	private final RequestsRepository requestsRepository;
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
-	//private final WalletService walletService;
+	private final WalletService walletService;
 
 	@Transactional
 	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
@@ -84,7 +84,7 @@ public class RequestsService {
 		if(requests.getStatus()!=RequestStatus.PENDING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
 		Long price = trade.getPrice();
-		//walletService.walletPay(user, requestsId, price);
+		walletService.walletPay(user, trade.getId(), price);
 		requests.updateStatus(RequestStatus.PAID);
 	}
 
@@ -97,7 +97,7 @@ public class RequestsService {
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.SHIPPING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
-		//walletService.walletConfirm(user,requestsId);
+		walletService.walletConfirm(trade,requestsId);
 		requests.updateStatus(RequestStatus.DONE);
 		trade.softDelete();
 	}
