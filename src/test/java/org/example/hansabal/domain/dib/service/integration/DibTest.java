@@ -84,19 +84,19 @@ public class DibTest {
 
 	@Test
 	void 좋아요_증가_및_감소_테스트() throws InterruptedException{
-		int threadCount = 1000;
-		ExecutorService executor = Executors.newFixedThreadPool(50);
+		int threadCount = 100;
+		ExecutorService executor = Executors.newFixedThreadPool(100);
 		CountDownLatch latch = new CountDownLatch(threadCount);
-		// CyclicBarrier barrier = new CyclicBarrier(threadCount);
+		CyclicBarrier barrier = new CyclicBarrier(threadCount);
 		DibRequest request = new DibRequest(DibType.BOARD,1L);
 
 		AtomicInteger increaseCount = new AtomicInteger();
 
 		for(int i = 0; i < threadCount; i++){
 			long userId = i+1L;
-			executor.submit( () -> {
+			executor.execute( () -> {
 				try {
-					// barrier.await();
+					barrier.await();
 					dibService.modifyDibs(userId,request);
 					increaseCount.incrementAndGet();
 				} catch (BizException e) {
