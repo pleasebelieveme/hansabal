@@ -41,7 +41,7 @@ public class TradeService {
 			title="";
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Trade> trades = tradeRepository.findAllByTitleContainingOrderByIdDesc(pageable, title);
+		Page<Trade> trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
 		return trades.map(TradeResponseDto::from);
 	}
 
@@ -57,7 +57,7 @@ public class TradeService {
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Long traderId=user.getId();
-		Page<Trade> trades = tradeRepository.findByTraderOrderByTradeIdAsc(traderId,pageable);
+		Page<Trade> trades = tradeRepository.findByTraderOrderByTradeIdDesc(traderId,pageable);
 		return trades.map(TradeResponseDto::from);
 	}
 

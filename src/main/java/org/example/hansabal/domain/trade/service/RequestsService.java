@@ -13,6 +13,7 @@ import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,7 @@ public class RequestsService {
 	public Page<RequestsResponseDto> getRequestList(Long tradeId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Requests> requests = requestsRepository.findAllByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
+		Page<Requests> requests = requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
 		return requests.map(RequestsResponseDto::from);
 
 	}
