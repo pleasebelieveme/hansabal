@@ -15,7 +15,8 @@ public enum ProductErrorCode implements ErrorCode {
         NO_CONTENTS(HttpStatus.NO_CONTENT,"P005","장바구니가 비었습니다."),
         LOCK_FAILED(HttpStatus.REQUEST_TIMEOUT,"P006","락 시간 초과로 요청 실패"),
         LOCK_INTERRUPTED(HttpStatus.BAD_REQUEST,"P007","락이 예기치않게 중단되었습니다."),
-        FAILED_NAVER(HttpStatus.BAD_GATEWAY, "P008", "외부 API 연동 중 오류가 발생했습니다.");
+        FAILED_NAVER(HttpStatus.BAD_GATEWAY, "P008", "네이버 API 서비스를 사용할 수 없습니다.");
+
 
 
 
