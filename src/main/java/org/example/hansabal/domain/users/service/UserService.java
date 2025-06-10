@@ -26,7 +26,7 @@ public class UserService {
 	public void createUser(@RequestBody UserCreateRequest request) {
 
 		if (userRepository.existsByEmail(request.email())) {
-			throw new BizException(UserErrorCode.DUPLICATE_USER_ID);
+			throw new BizException(UserErrorCode.DUPLICATE_USER_EMAIL);
 		}
 
 		String encodedPassword = passwordEncoder.encode(request.password());
