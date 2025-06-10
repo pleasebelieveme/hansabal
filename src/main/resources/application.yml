@@ -87,5 +87,5 @@ jwt:
 
 naver:
   api:
-  client-id: ${NAVER_CRAWL_CLIENT_ID}
-  client-secret: ${NAVER_CRAWL_CLIENT_SECRET}
+    client-id: ${NAVER_CRAWL_CLIENT_ID}
+    client-secret: ${NAVER_CRAWL_CLIENT_SECRET}
