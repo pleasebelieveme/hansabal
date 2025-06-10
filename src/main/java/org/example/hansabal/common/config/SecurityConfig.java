@@ -37,11 +37,6 @@ public class SecurityConfig {
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.authorizeHttpRequests(auth -> auth
-					.requestMatchers("/api/shop/**").permitAll()
-					.requestMatchers("/search/**").permitAll()
-					.requestMatchers("/crawl").permitAll()
-					.requestMatchers("/api/auth/**").permitAll()
-				.requestMatchers("/api/admin/**").hasRole("ADMIN")
 				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
