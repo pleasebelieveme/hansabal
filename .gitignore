@@ -11,7 +11,7 @@ infra/**
 ### 환경 변수 및 설정 파일 ###
 .env
 *.properties
-application.yml
+src/main/resources/application.yml
 infra/redis/
 infra/mysql/
 
