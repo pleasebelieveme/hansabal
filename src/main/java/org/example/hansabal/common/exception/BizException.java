@@ -1,6 +1,7 @@
 package org.example.hansabal.common.exception;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class BizException extends RuntimeException {
@@ -16,7 +17,7 @@ public class BizException extends RuntimeException {
 		super(errorCode.getMessage());
 		this.errorCode = errorCode;
 	}
-	public int getStatus() {
+	public HttpStatus getStatus() {
 		return errorCode.getStatus();
 	}
 	public String getCode() {
