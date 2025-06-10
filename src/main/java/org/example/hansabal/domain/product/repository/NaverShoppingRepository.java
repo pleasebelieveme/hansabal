@@ -19,10 +19,10 @@ public class NaverShoppingRepository {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    @Value("${naver.client-id}")
+    @Value("${naver.api.client-id}")
     private String clientId;
 
-    @Value("${naver.client-secret}")
+    @Value("${naver.api.client-secret}")
     private String clientSecret;
 
     public NaverShoppingRepository(RestTemplate restTemplate, ObjectMapper objectMapper) {
