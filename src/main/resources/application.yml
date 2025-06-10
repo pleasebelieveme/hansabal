@@ -86,5 +86,6 @@ jwt:
   refresh-token-expiration: 21600000     # 6시간 (밀리초)
 
 naver:
-  client-id: ${NAVER_CRAWL_CLIENT_ID}
-  client-secret: ${NAVER_CRAWL_CLIENT_SECRET}
+  api:
+    client-id: ${NAVER_CRAWL_CLIENT_ID}
+    client-secret: ${NAVER_CRAWL_CLIENT_SECRET}
