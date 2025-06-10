@@ -3,9 +3,11 @@ package org.example.hansabal.domain.users.service.integration;
 import static org.assertj.core.api.Assertions.*;
 
 import lombok.extern.slf4j.Slf4j;
+import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
+import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.example.hansabal.domain.users.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
@@ -68,6 +70,22 @@ public class UserTest {
         assertThat(savedUser.get().getName()).isEqualTo("testman");
         assertThat(savedUser.get().getNickname()).isEqualTo("testnickname");
         assertThat(savedUser.get().getUserRole()).isEqualTo(UserRole.USER);
+    }
+
+    @Test
+    void 중복_이메일_예외처리() {
+        // given
+        UserCreateRequest request = new UserCreateRequest(
+                "test@email.com",
+                "emailtest12!@",
+                "emailtestman",
+                "emailtestnickname",
+                UserRole.USER);
+
+        //when, then
+        assertThatThrownBy(() -> userService.createUser(request))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("중복된 이메일입니다.");
 
     }
 }
