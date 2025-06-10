@@ -20,8 +20,7 @@ public class Review extends BaseEntity {
     @Id
     private Long id;
 
-    @Column(nullable = false)
-    @Lob //text 타입
+    @Column(nullable = false, columnDefinition = "LONGTEXT") // >LONGTEXT 타입이 용량 검색 인덱스 부분에서 더 효율적인
     private String content;
 
     @Column(nullable = false)

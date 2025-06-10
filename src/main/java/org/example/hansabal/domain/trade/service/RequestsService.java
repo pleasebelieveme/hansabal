@@ -13,6 +13,7 @@ import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

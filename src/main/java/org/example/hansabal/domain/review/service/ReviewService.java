@@ -60,6 +60,7 @@ public class ReviewService {
         return UpdateReviewResponse.from(review);
     }
 
+    @Transactional
     public void deleteReview(Long reviewId) {
         Review findReview = reviewRepository.findByIdOrThrow(reviewId);
         findReview.softDelete();

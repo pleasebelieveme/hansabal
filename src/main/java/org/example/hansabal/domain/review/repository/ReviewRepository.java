@@ -18,7 +18,9 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @EntityGraph(attributePaths = "product")
-    @Query("SELECT r FROM Review r WHERE r.product.id= :productId")
+    @Query(value = "SELECT r FROM Review r WHERE r.product.id= :productId",
+    countQuery = "SELECT count(r) FROM Review r WHERE r.product.id= :productId")
+
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
     default Review findByIdOrThrow(Long id) {
