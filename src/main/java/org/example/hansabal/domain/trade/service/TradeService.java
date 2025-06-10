@@ -31,6 +31,7 @@ public class TradeService {
 			.contents(request.contents())
 			.trader(user)
 			.price(request.price())
+			.isOccupied(false)
 			.build();
 		tradeRepository.save(trade);
 	}
@@ -47,7 +48,7 @@ public class TradeService {
 
 	@Transactional(readOnly=true)
 	public TradeResponseDto getTrade(Long tradeId) {
-		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		return TradeResponseDto.from(trade);
 	}
 
@@ -63,7 +64,7 @@ public class TradeService {
 
 	@Transactional
 	public void updateTrade(Long tradeId, TradeRequestDto request, UserAuth userAuth) {
-		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		if(!trade.getTrader().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.updateTrade(request.title(),request.contents(), request.price());
@@ -71,7 +72,7 @@ public class TradeService {
 
 	@Transactional
 	public void cancelTrade(Long tradeId, UserAuth userAuth) {
-		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.NO_SUCH_THING));
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		if(!trade.getTrader().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.softDelete();

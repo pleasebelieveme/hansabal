@@ -13,12 +13,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> {
 
-	@EntityGraph(attributePaths="users")
+	@EntityGraph(attributePaths="trader")
 	@Query(value="SELECT t FROM Trade t WHERE t.title like concat('%',:title,'%') AND t.deletedAt IS null ORDER BY t.id Desc",
 		countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.title like concat('%',:title,'%') AND t.deletedAt IS null")
 	Page<Trade> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(@Param("title") String title, Pageable pageable);
 
-	@EntityGraph(attributePaths="users")
+	@EntityGraph(attributePaths="trader")
 	@Query(value="SELECT t FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null ORDER BY t.id desc",
 		countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null")
 	Page<Trade> findByTraderOrderByTradeIdDesc(@Param("traderId")Long traderId, Pageable pageable);

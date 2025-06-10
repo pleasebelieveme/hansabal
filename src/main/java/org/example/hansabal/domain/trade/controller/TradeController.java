@@ -65,7 +65,7 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@DeleteMapping("{tradeId}")
+	@DeleteMapping("/{tradeId}")
 	public ResponseEntity<Void> cancelTrade(@PathVariable Long tradeId, @AuthenticationPrincipal UserAuth userAuth){
 		tradeService.cancelTrade(tradeId, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
