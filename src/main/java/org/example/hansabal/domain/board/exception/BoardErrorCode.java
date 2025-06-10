@@ -20,13 +20,13 @@ public enum BoardErrorCode implements ErrorCode {
     private final String message;
 
     @Override
-    public int getStatus() {
-        return status.value();
+    public HttpStatus getStatus() {
+        return status;
     }
 
     @Override
     public String getCode() {
-        return this.code;
+        return code;
     }
 
     @Override
