@@ -32,10 +32,6 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-//    아직 엔티티가 없어서 주석처리하였습니다
-//    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL ,orphanRemoval = true)
-//    private List<Div> divs = new ArrayList<>();
-
     public Review(String content, User user, Product product) {
         this.content = content;
         this.user = user;

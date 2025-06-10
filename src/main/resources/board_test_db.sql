@@ -17,6 +17,7 @@ CREATE TABLE boards (
 ) ENGINE=InnoDB;
 
 INSERT INTO boards (id, user_id, category, title, content, view_count, dib_count, created_at, updated_at, deleted_at)
-VALUES (1, 1, 'INFO', 'test title', 'test content', 2, 0, NOW(), NOW(),NULL);
+VALUES (1, 1, 'INFO', 'test title', 'test content', 2, 0, NOW(), NOW(),NULL),
+       (2, 1, 'INFO', 'test title', 'test content', 2, 1000, NOW(), NOW(),NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -12,7 +12,6 @@ import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
 import org.example.hansabal.domain.comment.service.CommentService;
-import org.example.hansabal.domain.review.service.ReviewServiceImpl;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
@@ -88,7 +86,7 @@ public class CommentTest {
 	@Test
 	void 댓글_생성_보드정보_불일치_예외() {
 		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
-		Long boardId = 2L;
+		Long boardId = 3L;
 		UserAuth userAuth = new UserAuth(1L, UserRole.USER);
 
 		assertThatThrownBy( () -> {
