@@ -115,23 +115,25 @@ public class DibTest {
 		Board board = boardRepository.findById(1L).orElseThrow();
 		List<Dib> dibs = dibRepository.findAll();
 
-		assertThat(increaseCount.get()).isEqualTo(1000);
-		assertThat(board.getDibCount()).isEqualTo(1000);
-		assertThat(dibs).hasSize(1000);
+		assertThat(increaseCount.get()).isEqualTo(100);
+		assertThat(board.getDibCount()).isEqualTo(100);
+		assertThat(dibs).hasSize(100);
 
 		log.info("좋아요 최종 수: {}", board.getDibCount());
 		log.info("성공 요청 수: {}", increaseCount.get());
 
 		AtomicInteger cancelCount = new AtomicInteger();
+		CyclicBarrier cancelBarrier = new CyclicBarrier(threadCount);
 		CountDownLatch cancelLatch = new CountDownLatch(threadCount);
 
 		Thread.sleep(10000);
 
 		for (int i = 0; i < threadCount; i++) {
 			long userId = i + 1L;
-			executor = Executors.newFixedThreadPool(50);
+			executor = Executors.newFixedThreadPool(100);
 			executor.submit(() -> {
 				try {
+					cancelBarrier.await();
 					dibService.modifyDibs(userId, request);
 					cancelCount.incrementAndGet();
 				} catch (BizException e){
