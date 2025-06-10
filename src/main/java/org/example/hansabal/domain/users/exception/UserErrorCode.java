@@ -23,8 +23,8 @@ public enum UserErrorCode implements ErrorCode {
 	private final String message;
 
 	@Override
-	public int getStatus() {
-		return httpStatus.value();
+	public HttpStatus getStatus() {
+		return httpStatus;
 	}
 
 	@Override
