@@ -34,16 +34,20 @@ public class Trade extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User trader;
 	private Long price;
+	@Column(columnDefinition = "tinyint(1) default 0")
+	private boolean isOccupied;
 
 
-	public Trade(String title, String contents, User trader){
-		this.title=title;
-		this.contents=contents;
-		this.trader=trader;
-	}
 	public void updateTrade(String title, String contents, Long price){
 		this.title=title;
 		this.contents=contents;
 		this.price=price;
+	}
+	public void occupiedCheck(boolean isOccupied){
+		this.isOccupied=isOccupied;
+	}
+
+	public boolean getIsOccupied() {//@Getter 바로 적용 안되서 임시로 작성, 이후 삭제예정...
+		return isOccupied;
 	}
 }

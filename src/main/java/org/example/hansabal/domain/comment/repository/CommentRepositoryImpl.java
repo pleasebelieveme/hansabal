@@ -32,7 +32,7 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 				comment.dibCount
 			))
 			.from(comment)
-			.where(comment.board.id.eq(boardId))
+			.where(comment.board.id.eq(boardId).and(comment.deletedAt.isNull()))
 			.orderBy(comment.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
