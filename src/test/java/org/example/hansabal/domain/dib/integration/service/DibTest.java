@@ -1,9 +1,8 @@
-package org.example.hansabal.domain.dib.service.integration;
+package org.example.hansabal.domain.dib.integration.service;
 
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -17,19 +16,17 @@ import org.example.hansabal.domain.comment.dto.request.DibRequest;
 import org.example.hansabal.domain.comment.entity.Dib;
 import org.example.hansabal.domain.comment.entity.DibType;
 import org.example.hansabal.domain.comment.repository.DibRepository;
-import org.example.hansabal.domain.comment.service.DibService;
+import org.example.hansabal.domain.comment.DibService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
