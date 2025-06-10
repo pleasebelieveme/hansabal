@@ -21,8 +21,8 @@ public class JwtUtil {
 	@Value("${jwt.secret}")
 	private String secretKey;
 
-	private static final long EXPIRATION = 1000L * 60 * 30;
-	private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 14;
+	private static final long EXPIRATION = 1000L * 60 * 30; // 30분
+	private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 14; // 14일
 
 	public String createToken(Long id, UserRole userRole){
 		return Jwts.builder()

@@ -42,10 +42,15 @@ public class AuthService {
 		String token = jwtUtil.extractToken(request);
 
 		// 토큰이 유효한 경우만 블랙리스트에 등록
+		// 등록된 블랙리스트는 30분 후 제거 -> 엑세스토큰과 시간을 맞추는 것이 일반적
 		if (token != null && jwtUtil.validateToken(token)) {
 			long expiration = jwtUtil.getExpiration(token);
 			redisRepository.saveBlackListToken(token, expiration);
 		}
+
+		// 유저 ID 추출 후 리프레시 토큰 제거
+		UserAuth userAuth = jwtUtil.extractUserAuth(token);
+		redisRepository.deleteRefreshToken(userAuth.getId());
 	}
 
 	public TokenResponse reissue(String bearerToken) {
