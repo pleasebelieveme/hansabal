@@ -37,7 +37,8 @@ public class ReviewService {
         Product findProduct = productRepository.findByIdOrElseThrow(productId);
         Review review = new Review(dto.getContent(),dto.getRating(), findUser, findProduct);
         Review savedReview = reviewRepository.save(review);
-        return CreateReviewResponse.from(savedReview);
+        return new CreateReviewResponse(savedReview.getId(), savedReview.getUser().getNickname(), savedReview.getContent());
+//        return CreateReviewResponse.from(savedReview);
     }
 
     @Transactional(readOnly = true) //페이징

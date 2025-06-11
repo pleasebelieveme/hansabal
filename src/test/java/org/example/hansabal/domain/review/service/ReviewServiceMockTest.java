@@ -71,12 +71,8 @@ public class ReviewServiceMockTest {
         assertThat(response.getNickname()).isEqualTo(user.getNickname());
         assertThat(response.getContent()).isEqualTo(request.getContent());
     }
-
     // 예외 test 할때 사용할 예정참고할 코드 입니다. 추후에 삭제하겠습니다.
     // assertThrows(BizException .class, () -> reviewService.createReview(productId , userAuth, request));
     // assertDoesNotThrow(() -> reviewService.createReview(productId , userAuth, request));
-    @Test
-    void 조회() {
 
-    }
 }
