@@ -244,5 +244,34 @@ public class UserTest {
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("현재 계정의 비밀번호와 같습니다.");
     }
+
+    @Test
+    void 닉네임만_변경_성공() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "onlyNick@test.com",
+                "OriginalPassword12!@",
+                "name",
+                "nickname",
+                UserRole.USER
+        );
+        userService.createUser(create);
+
+        User savedUser = userRepository.findByEmailOrElseThrow("onlyNick@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+
+        UserUpdateRequest request = new UserUpdateRequest(
+                "newNickname",
+                "OriginalPassword12!@",
+                null
+        );
+
+        // when
+        userService.updateUser(request, auth);
+
+        // then
+        User updatedUser = userRepository.findByIdOrElseThrow(savedUser.getId());
+        assertThat(updatedUser.getNickname()).isEqualTo("newNickname");
+    }
 }
 

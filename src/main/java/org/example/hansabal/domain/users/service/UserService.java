@@ -62,7 +62,11 @@ public class UserService {
 			throw new BizException(UserErrorCode.PASSWORD_NOT_CHANGED);
 		}
 
-		String encodedPassword = passwordEncoder.encode(request.newPassword());
+		String encodedPassword = null;
+		if (request.newPassword() != null) {
+			encodedPassword = passwordEncoder.encode(request.newPassword());
+		}
+
 		findUser.updateUser(request.nickname(), encodedPassword);
 	}
 
