@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
+import org.example.hansabal.domain.users.dto.request.UserUpdateRequest;
 import org.example.hansabal.domain.users.dto.response.UserResponse;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
@@ -134,6 +135,34 @@ public class UserTest {
         assertThatThrownBy(() -> userService.findById(userAuth))
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("존재하지 않는 사용자입니다.");
+    }
+
+    // updateUser
+    @Test
+    void 비밀번호_불일치_예외발생() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "wrongpass@test.com",
+                "OriginalPassword12!@",
+                "WrongPassName",
+                "WrongPassNick",
+                UserRole.USER
+        );
+        userService.createUser(create);
+
+        User savedUser = userRepository.findByEmailOrElseThrow("wrongpass@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+
+        UserUpdateRequest request = new UserUpdateRequest(
+                "newNickname",
+                "wrongPassword12!@", // 잘못된 oldPassword
+                "newPassword12!@"
+        );
+
+        // when & then
+        assertThatThrownBy(() -> userService.updateUser(request, auth))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("유효하지 않은 비밀번호입니다.");
     }
 
 }
