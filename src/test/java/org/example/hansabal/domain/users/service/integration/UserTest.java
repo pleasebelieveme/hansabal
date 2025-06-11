@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
+import org.example.hansabal.domain.users.dto.response.UserResponse;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
@@ -54,6 +56,7 @@ public class UserTest {
         // 테스트 전체 실행 전에 필요한 설정이 있다면 여기에 작성
     }
 
+    // createUser
     @Test
     void 유저_생성_및_암호화_검증(){
         // given
@@ -95,6 +98,31 @@ public class UserTest {
 
     }
 
+    // findById
+    @Test
+    void 유저_ID_조회_성공() {
+        // given
+        UserCreateRequest request = new UserCreateRequest(
+                "find@test.com",
+                "Password12!@",
+                "findName",
+                "findNickname",
+                UserRole.USER
+        );
+        userService.createUser(request);
+
+        // when
+        User savedUser = userRepository.findByEmailOrElseThrow("find@test.com");
+        UserAuth userAuth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserResponse response = UserResponse.from(savedUser);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.id()).isEqualTo(savedUser.getId());
+        assertThat(response.email()).isEqualTo("find@test.com");
+        assertThat(response.name()).isEqualTo("findName");
+        assertThat(response.nickname()).isEqualTo("findNickname");
+    }
 
 }
 
