@@ -36,7 +36,7 @@ public class UserService {
 			.password(encodedPassword)
 			.name(request.name())
 			.nickname(request.nickname())
-			.userRole(request.userRole() != null ? request.userRole() : UserRole.USER)
+			.userRole(request.userRole())
 			.build();
 
 		userRepository.save(user);
