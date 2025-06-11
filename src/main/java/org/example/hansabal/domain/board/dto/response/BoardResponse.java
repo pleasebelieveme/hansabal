@@ -31,6 +31,7 @@ public class BoardResponse {
     private List<CommentPageResponse> comments;
     private int likeCount;
     private boolean likedByMe;
+    private int dibCount;
 
     public static BoardResponse from(Board board) {
         User user = board.getUser();
@@ -43,31 +44,12 @@ public class BoardResponse {
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())
+                .dibCount(board.getDibCount())
                 .createdAt(board.getCreatedAt())
                 .updatedAt(board.getUpdatedAt())
                 .comments(null)
                 .likeCount(0)
                 .likedByMe(false)
-                .build();
-    }
-
-    // ⭐ 정적 팩토리 메서드
-    public static BoardResponse from(Board board, List<CommentPageResponse> comments, int likeCount, boolean likedByMe) {
-        User user = board.getUser();
-        return BoardResponse.builder()
-                .id(board.getId())
-                .userId(user.getId())
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .category(board.getCategory().getDisplayName())
-                .title(board.getTitle())
-                .content(board.getContent())
-                .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
-                .updatedAt(board.getUpdatedAt())
-                .comments(comments)
-                .likeCount(likeCount)
-                .likedByMe(likedByMe)
                 .build();
     }
 
