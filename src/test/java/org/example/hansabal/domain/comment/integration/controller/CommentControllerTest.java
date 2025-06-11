@@ -70,7 +70,7 @@ public class CommentControllerTest {
 	CommentService commentService;
 
 	@Test
-	void creatComment() throws Exception{
+	void createComment() throws Exception{
 		// given
 		CreateCommentRequest request = new CreateCommentRequest("댓글");
 		// 댓글 작성 후 반환될 응답 객체를 미리 준비 (Service가 반환한다고 가정함)
