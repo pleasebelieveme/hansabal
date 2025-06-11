@@ -7,7 +7,6 @@ import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
-import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.example.hansabal.domain.users.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
@@ -27,7 +26,7 @@ import java.util.Optional;
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/user_test_db.sql"}
+@Sql(scripts = {"/comment_user_test_db.sql"}
         ,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
 public class UserTest {

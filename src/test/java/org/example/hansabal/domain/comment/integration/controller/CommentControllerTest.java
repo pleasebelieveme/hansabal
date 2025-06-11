@@ -8,18 +8,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
-import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.service.CommentService;
-import org.example.hansabal.domain.users.entity.UserRole;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -38,7 +35,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @Testcontainers
 @ActiveProfiles("test")
-@Sql(scripts = {"/user_test_db.sql","/board_test_db.sql"}
+@Sql(scripts = {"/comment_user_test_db.sql", "/comment_board_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class CommentControllerTest {
 	/* 기존 WebMvcTest에서 SpringBootTest로 변경한 이유는

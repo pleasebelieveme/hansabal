@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Testcontainers
 @ActiveProfiles("test")
 @Slf4j
-@Sql(scripts = "/board_test_db.sql",
+@Sql(scripts = "/comment_board_test_db.sql",
 	executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DibTest {

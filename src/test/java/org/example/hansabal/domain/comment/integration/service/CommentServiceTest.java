@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/user_test_db.sql","/board_test_db.sql","/comment_test_db.sql"}
+@Sql(scripts = {"/comment_user_test_db.sql", "/comment_board_test_db.sql","/comment_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
 public class CommentServiceTest {
