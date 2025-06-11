@@ -34,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql"}
+@Sql(scripts = {"/trade_user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
 public class TradeTest {
