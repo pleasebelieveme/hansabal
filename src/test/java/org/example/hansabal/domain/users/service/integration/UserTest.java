@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,9 @@ public class UserTest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @BeforeAll
     public static void beforeAll() {
@@ -51,11 +55,12 @@ public class UserTest {
     }
 
     @Test
-    void 유저_생성(){
+    void 유저_생성_및_암호화_검증(){
         // given
+        String rawPassword = "Testman12!@";
         UserCreateRequest request = new UserCreateRequest(
                 "test@test.com",
-                "Testman12!@",
+                rawPassword,
                 "testman",
                 "testnickname",
                 UserRole.USER);
@@ -64,12 +69,13 @@ public class UserTest {
         userService.createUser(request);
 
         //then
-        Optional<User> savedUser = userRepository.findByEmail("test@test.com");
-        assertThat(savedUser).isPresent();
-        assertThat(savedUser.get().getEmail()).isEqualTo("test@test.com");
-        assertThat(savedUser.get().getName()).isEqualTo("testman");
-        assertThat(savedUser.get().getNickname()).isEqualTo("testnickname");
-        assertThat(savedUser.get().getUserRole()).isEqualTo(UserRole.USER);
+        User savedUser = userRepository.findByEmailOrElseThrow("test@test.com");
+        assertThat(savedUser).isNotNull();
+        assertThat(savedUser.getEmail()).isEqualTo("test@test.com");
+        assertThat(passwordEncoder.matches(rawPassword, savedUser.getPassword())).isTrue();
+        assertThat(savedUser.getName()).isEqualTo("testman");
+        assertThat(savedUser.getNickname()).isEqualTo("testnickname");
+        assertThat(savedUser.getUserRole()).isEqualTo(UserRole.USER);
     }
 
     @Test
@@ -88,5 +94,7 @@ public class UserTest {
                 .hasMessageContaining("중복된 이메일입니다.");
 
     }
+
+
 }
 
