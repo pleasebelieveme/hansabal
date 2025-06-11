@@ -191,5 +191,31 @@ public class UserTest {
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("닉네임이나 새 비밀번호 중 하나는 반드시 입력되어야 합니다.");
     }
+
+    @Test
+    void 동일한_닉네임_변경요청_예외발생() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "sameName@test.com",
+                "OriginalPassword12!@",
+                "sameName",
+                "sameNick",
+                UserRole.USER
+        );
+        userService.createUser(create);
+
+        User savedUser = userRepository.findByEmailOrElseThrow("sameName@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserUpdateRequest request = new UserUpdateRequest(
+                savedUser.getNickname(),
+                "OriginalPassword12!@",
+                null
+        );
+
+        // when & then
+        assertThatThrownBy(() -> userService.updateUser(request, auth))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("현재 계정의 닉네임과 같습니다.");
+    }
 }
 
