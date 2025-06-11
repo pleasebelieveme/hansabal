@@ -217,5 +217,32 @@ public class UserTest {
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("현재 계정의 닉네임과 같습니다.");
     }
+
+    @Test
+    void 동일한_비밀번호_변경요청_예외발생() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "samePass@test.com",
+                "OriginalPassword12!@",
+                "samePass",
+                "sameNick",
+                UserRole.USER
+        );
+        userService.createUser(create);
+
+        User savedUser = userRepository.findByEmailOrElseThrow("samePass@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+
+        UserUpdateRequest request = new UserUpdateRequest(
+                null,
+                "OriginalPassword12!@",
+                "OriginalPassword12!@"
+        );
+
+        // when & then
+        assertThatThrownBy(() -> userService.updateUser(request, auth))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("현재 계정의 비밀번호와 같습니다.");
+    }
 }
 
