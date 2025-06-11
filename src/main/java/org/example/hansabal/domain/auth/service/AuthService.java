@@ -46,6 +46,10 @@ public class AuthService {
 			long expiration = jwtUtil.getExpiration(token);
 			redisRepository.saveBlackListToken(token, expiration);
 		}
+
+		// 유저 ID 추출 후 리프레시 토큰 제거
+		UserAuth userAuth = jwtUtil.extractUserAuth(token);
+		redisRepository.deleteRefreshToken(userAuth.getId());
 	}
 
 	public TokenResponse reissue(String bearerToken) {

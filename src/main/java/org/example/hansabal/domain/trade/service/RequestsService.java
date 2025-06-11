@@ -13,7 +13,7 @@ import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
-import org.example.hansabal.domain.wallet.service.WalletService;
+//import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ public class RequestsService {
 	private final RequestsRepository requestsRepository;
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
-	private final WalletService walletService;
+	//private final WalletService walletService;
 
 	@Transactional
 	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
@@ -61,7 +61,9 @@ public class RequestsService {
 		if(requests.getStatus()==RequestStatus.AVAILABLE)//거래상태가 '가능'이고 가격이 무료가 아닐 때 배송단계로 넘기는것을 금지.
 			if(request.requestStatus()==RequestStatus.SHIPPING&&trade.getPrice()!=0L)
 				throw new BizException(TradeErrorCode.NOT_PAID);
-		if(requests.getStatus()==RequestStatus.PAID||requests.getStatus()==RequestStatus.DONE)//거래 요청자가 지정해야할 상태로 변경 금지.
+		if(request.requestStatus()==RequestStatus.PAID||request.requestStatus()==RequestStatus.DONE)//거래 요청자가 지정해야할 상태로 변경 금지.
+			throw new BizException(TradeErrorCode.NOT_SUPPORTED_TYPE);
+		if(requests.getStatus()==RequestStatus.PAID&&request.requestStatus()==RequestStatus.PENDING)//지불 완료된 거래요청을 지불대기로 변경하는것을 방지
 			throw new BizException(TradeErrorCode.NOT_SUPPORTED_TYPE);
 		requests.updateStatus(request.requestStatus());
 		if(!trade.getIsOccupied())
@@ -88,8 +90,8 @@ public class RequestsService {
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.PENDING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
-		Long price = trade.getPrice();
-		walletService.walletPay(user, trade.getId(), price);
+		//Long price = trade.getPrice();
+		//walletService.walletPay(user, trade.getId(), price);
 		requests.updateStatus(RequestStatus.PAID);
 	}
 
@@ -102,7 +104,7 @@ public class RequestsService {
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.SHIPPING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
-		walletService.walletConfirm(trade,requestsId);
+		//walletService.walletConfirm(trade,requestsId);
 		requests.updateStatus(RequestStatus.DONE);
 		trade.softDelete();
 	}

@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -34,21 +35,26 @@ public class BoardService {
     private final CommentService commentService;
     private final DibService dibService;
     private final CommentRepository commentRepository;
+    private final BoardMapper boardMapper;
 
+
+    // === 게시글 등록 ===
     @Transactional
     public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Board board = Board.builder()
                 .user(user)
-                .category(BoardCategory.valueOf(request.getCategory().toUpperCase())) // 반드시 enum으로 변환
+                .category(BoardCategory.fromDisplayName(request.getCategory())) // ✅ 변경
                 .title(request.getTitle())
                 .content(request.getContent())
+                .dibCount(0)
                 .viewCount(0)
                 .build();
         Board saved = boardRepository.save(board);
-        return toResponse(saved);
+        return boardMapper.toResponse(saved);
     }
 
+    // === 게시글 수정 ===
     @Transactional
     public BoardResponse updatePost(UserAuth userAuth, Long Id, BoardRequest request) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
@@ -57,10 +63,12 @@ public class BoardService {
         if (!board.getUser().getId().equals(user.getId())) {
             throw new BizException(BoardErrorCode.FORBIDDEN);
         }
-        board.update(BoardCategory.valueOf(request.getCategory().toUpperCase()), request.getTitle(), request.getContent());
-        return toResponse(board);
-    }
 
+        // 카테고리 + 제목 + 내용 업데이트
+        board.update(BoardCategory.valueOf(request.getCategory().toUpperCase()), request.getTitle(), request.getContent());
+        return boardMapper.toResponse(board);
+    }
+    // === 게시글 삭제 ===
     @Transactional
     public void deletePost(UserAuth userAuth, Long Id) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
@@ -72,58 +80,53 @@ public class BoardService {
         boardRepository.delete(board);
     }
 
+    // === 게시글 상세 조회 ===
     @Transactional(readOnly = true)
     public BoardResponse getPost(Long postId, Pageable pageable) {
         // 1. 게시글 엔티티 조회
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
 
-        // 2. 댓글 리스트 (페이징 적용)
-        Page<CommentPageResponse> commentPage = commentRepository.findByBoardId(postId, pageable);
-        List<CommentPageResponse> comments = commentPage.getContent();
 
-        // 3. 좋아요(찜) 개수 - Board 엔티티의 필드값 사용
+
+        // 2. 좋아요(찜) 개수 - Board 엔티티의 필드값 사용
         int likeCount = board.getDibCount();
 
+        // 3. 댓글 리스트 제거에 따라 빈 리스트 전달 또는 null 처리 (선택)
+        List<CommentPageResponse> comments = Collections.emptyList(); // 또는 null
 
-        // 5. 응답 조립 및 반환
-        return BoardResponse.from(board, comments, likeCount, false /* likedByMe: 구현 시 교체 */);
+        // 4. 응답 조립 및 반환
+        return boardMapper.toResponse(board, comments, likeCount, false);
     }
 
+    // === 게시글 목록 조회 (카테고리 + 키워드 포함) ===
     @Transactional(readOnly = true)
-    public Page<BoardResponse> getPosts(BoardCategory category, int page, int size) {
+    public Page<BoardResponse> getPosts(String category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Board> boardPage;
-        if (category == BoardCategory.ALL) {
-            boardPage = boardRepository.findAll(pageable);
+
+        boolean isAll = category.equalsIgnoreCase("ALL");
+        boolean hasKeyword = keyword != null && !keyword.isBlank();
+
+        if (isAll && hasKeyword) {
+            // 1. 전체 + 검색어 → 제목/내용에 키워드 포함된 게시글
+            boardPage = boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+
+        } else if (!isAll && hasKeyword) {
+            // 2. 특정 카테고리 + 검색어
+            BoardCategory boardCategory = BoardCategory.fromDisplayName(category);
+            boardPage = boardRepository.searchByCategoryAndKeyword(boardCategory, keyword, pageable);
+
+        } else if (!isAll) {
+            // 3. 특정 카테고리만
+            BoardCategory boardCategory = BoardCategory.fromDisplayName(category);
+            boardPage = boardRepository.findByCategory(boardCategory, pageable);
+
         } else {
-            boardPage = boardRepository.findByCategory(category, pageable);
+            // 4. 전체 조회
+            boardPage = boardRepository.findAll(pageable);
         }
-        // Board → BoardResponse 변환 예시
-        return boardPage.map(BoardResponse::from);
-    }
 
-    @Transactional(readOnly = true)
-    public Page<BoardResponse> searchPosts(String keyword, int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size);
-        Page<Board> boards = boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageRequest);
-        return boards.map(this::toResponse);
-    }
-
-    // 작성자 정보 포함 변환
-    private BoardResponse toResponse(Board board) {
-        User user = board.getUser();
-        return BoardResponse.builder()
-                .id(board.getId())
-                .userId(user.getId())
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .category(board.getCategory().getDisplayName()) // ★ 여기만 getDisplayName()으로 수정
-                .title(board.getTitle())
-                .content(board.getContent())
-                .viewCount(board.getViewCount())
-                .createdAt(board.getCreatedAt())
-                .updatedAt(board.getUpdatedAt())
-                .build();
+        return boardPage.map(boardMapper::toResponse);
     }
 }
