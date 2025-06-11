@@ -16,7 +16,7 @@ import org.example.hansabal.domain.comment.dto.request.DibRequest;
 import org.example.hansabal.domain.comment.entity.Dib;
 import org.example.hansabal.domain.comment.entity.DibType;
 import org.example.hansabal.domain.comment.repository.DibRepository;
-import org.example.hansabal.domain.comment.DibService;
+import org.example.hansabal.domain.comment.service.DibService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.service.UserService;
