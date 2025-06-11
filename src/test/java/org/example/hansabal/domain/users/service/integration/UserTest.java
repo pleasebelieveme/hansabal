@@ -304,5 +304,71 @@ public class UserTest {
         User updated = userRepository.findByIdOrElseThrow(savedUser.getId());
         assertThat(passwordEncoder.matches(newPassword, updated.getPassword())).isTrue();
     }
+
+    @Test
+    void 닉네임_비밀번호_모두_변경_성공() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "change@test.com",
+                "OldPassword12!@",
+                "name",
+                "nickname",
+                UserRole.USER
+        );
+        userService.createUser(create);
+
+        User savedUser = userRepository.findByEmailOrElseThrow("change@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+
+        String newPassword = "Changed12!@";
+
+        UserUpdateRequest request = new UserUpdateRequest(
+                "changeNickname",
+                "OldPassword12!@",
+                newPassword
+        );
+
+        // when
+        userService.updateUser(request, auth);
+
+        // then
+        User updated = userRepository.findByIdOrElseThrow(savedUser.getId());
+        assertThat(updated.getNickname()).isEqualTo("changeNickname");
+        assertThat(passwordEncoder.matches(newPassword, updated.getPassword())).isTrue();
+    }
+
+    @Test
+    void 회원_삭제_성공() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "delete@test.com",
+                "Password12!@",
+                "name",
+                "nickname",
+                UserRole.USER
+        );
+        userService.createUser(create);
+        User savedUser = userRepository.findByEmailOrElseThrow("delete@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+
+        // when
+        userService.deleteUser(auth);
+
+        // then
+        assertThatThrownBy(() -> userRepository.findByIdOrElseThrow(savedUser.getId()))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("존재하지 않는 사용자입니다."); // 예외 메시지는 상황에 맞게 수정
+    }
+
+    @Test
+    void 존재하지_않는_유저_삭제시_예외발생() {
+        // given
+        UserAuth auth = new UserAuth(9999L, UserRole.USER); // 존재하지 않는 ID
+
+        // when & then
+        assertThatThrownBy(() -> userService.deleteUser(auth))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("존재하지 않는 사용자입니다.");
+    }
 }
 
