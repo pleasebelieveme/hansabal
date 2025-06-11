@@ -273,5 +273,36 @@ public class UserTest {
         User updatedUser = userRepository.findByIdOrElseThrow(savedUser.getId());
         assertThat(updatedUser.getNickname()).isEqualTo("newNickname");
     }
+
+    @Test
+    void 비밀번호만_변경_성공() {
+        // given
+        UserCreateRequest create = new UserCreateRequest(
+                "onlyPass@test.com",
+                "OldPassword12!@",
+                "name",
+                "nickname",
+                UserRole.USER
+        );
+        userService.createUser(create);
+
+        User savedUser = userRepository.findByEmailOrElseThrow("onlyPass@test.com");
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+
+        String newPassword = "Newpass12!@";
+
+        UserUpdateRequest request = new UserUpdateRequest(
+                null,
+                "OldPassword12!@",
+                newPassword
+        );
+
+        // when
+        userService.updateUser(request, auth);
+
+        // then
+        User updated = userRepository.findByIdOrElseThrow(savedUser.getId());
+        assertThat(passwordEncoder.matches(newPassword, updated.getPassword())).isTrue();
+    }
 }
 
