@@ -3,7 +3,6 @@ package org.example.hansabal.board;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.example.hansabal.common.exception.BizException;
@@ -12,12 +11,8 @@ import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.repository.BoardRepository;
-import org.example.hansabal.domain.board.service.BoardMapper;
 import org.example.hansabal.domain.board.service.BoardService;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
-import org.example.hansabal.domain.comment.service.CommentService;
-import org.example.hansabal.domain.comment.service.DibService;
-import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;

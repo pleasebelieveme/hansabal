@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.comment.service.integration;
+package org.example.hansabal.domain.comment.integration.service;
 
 import static org.assertj.core.api.Assertions.*;
 

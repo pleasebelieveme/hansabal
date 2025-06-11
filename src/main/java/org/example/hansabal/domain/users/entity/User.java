@@ -50,6 +50,15 @@ public class User extends BaseEntity {
 	@Column(nullable = true)
 	private UserRole userRole;
 
+	public User(Long id, String email, String password, String name, String nickname, UserRole userRole) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.nickname = nickname;
+		this.userRole = userRole;
+	}
+
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Board> boards;
 	//
