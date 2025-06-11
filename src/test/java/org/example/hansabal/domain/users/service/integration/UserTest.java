@@ -124,5 +124,17 @@ public class UserTest {
         assertThat(response.nickname()).isEqualTo("findNickname");
     }
 
+    @Test
+    void 유저_ID_조회_실패_예외발생() {
+        // given
+        Long id = 9999L;
+        UserAuth userAuth = new UserAuth(id, UserRole.USER);
+
+        // when & then
+        assertThatThrownBy(() -> userService.findById(userAuth))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("존재하지 않는 사용자입니다.");
+    }
+
 }
 
