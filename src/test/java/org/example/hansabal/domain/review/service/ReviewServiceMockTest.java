@@ -1,10 +1,13 @@
 package org.example.hansabal.domain.review.service;
 
+import org.assertj.core.api.Assertions;
+import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.entity.ProductStatus;
 import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
+import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
 import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.repository.ReviewRepository;
@@ -17,10 +20,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.validation.BindException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
@@ -71,8 +76,58 @@ public class ReviewServiceMockTest {
         assertThat(response.getNickname()).isEqualTo(user.getNickname());
         assertThat(response.getContent()).isEqualTo(request.getContent());
     }
-    // 예외 test 할때 사용할 예정참고할 코드 입니다. 추후에 삭제하겠습니다.
-    // assertThrows(BizException .class, () -> reviewService.createReview(productId , userAuth, request));
-    // assertDoesNotThrow(() -> reviewService.createReview(productId , userAuth, request));
 
+    @Test
+    void 리뷰생성_불일치_예외() {
+        // given
+        Long productId = 1L;
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        CreateReviewRequest request = new CreateReviewRequest("테스트 리뷰", 5);
+
+        Product product = new Product("테스트 제품", 10, ProductStatus.FOR_SALE);
+        User user = new User("테스트 이메일", "테스트 비밀번호", "테스트 이름", "테스트 닉네임");
+
+        Long reviewId = 1L;
+        Review review = Mockito.mock(Review.class);
+        given(review.getId()).willReturn(reviewId);
+        given(review.getUser()).willReturn(user);
+        given(review.getContent()).willReturn(request.getContent());
+
+        //when
+        when(productRepository.findByIdOrElseThrow(anyLong())).thenReturn(product);
+        when(userRepository.findByIdOrElseThrow(anyLong())).thenReturn(user);
+        when(reviewRepository.save(any())).thenReturn(review);
+        CreateReviewResponse response = reviewService.createReview(productId, userAuth, request);
+
+        //then
+        assertThrows(BizException.class,()->reviewService.createReview(productId, userAuth, request));
+    }
+
+
+
+
+    @Test
+    void 리뷰_수정() {
+        //given
+        Long reviewId = 1L;
+        UpdateReviewRequest request = new UpdateReviewRequest("테스트1", 5);
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+
+        //given 2
+        User user = new User(1L,"테스트 이메일", "테스트 비밀번호", "테스트 이름", "테스트 닉네임",UserRole.USER);
+
+        //when
+        Review review = Mockito.mock(Review.class);
+        given(review.getId()).willReturn(reviewId);
+        given(review.getUser()).willReturn(user);
+        reviewService.updateReview(reviewId,request,userAuth);
+
+        //then
+    }
 }
+//        Assertions.assertThatThrownBy(() -> reviewService.createReview(2L, userAuth, request))
+//                .isInstanceOf(BizException.class).hasMessageContaining("해당하는 리뷰가 없습니다");
+// 예외 test 할때 사용할 예정참고 하려고 적어 놓은 코드 입니다. 추후에 삭제하겠습니다.
+//        assertDoesNotThrow(() -> reviewService.createReview(productId , userAuth, request));
+
+
