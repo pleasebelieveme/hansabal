@@ -2,15 +2,27 @@ package org.example.hansabal.domain.auth.service.integration;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.JwtUtil;
 import org.example.hansabal.domain.auth.dto.request.LoginRequest;
 import org.example.hansabal.domain.auth.dto.response.TokenResponse;
 import org.example.hansabal.domain.auth.service.AuthService;
+import org.example.hansabal.domain.auth.service.TokenService;
+import org.example.hansabal.domain.users.entity.User;
+import org.example.hansabal.domain.users.repository.RedisRepository;
+import org.example.hansabal.domain.users.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.anyLong;
+
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
@@ -45,6 +57,18 @@ public class AuthTest {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @MockitoBean
+    private RedisRepository redisRepository;
 
 
     @Test
@@ -81,5 +105,21 @@ public class AuthTest {
         assertThatThrownBy(() -> authService.login(request))
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("존재하지 않는 사용자입니다.");
+    }
+
+    @Test
+    void 로그아웃_성공() {
+        // given
+        User user = userRepository.findByEmailOrElseThrow("test@email.com");
+        String token = tokenService.createTokens(user.getId(), user.getUserRole()).getAccessToken();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer " + token);
+
+        // when
+        authService.logout(request);
+
+        // then: 블랙리스트 등록, 리프레시 삭제가 호출됐는지 검증
+        verify(redisRepository, times(1)).saveBlackListToken(anyString(), anyLong());
+        verify(redisRepository, times(1)).deleteRefreshToken(user.getId());
     }
 }
