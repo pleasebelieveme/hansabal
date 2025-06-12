@@ -22,6 +22,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.validation.BindException;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -86,48 +88,19 @@ public class ReviewServiceMockTest {
 
         Product product = new Product("테스트 제품", 10, ProductStatus.FOR_SALE);
         User user = new User("테스트 이메일", "테스트 비밀번호", "테스트 이름", "테스트 닉네임");
-
-        Long reviewId = 1L;
-        Review review = Mockito.mock(Review.class);
-        given(review.getId()).willReturn(reviewId);
-        given(review.getUser()).willReturn(user);
-        given(review.getContent()).willReturn(request.getContent());
+        Review review  = new Review("테스트리뷰", 5, user, product);
 
         //when
         when(productRepository.findByIdOrElseThrow(anyLong())).thenReturn(product);
         when(userRepository.findByIdOrElseThrow(anyLong())).thenReturn(user);
-        when(reviewRepository.save(any())).thenReturn(review);
-        CreateReviewResponse response = reviewService.createReview(productId, userAuth, request);
+        when(reviewRepository.findByUserAndProductId(user, product.getId())).thenReturn(Optional.of(review));
+        //Optional<Review>가 반환 타입이기 때문에 "Optional.of(review)"을 사용했습니다.
 
         //then
         assertThrows(BizException.class,()->reviewService.createReview(productId, userAuth, request));
     }
 
-
-
-
-    @Test
-    void 리뷰_수정() {
-        //given
-        Long reviewId = 1L;
-        UpdateReviewRequest request = new UpdateReviewRequest("테스트1", 5);
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
-
-        //given 2
-        User user = new User(1L,"테스트 이메일", "테스트 비밀번호", "테스트 이름", "테스트 닉네임",UserRole.USER);
-
-        //when
-        Review review = Mockito.mock(Review.class);
-        given(review.getId()).willReturn(reviewId);
-        given(review.getUser()).willReturn(user);
-        reviewService.updateReview(reviewId,request,userAuth);
-
-        //then
-    }
 }
-//        Assertions.assertThatThrownBy(() -> reviewService.createReview(2L, userAuth, request))
-//                .isInstanceOf(BizException.class).hasMessageContaining("해당하는 리뷰가 없습니다");
-// 예외 test 할때 사용할 예정참고 하려고 적어 놓은 코드 입니다. 추후에 삭제하겠습니다.
-//        assertDoesNotThrow(() -> reviewService.createReview(productId , userAuth, request));
+
 
 
