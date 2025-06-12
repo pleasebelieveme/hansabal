@@ -65,4 +65,4 @@
 //        Assertions.assertThat(response).isNotNull();
 //        Assertions.assertThat(response.getId()).isEqualTo(product.getId());
 //    }
-//}
+//} 일단 주석처리 해놨습니다.

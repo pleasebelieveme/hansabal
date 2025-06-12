@@ -57,7 +57,7 @@ public class ReviewService {
         if (!review.getUser().getId().equals(user.getId())) {
             throw new BizException(ReviewErrorCode.REVIEW_FORBIDDEN);
         }
-        review.updateReview(request.getContent());
+        review.updateReview(request.getContent(),request.getRating());
         return UpdateReviewResponse.from(review);
     }
 
