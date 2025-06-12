@@ -1,5 +1,12 @@
 package org.example.hansabal.domain.auth.service.integration;
 
+import org.junit.jupiter.api.Test;
+
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+
 import io.lettuce.core.RedisClient;
 import io.lettuce.core.api.StatefulRedisConnection;
 import lombok.extern.slf4j.Slf4j;
@@ -29,9 +36,7 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 
 @SpringBootTest
 @Testcontainers
@@ -132,24 +137,27 @@ public class AuthTest {
 
     @Test
     void 로그아웃_성공() {
-        // given
+        // given: 유저 조회 및 토큰 생성
         User user = userRepository.findByEmailOrElseThrow("test@email.com");
-        TokenResponse tokens = tokenService.createTokens(user.getId(), user.getUserRole());
-        String accessToken = tokens.getAccessToken();
+        TokenResponse tokens = tokenService.generateTokens(user.getId(), user.getUserRole());
+        tokenService.saveRefreshToken(user.getId(), tokens.getRefreshToken());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addHeader("Authorization", "Bearer " + accessToken);
+        request.addHeader("Authorization", "Bearer " + tokens.getAccessToken());
 
-        // when
+        // when: 로그아웃 수행
         authService.logout(request);
 
-        // 블랙리스트 토큰 존재 여부 체크
-        boolean isBlackListed = redisRepository.validateKey(accessToken);
+        // then: AccessToken 유효성 확인 (여전히 유효하지만 블랙리스트에 저장됐는지 확인)
+        assertThat(jwtUtil.validateToken(tokens.getAccessToken())).isTrue();
+
+        // Redis에 AccessToken이 블랙리스트로 저장되어 있는지 확인
+        boolean isBlackListed = redisRepository.validateKey(tokens.getAccessToken());
         assertThat(isBlackListed).isTrue();
 
-        // 리프레시 토큰 존재 여부 체크 (일치 여부 판단)
-        boolean refreshTokenValid = redisRepository.validateRefreshToken(user.getId(), "기대하는_리프레시_토큰_값");
-        assertThat(refreshTokenValid).isFalse(); // 로그아웃 후면 삭제되어 false여야 함
+        // 리프레시 토큰이 삭제되어 더 이상 유효하지 않아야 함
+        boolean isRefreshTokenValid = redisRepository.validateRefreshToken(user.getId(), tokens.getRefreshToken());
+        assertThat(isRefreshTokenValid).isFalse();
     }
     @Test
     void 리프레시토큰이_널이거나_Bearer_로_시작하지_않으면_예외발생() {
@@ -169,7 +177,8 @@ public class AuthTest {
         User user = userRepository.findByEmailOrElseThrow("test@email.com");
 
         // 실제 토큰 생성 (유효한 리프레시 토큰)
-        TokenResponse tokenResponse = tokenService.createTokens(user.getId(), user.getUserRole());
+        TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole());
+        tokenService.saveRefreshToken(user.getId(), tokenResponse.getRefreshToken());
         String validRefreshToken = tokenResponse.getRefreshToken();
 
         // Redis에 실제 저장 (saveRefreshToken 메서드 사용)
@@ -183,4 +192,5 @@ public class AuthTest {
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
     }
+
 }
