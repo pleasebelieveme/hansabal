@@ -13,6 +13,9 @@ public class ReviewResponse {
     private final String content;
 
     public static ReviewResponse from(Review review) {
-        return new ReviewResponse(review.getId(),review.getUser().getNickname(),review.getContent());
+        return new ReviewResponse(
+                 review.getId()
+                ,review.getUser().getNickname()
+                ,review.getContent());
     }
 }

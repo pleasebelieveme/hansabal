@@ -4,6 +4,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.exception.ReviewErrorCode;
+import org.example.hansabal.domain.users.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -18,7 +19,9 @@ import java.util.Optional;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @EntityGraph(attributePaths = "product")
-    @Query("SELECT r FROM Review r WHERE r.product.id= :productId")
+    @Query(value = "SELECT r FROM Review r WHERE r.product.id= :productId",
+    countQuery = "SELECT count(r) FROM Review r WHERE r.product.id= :productId")
+
     Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
     default Review findByIdOrThrow(Long id) {
@@ -30,4 +33,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     default Review findByProductIdOrThrow(Long productId) {
         return findByProductId(productId).orElseThrow(()->new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
     }
+    Optional<Review> findByUserAndProductId(User user, Long productId);
 }

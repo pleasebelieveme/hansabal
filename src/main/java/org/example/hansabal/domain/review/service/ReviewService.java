@@ -22,6 +22,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -33,9 +35,13 @@ public class ReviewService {
 
     @Transactional
     public CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest dto) {
-        User findUser = userRepository.findByIdOrElseThrow(userAuth.getId());
+        User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Product findProduct = productRepository.findByIdOrElseThrow(productId);
-        Review review = new Review(dto.getContent(), findUser, findProduct);
+        Optional<Review> existingReview  = reviewRepository.findByUserAndProductId(user, findProduct.getId());
+        if (existingReview.isPresent()) {
+            throw new BizException(ReviewErrorCode.REVIEW_ALREADY_EXISTS);
+        }
+        Review review = new Review(dto.getContent(),dto.getRating(), user, findProduct);
         Review savedReview = reviewRepository.save(review);
         return CreateReviewResponse.from(savedReview);
     }
@@ -56,10 +62,11 @@ public class ReviewService {
         if (!review.getUser().getId().equals(user.getId())) {
             throw new BizException(ReviewErrorCode.REVIEW_FORBIDDEN);
         }
-        review.updateReview(request.getContent());
+        review.updateReview(request.getContent(),request.getRating());
         return UpdateReviewResponse.from(review);
     }
 
+    @Transactional
     public void deleteReview(Long reviewId) {
         Review findReview = reviewRepository.findByIdOrThrow(reviewId);
         findReview.softDelete();
