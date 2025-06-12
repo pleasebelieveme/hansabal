@@ -61,4 +61,15 @@ public class AuthTest {
         assertThat(response.getRefreshToken()).isNotBlank();
     }
 
+    @Test
+    void 로그인_실패_비밀번호_불일치() {
+        // given
+        LoginRequest request = new LoginRequest("test@email.com", "WrongPassword123!");
+
+        // when & then
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("유효하지 않은 비밀번호입니다.");
+    }
+
 }
