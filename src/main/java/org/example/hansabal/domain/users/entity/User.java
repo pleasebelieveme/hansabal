@@ -77,13 +77,6 @@ public class User extends BaseEntity {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<Dib> dibs;
 
-	public User(String email, String password, String name, String nickname) {
-		this.email = email;
-		this.password = password;
-		this.name = name;
-		this.nickname = nickname;
-	}
-
 	public void updateUser(String nickname, String password) {
 		if (nickname != null) {
 			this.nickname = nickname;
