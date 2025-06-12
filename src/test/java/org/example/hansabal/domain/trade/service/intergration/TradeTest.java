@@ -108,7 +108,7 @@ public class TradeTest {
 		UserAuth userAuth = new UserAuth(4L, UserRole.USER);
 		Long tradeId = 7L;
 
-		tradeService.cancelTrade(7L, userAuth);
+		tradeService.cancelTrade(tradeId, userAuth);
 		Trade trade = tradeRepository.findById(7L).orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 
 		assertThat(trade.getDeletedAt()).isNotNull();
@@ -120,7 +120,7 @@ public class TradeTest {
 	RequestsRequestDto request = RequestsRequestDto.builder().tradeId(6L).build();
 
 	requestsService.createRequests(userAuth,request);
-	Requests requests = requestsRepository.findById(7L).orElseThrow(() -> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
+	Requests requests = requestsRepository.findById(8L).orElseThrow(() -> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 
 	assertThat(requests.getStatus()).isEqualTo(RequestStatus.AVAILABLE);
 	assertThat(requests.getTrade().getId()).isEqualTo(6L);
@@ -168,12 +168,36 @@ public class TradeTest {
 	void 거래_상태_업데이트_실패_잘못된_상태_업데이트(){//3번 rq사용, st:paid/done
 		UserAuth userAuth = new UserAuth(2L,UserRole.USER);
 		Long requestsId=3L;
-		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PAID);
+		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.DONE);
 
 		requestsService.updateRequestsByTrader(requestsId, request, userAuth);
 
 		assertThatThrownBy(()->{requestsService.updateRequestsByTrader(requestsId, request, userAuth);
 		}).isInstanceOf(BizException.class).hasMessageContaining("올바르지 않은 상태값입니다.");
+	}
+
+	@Test
+	void 거래_상태_업데이트_실패_점유된_거래의_추가_요청_수락_시도(){
+		UserAuth userAuth = new UserAuth(1L,UserRole.USER);
+		Long requestsId=7L;
+		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PENDING);
+
+		requestsService.updateRequestsByTrader(requestsId, request, userAuth);
+
+		assertThatThrownBy(()->{requestsService.updateRequestsByTrader(requestsId, request, userAuth);
+		}).isInstanceOf(BizException.class).hasMessageContaining("이미 요청을 수락한 거래입니다.");
+	}
+
+	@Test
+	void 거래_상태_업데이트_실패_지불된_요청을_지불_전으로_수정(){//rq3
+		UserAuth userAuth = new UserAuth(2L,UserRole.USER);
+		Long requestsId=3L;
+		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PENDING);
+
+		requestsService.updateRequestsByTrader(requestsId, request, userAuth);
+
+		assertThatThrownBy(()->{requestsService.updateRequestsByTrader(requestsId, request, userAuth);
+		}).isInstanceOf(BizException.class).hasMessageContaining("이미 지불된 요청을 지불 전으로 돌릴 수 없습니다.");
 	}
 
 	@Test
