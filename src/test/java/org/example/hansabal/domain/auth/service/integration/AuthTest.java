@@ -1,6 +1,7 @@
 package org.example.hansabal.domain.auth.service.integration;
 
 import lombok.extern.slf4j.Slf4j;
+import org.assertj.core.api.Assertions;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.JwtUtil;
 import org.example.hansabal.domain.auth.dto.request.LoginRequest;
@@ -13,6 +14,8 @@ import org.example.hansabal.domain.users.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -121,5 +124,17 @@ public class AuthTest {
         // then: 블랙리스트 등록, 리프레시 삭제가 호출됐는지 검증
         verify(redisRepository, times(1)).saveBlackListToken(anyString(), anyLong());
         verify(redisRepository, times(1)).deleteRefreshToken(user.getId());
+    }
+
+    @Test
+    void 리프레시토큰이_널이거나_Bearer_로_시작하지_않으면_예외가_발생한다() {
+        // given
+        // when & then
+        Assertions.assertThatThrownBy(() -> authService.reissue(null))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
+        Assertions.assertThatThrownBy(() -> authService.reissue("InvalidToken"))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
     }
 }
