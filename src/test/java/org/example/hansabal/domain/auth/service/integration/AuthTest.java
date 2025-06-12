@@ -72,4 +72,14 @@ public class AuthTest {
                 .hasMessageContaining("유효하지 않은 비밀번호입니다.");
     }
 
+    @Test
+    void 로그인_실패_존재하지_않는_이메일() {
+        // given
+        LoginRequest request = new LoginRequest("notexist@email.com", "!Aa123456");
+
+        // when & then
+        assertThatThrownBy(() -> authService.login(request))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("존재하지 않는 사용자입니다.");
+    }
 }
