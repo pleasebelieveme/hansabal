@@ -21,11 +21,9 @@ import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.RedisRepository;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -159,6 +157,17 @@ public class AuthTest {
         boolean isRefreshTokenValid = redisRepository.validateRefreshToken(user.getId(), tokens.getRefreshToken());
         assertThat(isRefreshTokenValid).isFalse();
     }
+
+    @Test
+    void 로그아웃_중_token이_null이면_예외_없이_조용히_무시된다() {
+        // given: Authorization 헤더가 없음 → extractToken()이 null 반환
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        // when & then
+        assertThatCode(() -> authService.logout(request))
+                .doesNotThrowAnyException();
+    }
+
     @Test
     void 리프레시토큰이_널이거나_Bearer_로_시작하지_않으면_예외발생() {
         // given
