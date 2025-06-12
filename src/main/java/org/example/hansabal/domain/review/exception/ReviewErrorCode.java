@@ -18,8 +18,8 @@ public enum ReviewErrorCode implements ErrorCode {
 
 
     @Override
-    public int getStatus() {
-        return httpStatus.value();
+    public HttpStatus getStatus() {
+        return httpStatus;
     }
 
     @Override

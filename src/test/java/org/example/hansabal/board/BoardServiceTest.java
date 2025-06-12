@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
@@ -29,13 +30,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
-
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 @SpringBootTest
+@Testcontainers
 @Transactional
 @ActiveProfiles("test")
 @Sql(scripts = {"/user_test_db.sql", "/board_test_db.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Slf4j
 public class BoardServiceTest {
 
     @Autowired private BoardService boardService;
