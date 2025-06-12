@@ -15,9 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.times;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.anyLong;
 
@@ -34,6 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @Testcontainers
@@ -67,7 +65,7 @@ public class AuthTest {
     @Autowired
     private TokenService tokenService;
 
-    @Autowired
+    @MockitoBean
     private JwtUtil jwtUtil;
 
     @MockitoBean
@@ -127,13 +125,24 @@ public class AuthTest {
     }
 
     @Test
-    void 리프레시토큰이_널이거나_Bearer_로_시작하지_않으면_예외가_발생한다() {
+    void 리프레시토큰이_널이거나_Bearer_로_시작하지_않으면_예외발생() {
         // given
         // when & then
         Assertions.assertThatThrownBy(() -> authService.reissue(null))
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
         Assertions.assertThatThrownBy(() -> authService.reissue("InvalidToken"))
+                .isInstanceOf(BizException.class)
+                .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
+    }
+
+    @Test
+    void 리프레시토큰의_정보가_유효하지_않으면_예외발생() {
+        // given
+        when(jwtUtil.validateToken("validRefreshToken")).thenReturn(false);
+
+        // when & then
+        Assertions.assertThatThrownBy(() -> authService.reissue("Bearer validRefreshToken"))
                 .isInstanceOf(BizException.class)
                 .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
     }
