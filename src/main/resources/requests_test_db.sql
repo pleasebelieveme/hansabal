@@ -11,7 +11,7 @@ CREATE TABLE requests (
                        FOREIGN KEY (requester) REFERENCES users(id),
                        created_at DATETIME(6),
                        updated_at DATETIME(6),
-                       deleted_at DATETIME(6),
+                       deleted_at DATETIME(6)
 ) ENGINE=InnoDB;
 
 INSERT INTO requests (id, status, trade, requester,created_at, updated_at, deleted_at)
