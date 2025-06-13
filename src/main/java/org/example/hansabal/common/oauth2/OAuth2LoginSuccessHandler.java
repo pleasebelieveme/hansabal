@@ -39,7 +39,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 		User user = userRepository.findByEmailOrElseThrow(email);
 
-		TokenResponse tokenResponse = tokenService.createTokens(user.getId(), user.getUserRole());
+		TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole());
+		tokenService.saveRefreshToken(user.getId(), tokenResponse.getRefreshToken());
 
 		// 응답 바디 설정 및 JSON 변환
 		response.setContentType("application/json");
