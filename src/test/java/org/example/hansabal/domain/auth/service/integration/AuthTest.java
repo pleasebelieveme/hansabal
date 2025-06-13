@@ -169,6 +169,21 @@ public class AuthTest {
     }
 
     @Test
+    void 로그아웃_중_token이_invalid하면_예외_없이_조용히_무시된다() {
+        // given: Authorization 헤더는 있으나 invalid token
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addHeader("Authorization", "Bearer invalid_token_!!!");
+
+        // when & then
+        assertThatCode(() -> authService.logout(request))
+                .doesNotThrowAnyException();
+
+        // then: 블랙리스트에 등록되지 않음
+        boolean isBlackListed = redisRepository.validateKey("invalid_token_!!!");
+        assertThat(isBlackListed).isFalse();
+    }
+
+    @Test
     void 리프레시토큰이_널이거나_Bearer_로_시작하지_않으면_예외발생() {
         // given
         // when & then
