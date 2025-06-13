@@ -15,7 +15,7 @@ CREATE TABLE trade (
                          FOREIGN KEY (trader) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
-INSERT INTO trade (id, title, contents, trader, price,isOccupied)
+INSERT INTO trade (id, title, contents, trader, price,isOccupied,created_at, updated_at, deleted_at)
 VALUES(1,'test1','testcontents',1,25000,0,now(),now(),null),
       (2,'test2','testcontents',1,15000,1,now(),now(),null),
       (3,'test3','testcontents',2,33000,1,now(),now(),null),
