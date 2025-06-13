@@ -1,13 +1,11 @@
 package org.example.hansabal.domain.review.service;
 
-import org.assertj.core.api.Assertions;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.entity.ProductStatus;
 import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
-import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
 import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.repository.ReviewRepository;
@@ -20,12 +18,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.validation.BindException;
-
 import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
