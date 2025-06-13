@@ -217,4 +217,30 @@ public class AuthTest {
                 .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
     }
 
+    @Test
+    void 리프레시토큰_재발급_성공() {
+        // given
+        User user = userRepository.findByEmailOrElseThrow("test@email.com");
+
+        // 실제 토큰 생성 + Redis 저장
+        TokenResponse originalToken = tokenService.generateTokens(user.getId(), user.getUserRole());
+        tokenService.saveRefreshToken(user.getId(), originalToken.getRefreshToken());
+
+        String refreshToken = originalToken.getRefreshToken();
+
+        // when
+        TokenResponse newTokens = authService.reissue("Bearer " + refreshToken);
+
+        System.out.println("refreshToken = " + refreshToken);
+        System.out.println("newTokens = " + newTokens.getRefreshToken());
+        // then
+        assertThat(newTokens).isNotNull();
+        assertThat(newTokens.getAccessToken()).isNotBlank();
+        assertThat(newTokens.getRefreshToken()).isNotBlank();
+
+        // 이전 리프레시 토큰은 삭제되어야 함
+        boolean isOldTokenStillExists = redisRepository.validateRefreshToken(user.getId(), refreshToken);
+        assertThat(isOldTokenStillExists).isFalse();
+    }
+
 }
