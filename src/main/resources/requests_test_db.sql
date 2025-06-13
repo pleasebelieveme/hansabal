@@ -21,5 +21,6 @@ VALUES(1,'AVAILABLE',1,5,now(),now(),null),
       (4,'SHIPPING',4,8,now(),now(),null),
       (5,'DONE',5,9,now(),now(),null),
       (6,'AVAILABLE',6,9,now(),now(),null),
-      (7,'AVAILABLE',6,5,now(),now(),null);
+      (7,'AVAILABLE',5,5,now(),now(),null),
+      (8,'AVAILABLE',6,9,now(),now(),null);
 SET FOREIGN_KEY_CHECKS = 1;

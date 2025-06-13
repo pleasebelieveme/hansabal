@@ -22,6 +22,7 @@ VALUES(1,'test1','testcontents',1,25000,0,now(),now(),null),
       (4,'test4','testcontents',3,8500,1,now(),now(),null),
       (5,'generic1','testcontents',4,30500,1,now(),now(),null),
       (6,'generic2','testcontents',4,30500,0,now(),now(),null),
-      (7,'generic3','testcontents',4,30500,0,now(),now(),null);
+      (7,'generic3','testcontents',4,30500,0,now(),now(),null),
+      (8,'generic4','testcontents',4,30500,0,now(),now(),null);
 
 SET FOREIGN_KEY_CHECKS = 1;
