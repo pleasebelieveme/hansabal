@@ -26,12 +26,12 @@ public enum ProductErrorCode implements ErrorCode {
 
         @Override
         public HttpStatus getStatus() {
-                return httpStatus;
+            return httpStatus;
         }
 
         @Override
         public String getCode() {
-            return this.code;
+            return code;
         }
 
         @Override

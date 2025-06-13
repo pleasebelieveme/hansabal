@@ -21,7 +21,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	}
 
 	default User findByIdOrElseThrow(Long id) {
-		return findById(id).orElseThrow(() -> new BizException(UserErrorCode.NOT_FOUND_USER));
+		return findById(id)
+				.filter(user -> !user.isDeleted())
+				.orElseThrow(() -> new BizException(UserErrorCode.NOT_FOUND_USER));
 	}
 
 	boolean existsByNickname(String nickname);

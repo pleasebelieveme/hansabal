@@ -21,12 +21,12 @@ public enum BoardErrorCode implements ErrorCode {
 
     @Override
     public HttpStatus getStatus() {
-        return this.status;
+        return status;
     }
 
     @Override
     public String getCode() {
-        return this.code;
+        return code;
     }
 
     @Override

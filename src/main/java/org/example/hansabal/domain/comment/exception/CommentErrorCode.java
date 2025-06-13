@@ -23,7 +23,7 @@ public enum CommentErrorCode implements ErrorCode {
 
 	@Override
 	public String getCode() {
-		return this.name();
+		return code;
 	}
 
 	@Override

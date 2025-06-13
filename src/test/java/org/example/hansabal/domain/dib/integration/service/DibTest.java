@@ -1,9 +1,8 @@
-package org.example.hansabal.domain.dib.service.integration;
+package org.example.hansabal.domain.dib.integration.service;
 
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
@@ -22,14 +21,12 @@ import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -40,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Testcontainers
 @ActiveProfiles("test")
 @Slf4j
-@Sql(scripts = "/board_test_db.sql",
+@Sql(scripts = "/comment_board_test_db.sql",
 	executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DibTest {

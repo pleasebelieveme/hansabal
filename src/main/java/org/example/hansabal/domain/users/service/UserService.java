@@ -26,7 +26,7 @@ public class UserService {
 	public void createUser(@RequestBody UserCreateRequest request) {
 
 		if (userRepository.existsByEmail(request.email())) {
-			throw new BizException(UserErrorCode.DUPLICATE_USER_ID);
+			throw new BizException(UserErrorCode.DUPLICATE_USER_EMAIL);
 		}
 
 		String encodedPassword = passwordEncoder.encode(request.password());
@@ -36,7 +36,7 @@ public class UserService {
 			.password(encodedPassword)
 			.name(request.name())
 			.nickname(request.nickname())
-			.userRole(request.userRole() != null ? request.userRole() : UserRole.USER)
+			.userRole(request.userRole())
 			.build();
 
 		userRepository.save(user);
@@ -62,7 +62,11 @@ public class UserService {
 			throw new BizException(UserErrorCode.PASSWORD_NOT_CHANGED);
 		}
 
-		String encodedPassword = passwordEncoder.encode(request.newPassword());
+		String encodedPassword = null;
+		if (request.newPassword() != null) {
+			encodedPassword = passwordEncoder.encode(request.newPassword());
+		}
+
 		findUser.updateUser(request.nickname(), encodedPassword);
 	}
 
