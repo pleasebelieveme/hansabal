@@ -124,7 +124,7 @@ public class UserTest {
         // when
         User savedUser = userRepository.findByEmailOrElseThrow("find@test.com");
         UserAuth userAuth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
-        UserResponse response = UserResponse.from(savedUser);
+        UserResponse response = userService.findById(userAuth);
 
         // then
         assertThat(response).isNotNull();

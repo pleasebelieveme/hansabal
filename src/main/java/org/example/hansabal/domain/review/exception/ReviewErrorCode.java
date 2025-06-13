@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 public enum ReviewErrorCode implements ErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.BAD_REQUEST,"R001","해당하는 리뷰가 없습니다"),
     RIVIEW_NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "R002", "해당하는 제품이 없습니다."),
-    REVIEW_FORBIDDEN(HttpStatus.FORBIDDEN,"R003","권한이 없습니다.");
+    REVIEW_FORBIDDEN(HttpStatus.FORBIDDEN,"R003","권한이 없습니다."),
+    REVIEW_ALREADY_EXISTS(HttpStatus.BAD_REQUEST,"R004", "해당 상품에 대한 리뷰를 이미 작성하셨습니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
