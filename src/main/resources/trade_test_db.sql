@@ -8,14 +8,14 @@ CREATE TABLE trade (
                          contents TEXT ,
                          trader BIGINT NOT NULL ,
                          price BIGINT NOT NULL ,
-                         isOccupied tinyint NOT NULL,
+                         is_occupied tinyint NOT NULL,
                          created_at DATETIME(6),
                          updated_at DATETIME(6),
                          deleted_at DATETIME(6),
                          FOREIGN KEY (trader) REFERENCES users(id)
 ) ENGINE=InnoDB;
 
-INSERT INTO trade (id, title, contents, trader, price,isOccupied,created_at, updated_at, deleted_at)
+INSERT INTO trade (id, title, contents, trader, price,is_occupied,created_at, updated_at, deleted_at)
 VALUES(1,'test1','testcontents',1,25000,0,now(),now(),null),
       (2,'test2','testcontents',1,15000,1,now(),now(),null),
       (3,'test3','testcontents',2,33000,1,now(),now(),null),
