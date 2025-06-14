@@ -7,9 +7,6 @@ import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
-import java.util.ArrayList;
-
-
 @Entity
 @Table(name = "reviews")
 @Getter
@@ -45,5 +42,4 @@ public class Review extends BaseEntity {
         this.content = updateContent;
         this.rating = rating;
     }
-
 }
