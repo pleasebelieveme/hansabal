@@ -34,7 +34,7 @@ public class ReviewService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public CreateReviewResponse createReview(@Valid Long productId, UserAuth userAuth, CreateReviewRequest dto) {
+    public CreateReviewResponse createReview(Long productId, UserAuth userAuth, CreateReviewRequest dto) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Product findProduct = productRepository.findByIdOrElseThrow(productId);
         Optional<Review> existingReview  = reviewRepository.findByUserAndProductId(user, findProduct.getId());
