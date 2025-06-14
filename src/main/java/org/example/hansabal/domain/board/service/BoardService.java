@@ -82,7 +82,7 @@ public class BoardService {
 
     // === 게시글 상세 조회 ===
     @Transactional(readOnly = true)
-    public BoardResponse getPost(Long postId, Pageable pageable) {
+    public BoardResponse getPost(Long postId) {
         // 1. 게시글 엔티티 조회
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
