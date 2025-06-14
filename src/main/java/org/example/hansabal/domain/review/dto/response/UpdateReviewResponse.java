@@ -14,12 +14,15 @@ public class UpdateReviewResponse {
     private final String nickname;
     private final String content;
     private final LocalDateTime updatedAt;
+    private final Integer rating;
 
     public static UpdateReviewResponse from(Review review) {
         return new UpdateReviewResponse(
                 review.getId(),
                 review.getUser().getNickname(),
                 review.getContent(),
-                review.getUpdatedAt());
+                review.getUpdatedAt(),
+                review.getRating()
+        );
     }
 }
