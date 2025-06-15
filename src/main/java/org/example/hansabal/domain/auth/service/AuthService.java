@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.auth.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.JwtUtil;
 import org.example.hansabal.common.jwt.UserAuth;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional // AuthService의 모든 public 메서드에만 트랜잭션 적용
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
 	private final UserRepository userRepository;
@@ -35,21 +37,27 @@ public class AuthService {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
 		}
 
-		return tokenService.createTokens(user.getId(), user.getUserRole());
+		TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole());
+		tokenService.saveRefreshToken(user.getId(), tokenResponse.getRefreshToken());
+
+		return tokenResponse;
 	}
 
 	public void logout(HttpServletRequest request) {
-		String token = jwtUtil.extractToken(request);
+		try {
+			String token = jwtUtil.extractToken(request);
 
-		// 토큰이 유효한 경우만 블랙리스트에 등록
-		if (token != null && jwtUtil.validateToken(token)) {
-			long expiration = jwtUtil.getExpiration(token);
-			redisRepository.saveBlackListToken(token, expiration);
+			if (token != null && jwtUtil.validateToken(token)) {
+				long expiration = jwtUtil.getExpiration(token);
+				redisRepository.saveBlackListToken(token, expiration);
+
+				UserAuth userAuth = jwtUtil.extractUserAuth(token);
+				redisRepository.deleteRefreshToken(userAuth.getId());
+			}
+		} catch (Exception e) {
+			// 로그만 남기고 조용히 무시
+			log.warn("로그아웃 처리 중 예외 발생: {}", e.getMessage());
 		}
-
-		// 유저 ID 추출 후 리프레시 토큰 제거
-		UserAuth userAuth = jwtUtil.extractUserAuth(token);
-		redisRepository.deleteRefreshToken(userAuth.getId());
 	}
 
 	public TokenResponse reissue(String bearerToken) {
@@ -74,6 +82,10 @@ public class AuthService {
 
 		redisRepository.deleteRefreshToken(userAuth.getId());
 
-		return tokenService.createTokens(userAuth.getId(), userAuth.getUserRole());
+		// 4. 새 토큰 생성 및 저장
+		TokenResponse newTokens = tokenService.generateTokens(userAuth.getId(), userAuth.getUserRole());
+		tokenService.saveRefreshToken(userAuth.getId(), newTokens.getRefreshToken());
+
+		return newTokens;
 	}
 }
