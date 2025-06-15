@@ -10,4 +10,4 @@ spring:
     open-in-view: false
 
 jwt:
-  secret: TlSTtzcspRw0Ec1sUrK9 WwJ7a5XHVWzisIs2/5rg+bU=
+  secret: TlSTtzcspRw0Ec1sUrK9WwJ7a5XHVWzisIs2/5rg+bU=

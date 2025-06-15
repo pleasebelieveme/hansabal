@@ -4,6 +4,7 @@ package org.example.hansabal.domain.board.service;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.common.redisson.DistributedLock;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.entity.Board;
@@ -37,7 +38,12 @@ public class BoardService {
     private final CommentRepository commentRepository;
     private final BoardMapper boardMapper;
 
-
+    @DistributedLock(key = "'DIB:BOARD:' + #postId")
+    public void ViewCount (Long postId) {
+        Board board = boardRepository.findById(postId)
+                .orElseThrow(() -> new BizException(BoardErrorCode.BOARD_NOT_FOUND));
+        board.increaseViewCount();
+    }
     // === 게시글 등록 ===
     @Transactional
     public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
@@ -83,6 +89,8 @@ public class BoardService {
     // === 게시글 상세 조회 ===
     @Transactional(readOnly = true)
     public BoardResponse getPost(Long postId) {
+
+        ViewCount(postId);
         // 1. 게시글 엔티티 조회
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
