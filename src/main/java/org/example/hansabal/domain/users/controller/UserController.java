@@ -38,7 +38,7 @@ public class UserController {
 	}
 
 	@PatchMapping
-	public ResponseEntity<Void> updateUser(@Valid @RequestBody UserUpdateRequest request, UserAuth userAuth) {
+	public ResponseEntity<Void> updateUser(@Valid @RequestBody UserUpdateRequest request, @AuthenticationPrincipal UserAuth userAuth) {
 		userService.updateUser(request, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
