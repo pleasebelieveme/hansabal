@@ -11,9 +11,13 @@ public class CreateReviewResponse {
     private final Long id;
     private final String nickname;
     private final String content;
-
+    private final Integer rating;
 
     public static CreateReviewResponse from(Review review) {
-        return new CreateReviewResponse(review.getId(),review.getUser().getNickname(),review.getContent());
+        return new CreateReviewResponse(
+                review.getId(),
+                review.getUser().getNickname(),
+                review.getContent(),
+                review.getRating());
     }
 }

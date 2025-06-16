@@ -141,5 +141,4 @@ public class CommentServiceTest {
 		assertThat(result.getContent().get(99).getDibCount()).isEqualTo(0);
 	}
 
-
 }

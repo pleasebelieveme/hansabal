@@ -7,9 +7,6 @@ import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
-import java.util.ArrayList;
-
-
 @Entity
 @Table(name = "reviews")
 @Getter
@@ -20,9 +17,11 @@ public class Review extends BaseEntity {
     @Id
     private Long id;
 
-    @Column(nullable = false)
-    @Lob //text 타입
+    @Column(nullable = false, columnDefinition = "LONGTEXT") // >LONGTEXT 타입이 용량 검색 인덱스 부분에서 더 효율적인
     private String content;
+
+    @Column(nullable = false)
+    private Integer rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -32,14 +31,15 @@ public class Review extends BaseEntity {
     @JoinColumn(name = "product_id")
     private Product product;
 
-    public Review(String content, User user, Product product) {
+    public Review(String content, Integer rating, User user, Product product) {
         this.content = content;
+        this.rating = rating;
         this.user = user;
         this.product = product;
     }
 
-    public void updateReview(String updateContent) {
+    public void updateReview(String updateContent, Integer rating) {
         this.content = updateContent;
+        this.rating = rating;
     }
-
 }

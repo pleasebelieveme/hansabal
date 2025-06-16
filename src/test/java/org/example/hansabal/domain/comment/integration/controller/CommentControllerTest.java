@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.service.CommentService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,7 @@ public class CommentControllerTest {
 	CommentService commentService;
 
 	@Test
+	@DisplayName("댓글 생성 성공 테스트")
 	void createComment() throws Exception{
 		// given
 		CreateCommentRequest request = new CreateCommentRequest("댓글");
@@ -98,6 +100,24 @@ public class CommentControllerTest {
 			.andExpect(status().isCreated())
 			// JSON 응답에서 "contents" 필드가 "댓글" 인지 확인
 			.andExpect(jsonPath("$.contents").value("댓글"));
+	}
+
+	@Test
+	@DisplayName("댓글 생성 실패 Valid 오류")
+	void createComment_vaild_exception() throws Exception{
+		// given
+		CreateCommentRequest request = new CreateCommentRequest("");
+
+		// when & then
+		mockMvc.perform(post("/api/comments/boards/1")
+			.with(user("1").roles("USER"))
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(request)))
+			.andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+			.andExpect(jsonPath("$.code").value("C001"))
+			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
+			.andExpect(jsonPath("$.errors[0].field").value("contents"))
+			.andExpect(jsonPath("$.errors[0].rejectedValue").value(""));
 	}
 
 }

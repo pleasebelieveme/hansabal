@@ -54,11 +54,8 @@ public class BoardController {
 
     // 게시글 단건 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<BoardResponse> getPost(
-            @PathVariable Long postId,
-            @PageableDefault(size = 10) Pageable pageable
-    ) {
-        BoardResponse response = boardService.getPost(postId, pageable);
+    public ResponseEntity<BoardResponse> getPost(@PathVariable Long postId) {
+        BoardResponse response = boardService.getPost(postId);  // Pageable 삭제
         return ResponseEntity.ok(response);
     }
 

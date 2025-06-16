@@ -13,8 +13,8 @@ CREATE TABLE users (
                        updated_at DATETIME(6),
                        deleted_at DATETIME(6)
 ) ENGINE=InnoDB;
-
+-- password: !Aa123456
 INSERT INTO users (id, email, password, name, nickname, user_role,created_at, updated_at, deleted_at)
-VALUES (1,'test@email.com','!Aa123456','testname','testnickname1','USER',NOW(),NOW(),NULL);
+VALUES (1,'test@email.com','$2a$10$KSlx0SYrksH0u7ePgjALXuojnoawGXcngfyWgAwNiTu69GLgr01Gq','testname','testnickname1','USER',NOW(),NOW(),NULL);
 
 SET FOREIGN_KEY_CHECKS = 1;

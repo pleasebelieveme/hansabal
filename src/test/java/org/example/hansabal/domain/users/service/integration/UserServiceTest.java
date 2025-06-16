@@ -26,8 +26,6 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
-
 @SpringBootTest
 @Testcontainers
 @Transactional
@@ -35,7 +33,7 @@ import java.util.Optional;
 @Sql(scripts = {"/user_test_db.sql"}
         ,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
-public class UserTest {
+public class UserServiceTest {
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
@@ -124,7 +122,7 @@ public class UserTest {
         // when
         User savedUser = userRepository.findByEmailOrElseThrow("find@test.com");
         UserAuth userAuth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
-        UserResponse response = UserResponse.from(savedUser);
+        UserResponse response = userService.findById(userAuth);
 
         // then
         assertThat(response).isNotNull();

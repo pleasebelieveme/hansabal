@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -77,6 +78,7 @@ public class JwtUtil {
 		return Jwts.builder()
 			.setSubject(String.valueOf(id))
 			.claim("userRole", role.name())
+			.claim("jti", UUID.randomUUID().toString())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
