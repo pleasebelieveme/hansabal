@@ -13,15 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -48,17 +44,6 @@ public class AuthControllerTest {
                         .userRole(UserRole.USER)
                         .build()
         );
-
-        // UserAuth를 실제 ID 기반으로 설정
-        UserAuth testUserAuth = new UserAuth(testUser.getId(), testUser.getUserRole());
-
-        SecurityContextHolder.getContext().setAuthentication(
-                new UsernamePasswordAuthenticationToken(
-                        testUserAuth,
-                        null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + testUserAuth.getUserRole()))
-                )
-        );
     }
 
     @Test
@@ -68,15 +53,22 @@ public class AuthControllerTest {
         );
 
         mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(user("1").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
     }
 
     @Test
     void 로그아웃_성공() throws Exception {
+        LoginRequest request = new LoginRequest(
+                "user@email.com","OldPassword12!@"
+        );
         // 로그인 후 쿠키 또는 토큰 없이도 mockMvc 테스트에서 직접 호출 가능 (단순히 status 확인)
-        mockMvc.perform(post("/api/auth/logout"))
+        mockMvc.perform(post("/api/auth/logout")
+                        .with(user("1").roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk());
     }
 
@@ -86,8 +78,9 @@ public class AuthControllerTest {
         LoginRequest request = new LoginRequest("user@email.com", "OldPassword12!@");
 
         String responseBody = mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
+                .with(user("1").roles("USER"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
@@ -97,7 +90,7 @@ public class AuthControllerTest {
 
         // when & then: 재발급 요청
         mockMvc.perform(post("/api/auth/reissue")
-                        .header("Authorization", "Bearer " + tokenResponse.getRefreshToken()))
+                .header("Authorization", "Bearer " + tokenResponse.getRefreshToken()))
                 .andExpect(status().isOk());
     }
 }
