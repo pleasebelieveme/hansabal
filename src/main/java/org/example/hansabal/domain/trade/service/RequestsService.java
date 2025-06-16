@@ -43,8 +43,7 @@ public class RequestsService {
 	public Page<RequestsResponseDto> getRequestList(Long tradeId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Requests> requests = requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
-		return requests.map(RequestsResponseDto::from);
+		return requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
 
 	}
 
