@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class TokenResponse {
+
 	@Schema(description = "액세스 토큰", example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")
 	private final String accessToken;
 

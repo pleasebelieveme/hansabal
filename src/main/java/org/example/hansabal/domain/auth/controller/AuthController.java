@@ -25,12 +25,12 @@ public class AuthController {
 	private final AuthService authService;
 
 	@Operation(
-			summary = "로그인",
-			description = "이메일과 비밀번호를 입력받아 로그인하고, AccessToken과 RefreshToken을 반환합니다."
+		summary = "로그인",
+		description = "이메일과 비밀번호를 입력받아 로그인하고, AccessToken과 RefreshToken을 반환합니다."
 	)
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "로그인 성공"),
-			@ApiResponse(responseCode = "401", description = "인증 실패")
+		@ApiResponse(responseCode = "200", description = "로그인 성공"),
+		@ApiResponse(responseCode = "401", description = "인증 실패")
 	})
 	@PostMapping("/login")
 	public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -39,8 +39,8 @@ public class AuthController {
 	}
 
 	@Operation(
-			summary = "로그아웃",
-			description = "현재 로그인된 사용자를 로그아웃 처리합니다. AccessToken을 무효화합니다."
+		summary = "로그아웃",
+		description = "현재 로그인된 사용자를 로그아웃 처리합니다. AccessToken을 무효화합니다."
 	)
 	@ApiResponse(responseCode = "200", description = "로그아웃 성공")
 	@PostMapping("/logout")
@@ -50,12 +50,12 @@ public class AuthController {
 	}
 
 	@Operation(
-			summary = "토큰 재발급",
-			description = "RefreshToken을 사용하여 새로운 AccessToken과 RefreshToken을 발급받습니다."
+		summary = "토큰 재발급",
+		description = "RefreshToken을 사용하여 새로운 AccessToken과 RefreshToken을 발급받습니다."
 	)
 	@ApiResponses({
-			@ApiResponse(responseCode = "200", description = "재발급 성공"),
-			@ApiResponse(responseCode = "401", description = "RefreshToken 인증 실패")
+		@ApiResponse(responseCode = "200", description = "재발급 성공"),
+		@ApiResponse(responseCode = "401", description = "RefreshToken 인증 실패")
 	})
 	@PostMapping("/reissue")
 	public ResponseEntity<TokenResponse> reissue(@RequestHeader("Authorization") String refreshToken) {
