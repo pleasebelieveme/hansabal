@@ -18,22 +18,22 @@ public class SwaggerConfig {
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
 
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-                .name(jwt)
-                .type(SecurityScheme.Type.HTTP)
-                .scheme("bearer")
-                .bearerFormat("JWT"));
+            .name(jwt)
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT"));
 
         return new OpenAPI()
-                .openapi("3.0.3")
-                .components(components) // ✅ 하나만 사용
-                .info(apiInfo())
-                .addSecurityItem(securityRequirement);
+            .openapi("3.0.3")
+            .components(components)
+            .info(apiInfo())
+            .addSecurityItem(securityRequirement);
     }
 
     private Info apiInfo() {
         return new Info()
-                .title("Hansabal") // API의 제목
-                .description("sparta hansabal") // API에 대한 설명
-                .version("1.0.0"); // API의 버전
+            .title("Hansabal") // API의 제목
+            .description("sparta hansabal") // API에 대한 설명
+            .version("1.0.0"); // 우리 서비스의 API의 버전
     }
 }
