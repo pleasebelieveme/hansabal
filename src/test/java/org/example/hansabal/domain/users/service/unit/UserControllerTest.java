@@ -23,7 +23,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
@@ -50,8 +49,9 @@ public class UserControllerTest {
         doNothing().when(userService).createUser(any(UserCreateRequest.class));
 
         mockMvc.perform(post("/api/users")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(request))
+                )
                 .andExpect(status().isCreated());
     }
 
@@ -63,7 +63,6 @@ public class UserControllerTest {
         when(userService.findById(any())).thenReturn(response);
 
         mockMvc.perform(get("/api/users/me"))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email").value("test@email.com"))
                 .andExpect(jsonPath("$.name").value("testname"))
@@ -78,9 +77,9 @@ public class UserControllerTest {
         doNothing().when(userService).updateUser(any(UserUpdateRequest.class), any(UserAuth.class));
 
         mockMvc.perform(patch("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andDo(print())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(updateRequest))
+                )
                 .andExpect(status().isOk());
     }
 
@@ -90,7 +89,6 @@ public class UserControllerTest {
         doNothing().when(userService).deleteUser(any(UserAuth.class));
 
         mockMvc.perform(delete("/api/users"))
-                .andDo(print())
                 .andExpect(status().isOk());
     }
 }
