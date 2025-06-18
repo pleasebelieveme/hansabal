@@ -39,4 +39,9 @@ public class Chat extends BaseEntity {
 		this.sentAt = LocalDateTime.now();
 	}
 
+	public Chat(User sender, User receiver, String content) {
+		this.sender = sender;
+		this.receiver = receiver;
+		this.content = content;
+	}
 }
