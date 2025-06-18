@@ -50,7 +50,9 @@ public class Board  extends BaseEntity {
     public void decreaseDibs() {
         if (dibCount > 0) this.dibCount--;
     }
-
+    public void increaseViewCount() {
+        this.viewCount += 1;
+    }
     @Builder
     public Board(User user, BoardCategory category, String title, String content, Integer viewCount) {
         this.user = user;

@@ -11,8 +11,14 @@ public class ReviewResponse {
     private final Long id;
     private final String nickname;
     private final String content;
+    private final Integer rating;
 
     public static ReviewResponse from(Review review) {
-        return new ReviewResponse(review.getId(),review.getUser().getNickname(),review.getContent());
+        return new ReviewResponse(
+                review.getId(),
+                review.getUser().getNickname(),
+                review.getContent(),
+                review.getRating()
+        );
     }
 }

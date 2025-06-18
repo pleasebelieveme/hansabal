@@ -27,6 +27,9 @@ dependencies {
     // 환경변수 .env
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
+    //이메일 발송에 대한 의존성
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
@@ -62,8 +65,16 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     // O'Auth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
     //batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
+
+    // WebSocket 지원
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
 }
 
 tasks.named('test') {

@@ -51,6 +51,15 @@ public class User extends BaseEntity {
 	@Column(nullable = true)
 	private UserRole userRole;
 
+	public User(Long id, String email, String password, String name, String nickname, UserRole userRole) {
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.name = name;
+		this.nickname = nickname;
+		this.userRole = userRole;
+	}
+
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Board> boards;
 	//
@@ -67,13 +76,6 @@ public class User extends BaseEntity {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<Dib> dibs;
-
-	public User(String email, String password, String name, String nickname) {
-		this.email = email;
-		this.password = password;
-		this.name = name;
-		this.nickname = nickname;
-	}
 
 	public void updateUser(String nickname, String password) {
 		if (nickname != null) {

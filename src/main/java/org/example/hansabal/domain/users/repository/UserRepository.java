@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.users.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.example.hansabal.common.exception.BizException;
@@ -21,8 +22,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	}
 
 	default User findByIdOrElseThrow(Long id) {
-		return findById(id).orElseThrow(() -> new BizException(UserErrorCode.NOT_FOUND_USER));
+		return findById(id)
+				.filter(user -> !user.isDeleted())
+				.orElseThrow(() -> new BizException(UserErrorCode.NOT_FOUND_USER));
 	}
 
 	boolean existsByNickname(String nickname);
+
+	Optional<User> findByNickname(String nickname);
 }

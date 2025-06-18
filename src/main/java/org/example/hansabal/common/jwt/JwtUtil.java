@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -24,10 +25,11 @@ public class JwtUtil {
 	private static final long EXPIRATION = 1000L * 60 * 30; // 30분
 	private static final long REFRESH_EXPIRATION = 1000L * 60 * 60 * 24 * 14; // 14일
 
-	public String createToken(Long id, UserRole userRole){
+	public String createToken(Long id, UserRole userRole,String nickname){
 		return Jwts.builder()
 			.setSubject(String.valueOf(id))
 			.claim("userRole", userRole.name())
+			.claim("nickname",nickname)
 			.setIssuedAt(new Date())
 
 			.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
@@ -43,7 +45,8 @@ public class JwtUtil {
 			.parseClaimsJws(token)
 			.getBody();
 
-		return new UserAuth(Long.parseLong(claims.getSubject()), UserRole.valueOf(claims.get("userRole",String.class)));
+		return new UserAuth(Long.parseLong(claims.getSubject()), UserRole.valueOf(claims.get("userRole",String.class)),claims.get("nickname",
+			String.class));
 	}
 
 	public boolean validateToken(String token){
@@ -73,10 +76,12 @@ public class JwtUtil {
 		return claims.getExpiration().getTime() - System.currentTimeMillis();
 	}
 
-	public String createRefreshToken(Long id, UserRole role) {
+	public String createRefreshToken(Long id, UserRole role,String nickname) {
 		return Jwts.builder()
 			.setSubject(String.valueOf(id))
 			.claim("userRole", role.name())
+			.claim("nickname",nickname)
+			.claim("jti", UUID.randomUUID().toString())
 			.setIssuedAt(new Date())
 			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
 			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))

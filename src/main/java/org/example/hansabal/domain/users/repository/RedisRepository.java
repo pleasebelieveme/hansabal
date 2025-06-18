@@ -42,6 +42,11 @@ public class RedisRepository {
 	public void saveRefreshToken(Long userId, String refreshToken, long expirationMillis) {
 		try {
 			String key = REFRESH_TOKEN_PREFIX + userId;
+			System.out.println("저장 시도 key: " + key);
+			System.out.println("refreshToken: " + refreshToken);
+			System.out.println("expirationMillis: " + expirationMillis);
+			System.out.println("redisTemplate: " + redisTemplate);
+
 			redisTemplate.opsForValue().set(key, refreshToken, expirationMillis, TimeUnit.MILLISECONDS);
 		} catch (Exception e) {
 			throw new BizException(UserErrorCode.INVALID_REQUEST);
