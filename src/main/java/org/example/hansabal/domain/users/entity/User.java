@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.users.entity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.example.hansabal.common.base.BaseEntity;
@@ -20,6 +21,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @EntityScan(basePackages = "org.example.hansabal.domain.users.entity")
 @Getter
@@ -46,9 +48,16 @@ public class User extends BaseEntity {
 	@Column(nullable = false, unique = true)
 	private String nickname;
 
+	private LocalDateTime lastLoginAt;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = true)
 	private UserRole userRole;
+
+	@Builder.Default
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private UserStatus userStatus = UserStatus.ACTIVE;
 
 	public User(Long id, String email, String password, String name, String nickname, UserRole userRole) {
 		this.id = id;
@@ -84,5 +93,9 @@ public class User extends BaseEntity {
 		if (password != null) {
 			this.password = password;
 		}
+	}
+
+	public void updateLastLoginTime() {
+		this.lastLoginAt = LocalDateTime.now();
 	}
 }
