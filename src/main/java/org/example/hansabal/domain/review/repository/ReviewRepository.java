@@ -31,5 +31,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     default Review findByProductIdOrThrow(Long productId) {
         return findByProductId(productId).orElseThrow(()->new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
     }
+
     Optional<Review> findByUserAndProductId(User user, Long productId);
 }

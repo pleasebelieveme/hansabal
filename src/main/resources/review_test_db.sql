@@ -15,7 +15,7 @@ CREATE TABLE reviews (
                        deleted_at DATETIME(6)
 ) ENGINE=InnoDB;
 
-INSERT INTO comment (id, content, rating, user_id, product_id, created_at, updated_at, deleted_at)
-VALUES (1,"test review",5,1,1,NOW(),NOW(),NULL),
-       (2,"test review",5,1,1,NOW(),NOW(),NULL);
-    SET FOREIGN_KEY_CHECKS = 1;
+INSERT INTO reviews (id, content, rating, user_id, product_id, created_at, updated_at, deleted_at)
+VALUES (1,'test review',5,1,1,NOW(),NOW(),NULL);
+
+    SET FOREIGN_KEY_CHECKS = 0;
