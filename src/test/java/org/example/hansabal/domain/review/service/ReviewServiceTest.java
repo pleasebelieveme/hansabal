@@ -50,16 +50,6 @@ class ReviewServiceTest {
     @Autowired
     private ReviewRepository reviewRepository;
 
-
-//
-//    @BeforeEach
-//    void setUp() {
-//        UserCreateRequest userRequest = new UserCreateRequest("test@email.com", "!Aa123456", "테스트이름", "테스트닉네임", UserRole.USER);
-//        userService.createUser(userRequest);
-//        ProductRequestDto productRequest = new ProductRequestDto("테스트제품");
-//        productService.createProduct(productRequest);
-//    }
-
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("testdb")
@@ -138,10 +128,6 @@ class ReviewServiceTest {
     @Test
     void 리뷰삭제() {
         //given
-//        Long productId = 1L;
-//        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
-//        CreateReviewRequest request = new CreateReviewRequest("테스트 리뷰", 5);
-//        CreateReviewResponse response = reviewService.createReview(productId, userAuth, request);
         Long reviewId = 1L;
 
         //when
