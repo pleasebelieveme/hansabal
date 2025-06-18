@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -38,6 +39,7 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 @Testcontainers
 @ActiveProfiles("test")
+@Sql(scripts = {"/review_test_db.sql","/review_user_test_db.sql"},executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ReviewServiceTest {
 
     @Autowired
@@ -52,6 +54,8 @@ class ReviewServiceTest {
     @Autowired
     private ReviewRepository reviewRepository;
 
+
+
     @BeforeEach
     void setUp() {
         UserCreateRequest userRequest = new UserCreateRequest("test@email.com", "!Aa123456", "테스트이름", "테스트닉네임", UserRole.USER);
@@ -59,6 +63,7 @@ class ReviewServiceTest {
         ProductRequestDto productRequest = new ProductRequestDto("테스트제품");
         productService.createProduct(productRequest);
     }
+
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("testdb")
@@ -88,7 +93,6 @@ class ReviewServiceTest {
         assertThat(response.getNickname().equals("테스트닉네임"));
         assertThat(response.getContent().equals("테스트 리뷰"));
         assertThat(response.getRating().equals(5));
-        //rating은 다음 pr때 수정해서 올려놓을게요 지금 수정하면 더 코드리뷰가 많아 질까봐 ..ㅎㅎ
         assertThat(response).isNotNull();
     }
 
@@ -96,7 +100,7 @@ class ReviewServiceTest {
     void 리뷰_중복생성_예외() {
         //given
         Long productId = 1L;
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(2L, UserRole.USER);
         CreateReviewRequest request = new CreateReviewRequest("테스트 리뷰", 5);
 
         //when
@@ -112,7 +116,7 @@ class ReviewServiceTest {
         //given
         Long productId = 1L;
         Long reviewId = 1L;
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(2L, UserRole.USER);
         CreateReviewRequest createReviewRequest = new CreateReviewRequest("테스트 리뷰", 5);
 
         reviewService.createReview(productId, userAuth, createReviewRequest);
@@ -126,6 +130,7 @@ class ReviewServiceTest {
         assertThat(response.getNickname().equals("테스트닉네임"));
         assertThat(response.getContent().equals("테스트 업데이트 리뷰"));
         assertThat(response.getRating().equals(4));
+        assertThat(response).isNotNull();
     }
 
     @Test
