@@ -37,7 +37,7 @@ public class AuthService {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
 		}
 
-		TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole());
+		TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole(),user.getNickname());
 		tokenService.saveRefreshToken(user.getId(), tokenResponse.getRefreshToken());
 
 		return tokenResponse;
@@ -83,7 +83,7 @@ public class AuthService {
 		redisRepository.deleteRefreshToken(userAuth.getId());
 
 		// 4. 새 토큰 생성 및 저장
-		TokenResponse newTokens = tokenService.generateTokens(userAuth.getId(), userAuth.getUserRole());
+		TokenResponse newTokens = tokenService.generateTokens(userAuth.getId(), userAuth.getUserRole(),userAuth.getNickname());
 		tokenService.saveRefreshToken(userAuth.getId(), newTokens.getRefreshToken());
 
 		return newTokens;

@@ -15,9 +15,9 @@ public class TokenService {
 	private final JwtUtil jwtUtil;
 	private final RedisRepository redisRepository;
 
-	public TokenResponse generateTokens(Long userId, UserRole userRole) {
-		String accessToken = jwtUtil.createToken(userId, userRole);
-		String refreshToken = jwtUtil.createRefreshToken(userId, userRole);
+	public TokenResponse generateTokens(Long userId, UserRole userRole,String nickname) {
+		String accessToken = jwtUtil.createToken(userId, userRole,nickname);
+		String refreshToken = jwtUtil.createRefreshToken(userId, userRole,nickname);
 		return new TokenResponse(accessToken, refreshToken);
 	}
 

@@ -62,8 +62,16 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     // O'Auth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // WebSocket 지원
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+    // 메시징(STOMP) 지원
+    implementation 'org.springframework.boot:spring-boot-starter-messaging'
+
     // swagger
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
+
 }
 
 tasks.named('test') {
