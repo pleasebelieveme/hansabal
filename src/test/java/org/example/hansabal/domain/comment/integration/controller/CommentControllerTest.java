@@ -1,15 +1,20 @@
 package org.example.hansabal.domain.comment.integration.controller;
 
 
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 
+import java.util.List;
+
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
+import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.service.CommentService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +22,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -36,7 +44,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @Testcontainers
 @ActiveProfiles("test")
-@Sql(scripts = {"/comment_user_test_db.sql", "/comment_board_test_db.sql"}
+@Sql(scripts = {"/comment_user_test_db.sql", "/comment_board_test_db.sql","/comment_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class CommentControllerTest {
 	/* 기존 WebMvcTest에서 SpringBootTest로 변경한 이유는
@@ -72,7 +80,7 @@ public class CommentControllerTest {
 
 	@Test
 	@DisplayName("댓글 생성 성공 테스트")
-	void createComment() throws Exception{
+	void createCommentTest() throws Exception{
 		// given
 		CreateCommentRequest request = new CreateCommentRequest("댓글");
 		// 댓글 작성 후 반환될 응답 객체를 미리 준비 (Service가 반환한다고 가정함)
@@ -118,6 +126,66 @@ public class CommentControllerTest {
 			.andExpect(jsonPath("$.message").value("입력값이 올바르지 않습니다."))
 			.andExpect(jsonPath("$.errors[0].field").value("contents"))
 			.andExpect(jsonPath("$.errors[0].rejectedValue").value(""));
+	}
+
+	@Test
+	@DisplayName("댓글 수정 테스트")
+	void updateCommentTest() throws Exception {
+		// given
+		Long commentId = 1L;
+		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
+		CommentResponse response = new CommentResponse("수정된 댓글");
+		// refEq는 equals의 정의가 되어있지 않을때 사용하는데 record 타입이라면 자동으로 정의 되어 있기 때문에 그냥 eq를 사용해도 된다.
+		Mockito.when(commentService.updateComment(eq(request),eq(1L),any())).thenReturn(response);
+
+		// when & then
+		mockMvc.perform(patch("/api/comments/{commentId}",commentId)
+			.with(user("1").roles("USER"))
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(request)))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.contents").value("수정된 댓글"));
+	}
+
+	@Test
+	@DisplayName("댓글 삭제 테스트")
+	void deleteCommentTest() throws Exception {
+		// given
+		Long commentId = 1L;
+
+		// when & then
+		mockMvc.perform(delete("/api/comments/{commentId}",commentId)
+			.with(user("1").roles("USER")))
+			.andExpect(status().isOk());
+
+		verify(commentService).deleteComment(commentId);
+	}
+
+	@Test
+	@DisplayName("댓글 목록 1페이지 요청 테스트")
+	void findAllCommentsFromBoardTestV1() throws Exception{
+		// given
+		List<CommentPageResponse> contents = List.of(
+			new CommentPageResponse("댓글1", 3),
+			new CommentPageResponse("댓글2", 5)
+		);
+
+		Page<CommentPageResponse> responsePage = new PageImpl<>(
+			contents,PageRequest.of(0, 100),201);
+
+		Mockito.when(commentService.findAllCommentsFromBoard(eq(1L), eq(1), eq(100)))
+			.thenReturn(responsePage);
+
+		// when & then
+		mockMvc.perform(get("/api/comments/{boardId}", 1L)
+				.param("page", "1")
+				.param("size", "100")
+				.with(user("1").roles("USER")))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.content").isArray())
+			.andExpect(jsonPath("$.content.length()").value(2))
+			.andExpect(jsonPath("$.content[0].comments").value("댓글1"))
+			.andExpect(jsonPath("$.content[1].dibCount").value(5));
 	}
 
 }
