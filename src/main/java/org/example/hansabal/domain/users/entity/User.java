@@ -98,4 +98,8 @@ public class User extends BaseEntity {
 	public void updateLastLoginTime() {
 		this.lastLoginAt = LocalDateTime.now();
 	}
+
+	public void markAsDormant() {
+		this.userStatus = UserStatus.DORMANT;
+	}
 }
