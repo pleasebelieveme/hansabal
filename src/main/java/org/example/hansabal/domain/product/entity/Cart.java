@@ -1,18 +1,13 @@
 package org.example.hansabal.domain.product.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.*;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.common.base.BaseEntity;
+import org.example.hansabal.domain.users.entity.User;
 
 @Entity
 @Table(name = "cart")
@@ -23,7 +18,25 @@ public class Cart extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItems = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    @Column(nullable = false)
+    private int quantity;
+
+    public Cart(User user, Product product, int quantity) {
+        this.user = user;
+        this.product =product;
+        this.quantity = quantity;
+    }
+
+    public void updateCart(int quantity) {
+        this.product =product;
+        this.quantity = quantity;
+    }
 }

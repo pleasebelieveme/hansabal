@@ -2,9 +2,13 @@ package org.example.hansabal.domain.product.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.common.base.BaseEntity;
+import org.example.hansabal.domain.users.entity.User;
+
+import java.time.LocalTime;
 
 
 @Getter
@@ -42,6 +46,18 @@ public class Product extends BaseEntity {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "users_id", nullable = false)
+    private User user;
+
+    @Builder
+    public Product(String name,
+                 User user) {
+        this.name = name;
+
+        this.user = user;
     }
 
 

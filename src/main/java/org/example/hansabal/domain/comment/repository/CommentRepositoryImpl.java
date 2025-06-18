@@ -3,7 +3,6 @@ package org.example.hansabal.domain.comment.repository;
 import java.util.List;
 
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
-import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.entity.QComment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
