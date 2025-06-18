@@ -121,7 +121,7 @@ public class UserServiceTest {
 
         // when
         User savedUser = userRepository.findByEmailOrElseThrow("find@test.com");
-        UserAuth userAuth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth userAuth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
         UserResponse response = userService.findById(userAuth);
 
         // then
@@ -136,7 +136,7 @@ public class UserServiceTest {
     void 유저_ID_조회_실패_예외발생() {
         // given
         Long id = 9999L;
-        UserAuth userAuth = new UserAuth(id, UserRole.USER);
+        UserAuth userAuth = new UserAuth(id, UserRole.USER, "testnickname");
 
         // when & then
         assertThatThrownBy(() -> userService.findById(userAuth))
@@ -158,7 +158,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("wrongpass@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         UserUpdateRequest request = new UserUpdateRequest(
                 "newNickname",
@@ -185,7 +185,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("wrongpass@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         UserUpdateRequest request = new UserUpdateRequest(
                 null,
@@ -212,7 +212,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("sameName@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
         UserUpdateRequest request = new UserUpdateRequest(
                 savedUser.getNickname(),
                 "OriginalPassword12!@",
@@ -238,7 +238,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("samePass@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         UserUpdateRequest request = new UserUpdateRequest(
                 null,
@@ -265,7 +265,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("onlyNick@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         UserUpdateRequest request = new UserUpdateRequest(
                 "newNickname",
@@ -294,7 +294,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("onlyPass@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         String newPassword = "Newpass12!@";
 
@@ -325,7 +325,7 @@ public class UserServiceTest {
         userService.createUser(create);
 
         User savedUser = userRepository.findByEmailOrElseThrow("change@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         String newPassword = "Changed12!@";
 
@@ -356,7 +356,7 @@ public class UserServiceTest {
         );
         userService.createUser(create);
         User savedUser = userRepository.findByEmailOrElseThrow("delete@test.com");
-        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole());
+        UserAuth auth = new UserAuth(savedUser.getId(), savedUser.getUserRole(), savedUser.getNickname());
 
         // when
         userService.deleteUser(auth);
@@ -370,7 +370,7 @@ public class UserServiceTest {
     @Test
     void 존재하지_않는_유저_삭제시_예외발생() {
         // given
-        UserAuth auth = new UserAuth(9999L, UserRole.USER); // 존재하지 않는 ID
+        UserAuth auth = new UserAuth(9999L, UserRole.USER, "emptynickname"); // 존재하지 않는 ID
 
         // when & then
         assertThatThrownBy(() -> userService.deleteUser(auth))
