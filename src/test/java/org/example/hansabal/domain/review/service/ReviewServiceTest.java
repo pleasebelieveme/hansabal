@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.*;
 @Transactional
 @Testcontainers
 @ActiveProfiles("test")
-@Sql(scripts = {"/review_test_db.sql","/review_user_test_db.sql","/review_product_test_db.sql"},executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = {"/review_test_db.sql", "/review_user_test_db.sql", "/review_product_test_db.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class ReviewServiceTest {
 
     @Autowired
@@ -107,13 +107,9 @@ class ReviewServiceTest {
     @Test
     void 리뷰수정() {
         //given
-        Long productId = 1L;
         Long reviewId = 1L;
-        UserAuth userAuth = new UserAuth(2L, UserRole.USER);
-        CreateReviewRequest createReviewRequest = new CreateReviewRequest("테스트 리뷰", 5);
-
-        reviewService.createReview(productId, userAuth, createReviewRequest);
         UpdateReviewRequest updateReviewRequest = new UpdateReviewRequest("테스트 업데이트 리뷰", 4);
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
 
         //when
         UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, userAuth);
@@ -129,17 +125,9 @@ class ReviewServiceTest {
     @Test
     void 리뷰수정_유져정보_불일치_예외() {
         //given
-        Long productId = 1L;
         Long reviewId = 1L;
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
         UserAuth otherUserAuth = new UserAuth(2L, UserRole.USER);
-        CreateReviewRequest createReviewRequest = new CreateReviewRequest("테스트 리뷰", 5);
 
-        //유저를 하나 더 생성
-        UserCreateRequest userRequest = new UserCreateRequest("test@email2.com", "!Aa1234562", "테스트이름2", "테스트닉네임2", UserRole.USER);
-        userService.createUser(userRequest);
-
-        reviewService.createReview(productId, userAuth, createReviewRequest);
         UpdateReviewRequest updateReviewRequest = new UpdateReviewRequest("테스트 업데이트 리뷰", 4);
 
         //then,then
@@ -150,14 +138,15 @@ class ReviewServiceTest {
     @Test
     void 리뷰삭제() {
         //given
-        Long productId = 1L;
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
-        CreateReviewRequest request = new CreateReviewRequest("테스트 리뷰", 5);
-        CreateReviewResponse response = reviewService.createReview(productId, userAuth, request);
+//        Long productId = 1L;
+//        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+//        CreateReviewRequest request = new CreateReviewRequest("테스트 리뷰", 5);
+//        CreateReviewResponse response = reviewService.createReview(productId, userAuth, request);
+        Long reviewId = 1L;
 
         //when
-        reviewService.deleteReview(response.getId());
-        Optional<Review> review = reviewRepository.findById(response.getId());
+        reviewService.deleteReview(reviewId);
+        Optional<Review> review = reviewRepository.findById(reviewId);
 
         //then
         assertThat(review).isNotEmpty();

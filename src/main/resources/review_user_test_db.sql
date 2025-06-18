@@ -15,6 +15,7 @@ CREATE TABLE users (
 ) ENGINE=InnoDB;
 
 INSERT INTO users (id, email, password, name, nickname, user_role,created_at, updated_at, deleted_at)
-VALUES (1,'test1@email.com','!Aa123456','testname','testnickname1','USER',NOW(),NULL,NULL);
+VALUES (1,'test1@email.com','!Aa123456','testname','testnickname1','USER',NOW(),NULL,NULL),
+       (2,'test2@email.com','!Aa123456','testname','testnickname1','USER',NOW(),NULL,NULL);
 
 SET FOREIGN_KEY_CHECKS = 0;
