@@ -14,7 +14,6 @@ CREATE TABLE product (
 
 INSERT INTO product (id, name, quantity, product_status, created_at, updated_at, deleted_at)
 VALUES (1,'test product',5,'FOR_SALE',NOW(),NULL,NULL),
-       (2,'test product',5,'FOR_SALE',NOW(),NULL,NULL),
-       (3,'test product',5,'FOR_SALE',NOW(),NULL,NULL);
+       (2,'test product',5,'FOR_SALE',NOW(),NULL,NULL);
 
     SET FOREIGN_KEY_CHECKS = 0;

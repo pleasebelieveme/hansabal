@@ -97,12 +97,9 @@ class ReviewServiceTest {
         //given
         Long productId = 1L;
         UserAuth userAuth = new UserAuth(1L, UserRole.USER);
-        CreateReviewRequest request = new CreateReviewRequest("테스트 리뷰", 5);
+        CreateReviewRequest request = new CreateReviewRequest("test review", 5);
 
-        //when
-        reviewService.createReview(productId, userAuth, request);
-
-        //then
+        //when, then
         assertThatThrownBy(() -> reviewService.createReview(productId, userAuth, request))
                 .hasMessageContaining("해당 상품에 대한 리뷰를 이미 작성하셨습니다.");
     }
