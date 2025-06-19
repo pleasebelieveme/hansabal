@@ -24,7 +24,7 @@ public class TradeService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public void createTrade(TradeRequestDto request, UserAuth userAuth) {
+	public TradeResponseDto createTrade(TradeRequestDto request, UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade= Trade.builder()
 			.title(request.title())
@@ -34,6 +34,7 @@ public class TradeService {
 			.isOccupied(false)
 			.build();
 		tradeRepository.save(trade);
+		return TradeResponseDto.from(trade);
 	}
 
 	@Transactional(readOnly=true)
@@ -63,11 +64,12 @@ public class TradeService {
 	}
 
 	@Transactional
-	public void updateTrade(Long tradeId, TradeRequestDto request, UserAuth userAuth) {
+	public TradeResponseDto updateTrade(Long tradeId, TradeRequestDto request, UserAuth userAuth) {
 		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		if(!trade.getTrader().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.updateTrade(request.title(),request.contents(), request.price());
+		return TradeResponseDto.from(trade);
 	}
 
 	@Transactional

@@ -35,9 +35,9 @@ public class TradeController {
 	private final RequestsService requestsService;
 
 	@PostMapping
-	public ResponseEntity<Void> createTrade(@Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
-		tradeService.createTrade(request, userAuth);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<TradeResponseDto> createTrade(@Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
+		TradeResponseDto response = tradeService.createTrade(request, userAuth);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping// full-scan 발생 주의보, full-text-index 및 커스텀 함수 처리 후 개선 예정
@@ -60,9 +60,9 @@ public class TradeController {
 	}
 
 	@PatchMapping("/{tradeId}")
-	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		tradeService.updateTrade(tradeId, request, userAuth);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<TradeResponseDto> updateTrade(@PathVariable Long tradeId, @Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+		TradeResponseDto response = tradeService.updateTrade(tradeId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@DeleteMapping("/{tradeId}")
@@ -72,9 +72,9 @@ public class TradeController {
 	}
 
 	@PostMapping("/requests")
-	public ResponseEntity<Void> createRequests(@Valid @RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.createRequests(userAuth, request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<RequestsResponseDto> createRequests(@Valid @RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+		RequestsResponseDto response = requestsService.createRequests(userAuth, request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping("/{tradeId}/requests")
@@ -85,9 +85,9 @@ public class TradeController {
 	}
 
 	@PatchMapping("/requests/{requestsId}")
-	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.updateRequestsByTrader(requestsId, request, userAuth);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<RequestsResponseDto> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
+		RequestsResponseDto response = requestsService.updateRequestsByTrader(requestsId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@DeleteMapping("/requests/{requestsId}")

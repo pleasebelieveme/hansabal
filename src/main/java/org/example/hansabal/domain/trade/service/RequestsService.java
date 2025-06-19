@@ -31,12 +31,13 @@ public class RequestsService {
 	private final WalletService walletService;
 
 	@Transactional
-	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
+	public RequestsResponseDto createRequests(UserAuth userAuth, RequestsRequestDto request) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
 			TradeErrorCode.TRADE_NOT_FOUND));
 		Requests requests = Requests.of(trade,user);
 		requestsRepository.save(requests);
+		return RequestsResponseDto.from(requests);
 	}
 
 	@Transactional(readOnly=true)
@@ -48,7 +49,7 @@ public class RequestsService {
 	}
 
 	@Transactional
-	public void updateRequestsByTrader(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
+	public RequestsResponseDto updateRequestsByTrader(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		if(requests.getStatus()==RequestStatus.DONE)//완료된 거래 요청을 업데이트 하는것을 금지.
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
@@ -67,6 +68,7 @@ public class RequestsService {
 		requests.updateStatus(request.requestStatus());
 		if(!trade.getIsOccupied())
 			trade.occupiedCheck(true);
+		return RequestsResponseDto.from(requests);
 	}
 
 	@Transactional
