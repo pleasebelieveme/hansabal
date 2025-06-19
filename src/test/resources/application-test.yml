@@ -11,7 +11,7 @@ spring:
 
   mail:
     host: smtp.test.com
-    port: 1025
+    port: 587
     username: test
     password: test
     properties:
