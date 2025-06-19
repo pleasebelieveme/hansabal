@@ -38,7 +38,7 @@ public class WalletController {
 	private final UserRepository userRepository;
 	private final WalletRepository walletRepository;
 
-	@PostMapping()
+	@PostMapping("/new")
 	public ResponseEntity<Void> createWallet(@AuthenticationPrincipal UserAuth userAuth){
 		walletService.createWallet(userAuth);
 		return ResponseEntity.status(HttpStatus.CREATED).build();
