@@ -4,10 +4,8 @@ import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.JwtUtil;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.auth.service.AuthService;
-import org.example.hansabal.domain.auth.service.TokenService;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.repository.RedisRepository;
-import org.example.hansabal.domain.users.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -49,7 +47,7 @@ public class AuthUnitTest {
     void 리프레시토큰이_레디스에_저장된_것과_일치하지_않으면_REUSED_REFRESH_TOKEN_예외발생() {
         // given
         String refreshToken = "validRefreshToken";
-        UserAuth mockUserAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth mockUserAuth = new UserAuth(1L, UserRole.USER, "testnickname");
 
         when(jwtUtil.validateToken(refreshToken)).thenReturn(true);
         when(jwtUtil.extractUserAuth(refreshToken)).thenReturn(mockUserAuth);

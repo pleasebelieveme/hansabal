@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum UserErrorCode implements ErrorCode {
-	DUPLICATE_USER_ID(HttpStatus.BAD_REQUEST, "U001", "중복된 아이디입니다."),
 	DUPLICATE_USER_EMAIL(HttpStatus.BAD_REQUEST, "U001", "중복된 이메일입니다."),
 	NOT_FOUND_USER(HttpStatus.NOT_FOUND, "U002", "존재하지 않는 사용자입니다."),
 	INVALID_REQUEST(HttpStatus.BAD_REQUEST, "U003", "유효하지 않은 요청입니다."),
@@ -17,7 +16,8 @@ public enum UserErrorCode implements ErrorCode {
 	NICKNAME_NOT_CHANGED(HttpStatus.BAD_REQUEST, "U005",  "현재 계정의 닉네임과 같습니다."),
 	PASSWORD_NOT_CHANGED(HttpStatus.BAD_REQUEST, "U006",  "현재 계정의 비밀번호와 같습니다."),
 	NO_UPDATE_TARGET(HttpStatus.BAD_REQUEST, "U007",  "닉네임이나 새 비밀번호 중 하나는 반드시 입력되어야 합니다."),
-	DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "U008",  "이미 존재하는 닉네임입니다.");
+	DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "U008",  "이미 존재하는 닉네임입니다."),
+	DORMANT_ACCOUNT(HttpStatus.BAD_REQUEST, "U009",  "휴면 상태의 계정입니다. 관리자에게 문의하세요.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
