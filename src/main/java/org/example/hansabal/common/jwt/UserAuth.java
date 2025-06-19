@@ -10,4 +10,5 @@ import lombok.RequiredArgsConstructor;
 public class UserAuth {
 	private final Long id;
 	private final UserRole userRole;
+	private final String nickname;
 }

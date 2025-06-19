@@ -16,7 +16,7 @@ CREATE TABLE comment (
 ) ENGINE=InnoDB;
 
 INSERT INTO comment (id, contents, dib_count, user_id, board_id, created_at, updated_at, deleted_at)
-VALUES (1, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
+VALUES (1, 'test comment', 0, 1, 1, NOW(), NULL, NULL),
        (2, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (3, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (4, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
