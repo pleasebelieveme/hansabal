@@ -8,6 +8,7 @@ import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.service.BoardService;
+import org.example.hansabal.domain.board.service.BoardServiceUtill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardServiceUtill boardServiceUtill;
+
+
     // 게시글 등록
     @PostMapping
     public ResponseEntity<BoardResponse> createPost(
@@ -55,6 +59,8 @@ public class BoardController {
     // 게시글 단건 조회
     @GetMapping("/{postId}")
     public ResponseEntity<BoardResponse> getPost(@PathVariable Long postId) {
+        boardServiceUtill.viewCount(postId);
+
         BoardResponse response = boardService.getPost(postId);  // Pageable 삭제
         return ResponseEntity.ok(response);
     }
