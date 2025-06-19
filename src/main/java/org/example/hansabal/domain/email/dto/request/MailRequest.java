@@ -8,7 +8,6 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
 public class MailRequest {
 
     private String title;  //제목

@@ -22,10 +22,10 @@ public class MailService {
         message.setText(dto.getContent()); //메일 내용
         message.setTo(dto.getRecipient());
         javaMailSender.send(message);
-
+    }
+}
 //        List<String> recipientList = new ArrayList<>();
 //        recipientList.add("imleo322@gmail.com");
 //        mail.setRecipientList(recipientList);
 //        message.setTo(mail.getRecipientList().toArray(new String[mail.getRecipientList().size()])); //보낼사람들
-    }
-}
+//  나중에 사용하려고 주석처리 하였습니다.
