@@ -1,11 +1,10 @@
 package org.example.hansabal.domain.batch.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.hansabal.domain.admin.entity.AdminProductOrderStatMonthly;
 import org.example.hansabal.domain.admin.entity.ProductOrderStatDaily;
 import org.example.hansabal.domain.admin.entity.ProductOrderStatMonthly;
-import org.example.hansabal.domain.admin.entity.ProductStatDaily;
 import org.example.hansabal.domain.batch.entity.AdminProductOrderStatDaily;
+import org.example.hansabal.domain.batch.entity.AdminProductOrderStatMonthly;
 import org.example.hansabal.domain.order.entity.Order;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -162,7 +161,7 @@ public class ProductStatBatchConfig {
 	public Step AdminProductOrderStatMonthlyStep(
 			JobRepository jobRepository,
 			PlatformTransactionManager transactionManager,
-			@Qualifier("adminProductOrderStatDailyReader")
+			@Qualifier("adminProductOrderStatMonthlyReader")
 			ItemReader<ProductOrderStatMonthly> reader,                              // 상품 월별 통계 읽기
 			ItemProcessor<ProductOrderStatMonthly, AdminProductOrderStatMonthly> processor, // 관리자 상품 월별 통계로 변환
 			ItemWriter<AdminProductOrderStatMonthly> writer                          // 관리자 상품 월별 통계 저장
