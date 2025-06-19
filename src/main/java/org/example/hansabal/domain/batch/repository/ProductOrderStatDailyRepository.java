@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.batch.repository;
 
+import org.example.hansabal.domain.admin.entity.ProductStatDaily;
 import org.springframework.data.repository.query.Param;
 import org.example.hansabal.domain.admin.entity.ProductOrderStatDaily;
 import org.example.hansabal.domain.admin.entity.ProductOrderStatId;
@@ -11,14 +12,14 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface ProductOrderStatDailyRepository extends JpaRepository<ProductOrderStatDaily, ProductOrderStatId> {
+public interface ProductOrderStatDailyRepository extends JpaRepository<ProductStatDaily, ProductOrderStatId> {
         @Query("""
 			SELECT s
-			FROM ProductOrderStatDaily s
+			FROM ProductStatDaily s
 			WHERE s.id.ProdcutId = :productId
 			  AND s.id.date >= :from AND s.id.date < :to
 		""")
-        List<ProductOrderStatDaily> findAllByProductIdAndDateRange(
+        List<ProductStatDaily> findAllByProductIdAndDateRange(
             @Param("productId") Long productId,
             @Param("from") LocalDate from,
             @Param("to") LocalDate to
@@ -26,17 +27,17 @@ public interface ProductOrderStatDailyRepository extends JpaRepository<ProductOr
 
         @Query("""
 			SELECT s
-			FROM ProductOrderStatDaily s
+			FROM ProductStatDaily s
 			WHERE s.id.date >= :from AND s.id.date < :to
 		""")
-        List<ProductOrderStatDaily> findAllByDateRange(
+        List<ProductStatDaily> findAllByDateRange(
             @Param("from") LocalDate from,
             @Param("to") LocalDate to
 	);
 
         @Modifying
         @Query("""
-			UPDATE ProductOrderStatDaily s
+			UPDATE ProductStatDaily s
 			SET s.orderCount = :orderCount,
 				s.totalSales = :totalSales
 			WHERE s.id = :id
