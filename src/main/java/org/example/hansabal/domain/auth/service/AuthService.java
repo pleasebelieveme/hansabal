@@ -8,6 +8,7 @@ import org.example.hansabal.domain.auth.dto.request.LoginRequest;
 import org.example.hansabal.domain.auth.dto.response.TokenResponse;
 import org.example.hansabal.domain.auth.exception.AuthErrorCode;
 import org.example.hansabal.domain.users.entity.User;
+import org.example.hansabal.domain.users.entity.UserStatus;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.RedisRepository;
 import org.example.hansabal.domain.users.repository.UserRepository;
@@ -19,7 +20,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@Transactional // AuthService의 모든 public 메서드에만 트랜잭션 적용
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
@@ -30,12 +30,20 @@ public class AuthService {
 	private final TokenService tokenService;
 	private final JwtUtil jwtUtil;
 
+	@Transactional
 	public TokenResponse login(LoginRequest request) {
 		User user = userRepository.findByEmailOrElseThrow(request.email());
+
+		if (user.getUserStatus() != UserStatus.ACTIVE) {
+			throw new BizException(UserErrorCode.DORMANT_ACCOUNT);
+		}
 
 		if (!passwordEncoder.matches(request.password(), user.getPassword())) {
 			throw new BizException(UserErrorCode.INVALID_PASSWORD);
 		}
+
+		user.updateLastLoginTime();
+		userRepository.save(user);
 
 		TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole(),user.getNickname());
 		tokenService.saveRefreshToken(user.getId(), tokenResponse.getRefreshToken());
@@ -43,6 +51,7 @@ public class AuthService {
 		return tokenResponse;
 	}
 
+	@Transactional(readOnly = true)
 	public void logout(HttpServletRequest request) {
 		try {
 			String token = jwtUtil.extractToken(request);
@@ -60,6 +69,7 @@ public class AuthService {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public TokenResponse reissue(String bearerToken) {
 		// 1. Bearer 제거
 		if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {

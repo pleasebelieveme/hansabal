@@ -1,10 +1,12 @@
 package org.example.hansabal.domain.users.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.users.entity.User;
+import org.example.hansabal.domain.users.entity.UserStatus;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -30,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	boolean existsByNickname(String nickname);
 
 	Optional<User> findByNickname(String nickname);
+
+	List<User> findAllByLastLoginAtBeforeAndUserStatus(LocalDateTime time, UserStatus status);
+
 }

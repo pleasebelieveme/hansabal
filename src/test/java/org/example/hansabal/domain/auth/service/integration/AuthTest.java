@@ -137,7 +137,7 @@ public class AuthTest {
     void 로그아웃_성공() {
         // given: 유저 조회 및 토큰 생성
         User user = userRepository.findByEmailOrElseThrow("test@email.com");
-        TokenResponse tokens = tokenService.generateTokens(user.getId(), user.getUserRole());
+        TokenResponse tokens = tokenService.generateTokens(user.getId(), user.getUserRole(), user.getNickname());
         tokenService.saveRefreshToken(user.getId(), tokens.getRefreshToken());
 
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -201,7 +201,7 @@ public class AuthTest {
         User user = userRepository.findByEmailOrElseThrow("test@email.com");
 
         // 실제 토큰 생성 (유효한 리프레시 토큰)
-        TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole());
+        TokenResponse tokenResponse = tokenService.generateTokens(user.getId(), user.getUserRole(), user.getNickname());
         tokenService.saveRefreshToken(user.getId(), tokenResponse.getRefreshToken());
         String validRefreshToken = tokenResponse.getRefreshToken();
 
@@ -223,7 +223,7 @@ public class AuthTest {
         User user = userRepository.findByEmailOrElseThrow("test@email.com");
 
         // 실제 토큰 생성 + Redis 저장
-        TokenResponse originalToken = tokenService.generateTokens(user.getId(), user.getUserRole());
+        TokenResponse originalToken = tokenService.generateTokens(user.getId(), user.getUserRole(), user.getNickname());
         tokenService.saveRefreshToken(user.getId(), originalToken.getRefreshToken());
 
         String refreshToken = originalToken.getRefreshToken();
