@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.stream.LongStream;
 
 @RestController
-@RequestMapping()
+@RequestMapping("/send-email")
 @RequiredArgsConstructor
 public class MailController {
 
-    private final MailService mailService;
+    @Resource(name = "mailService")
+    private MailService mailService;
 
-    @PostMapping("/send-email")
+    @PostMapping
     public String send(@RequestBody MailRequest request) {
         mailService.sendSimpleEmail(request);
         return "이메일 보내기 성공";
