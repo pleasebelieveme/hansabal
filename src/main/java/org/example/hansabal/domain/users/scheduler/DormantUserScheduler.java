@@ -22,7 +22,7 @@ public class DormantUserScheduler {
     @Scheduled(cron = "0 0 3 * * *") // 매일 새벽 3시
     @Transactional
     public void markDormantUsers() {
-        LocalDateTime threshold = LocalDateTime.now().minusMonths(6); // 6개월 비로그인 기준
+        LocalDateTime threshold = LocalDateTime.now().minusYears(1); // 1년 비로그인 기준
 
         List<User> dormantUsers = userRepository.findAllByLastLoginAtBeforeAndUserStatus(
                 threshold, UserStatus.ACTIVE
