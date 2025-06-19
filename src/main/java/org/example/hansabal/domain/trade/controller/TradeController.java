@@ -40,7 +40,7 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 
-	@GetMapping
+	@GetMapping// full-scan 발생 주의보, full-text-index 및 커스텀 함수 처리 후 개선 예정
 	public ResponseEntity<Page<TradeResponseDto>> getTradesByTitle(@RequestParam(defaultValue = "1") @Positive int page, @RequestParam(defaultValue = "10") @Positive int size, @RequestParam(required=false, value="title") String title){
 		Page<TradeResponseDto> tradeList = tradeService.getTradeListByTitle(page, size, title);
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
@@ -52,7 +52,7 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@GetMapping("/my")
+	@GetMapping("/my")// full-scan 발생 주의보, full-text-index 및 커스텀 함수 처리 후 개선 예정
 	public ResponseEntity<Page<TradeResponseDto>> getMyTrades(
 		@RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size, @AuthenticationPrincipal UserAuth userAuth){
 		Page<TradeResponseDto> myTradeList = tradeService.getMyTrade(userAuth, page, size);

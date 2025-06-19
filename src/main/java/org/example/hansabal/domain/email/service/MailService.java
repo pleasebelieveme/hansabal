@@ -16,17 +16,16 @@ public class MailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public void sendSimpleEmail(MailRequest mail) {
+    public void sendSimpleEmail(MailRequest dto) {
         SimpleMailMessage message = new SimpleMailMessage();
-        List<String> recipientList = new ArrayList<>();
-        recipientList.add("imleo322@gmail.com");
-        mail.setRecipientList(recipientList);
-
-        message.setSubject(mail.getTitle()); //메일제목
-        //리스트를 배열로 만들건데 문자열 배열로 만들어주세요. 리스트 사이즈 만큼 변환할 것이다. 라는 뜻이다.
-        message.setTo(mail.getRecipientList().toArray(new String[mail.getRecipientList().size()])); //보낼사람들
-        message.setText(mail.getContent()); //메일 내용
-
+        message.setSubject(dto.getTitle()); //메일제목
+        message.setText(dto.getContent()); //메일 내용
+        message.setTo(dto.getRecipient());
         javaMailSender.send(message);
+
+//        List<String> recipientList = new ArrayList<>();
+//        recipientList.add("imleo322@gmail.com");
+//        mail.setRecipientList(recipientList);
+//        message.setTo(mail.getRecipientList().toArray(new String[mail.getRecipientList().size()])); //보낼사람들
     }
 }

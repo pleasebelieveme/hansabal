@@ -13,5 +13,5 @@ public class MailRequest {
 
     private String title;  //제목
     private String content; //내용
-    private List<String> recipientList;  //받는사람
+    private String recipient;  //받는사람
 }

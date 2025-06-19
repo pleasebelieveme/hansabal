@@ -117,7 +117,6 @@ class ReviewServiceTest {
         //given
         Long reviewId = 1L;
         UserAuth userAuth = new UserAuth(2L, UserRole.USER,"테스트닉네임");
-
         UpdateReviewRequest updateReviewRequest = new UpdateReviewRequest("테스트 업데이트 리뷰", 4);
 
         //then,then
