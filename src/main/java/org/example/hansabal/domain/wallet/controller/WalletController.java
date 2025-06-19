@@ -54,9 +54,9 @@ public class WalletController {
 	}
 
 	@GetMapping("/load")
-	public String load(@RequestParam(name = "uuid", required = false) String id, Model model) {
+	public String load(@RequestParam(name = "uuid", required = false) String uuid, Model model) {
 
-		model.addAttribute("orderUid", id);
+		model.addAttribute("uuid", uuid);
 
 		return "payment";
 	}
