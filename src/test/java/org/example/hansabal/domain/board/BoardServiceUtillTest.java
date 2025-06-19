@@ -32,7 +32,6 @@ import java.util.concurrent.Executors;
 
 
 @SpringBootTest
-@Transactional
 public class BoardServiceUtillTest {
 
     @Autowired
@@ -47,11 +46,10 @@ public class BoardServiceUtillTest {
     @Autowired
     private BoardService boardService;
 
-    @Autowired
-    private UserRepository userRepository;
-    private Long postId;
+
 
     @BeforeEach
+    @Transactional
     void setup() {
         for (int i = 0; i < 10; i++) {
             String email = "user" + i + "@exmaple.com";
@@ -70,15 +68,11 @@ public class BoardServiceUtillTest {
         // 유저 조회 후 UserAuth 생성
             UserAuth userAuth = new UserAuth(1L, UserRole.USER, "nickname0");
             BoardRequest boardRequest = new BoardRequest(
-                   "DAILY",
+                   BoardCategory.DAILY,
                     "테스트 제목",
                     "테스트 내용"
             );
             boardService.createPost(userAuth, boardRequest);
-            postId = 1L;
-
-
-
 
 
 
@@ -95,7 +89,7 @@ public class BoardServiceUtillTest {
             executor.submit(() -> {
                 try {
                     barrier.await(); // 모든 스레드 동시에 시작
-                    boardServiceUtill.viewCount(postId); // 분산락 적용 메서드
+                    boardServiceUtill.viewCount(1L); // 분산락 적용 메서드
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -107,7 +101,7 @@ public class BoardServiceUtillTest {
         latch.await(); // 모든 스레드 종료 대기
         executor.shutdown();
 
-        Board result = boardRepository.findById(postId).orElseThrow();
+        Board result = boardRepository.findById(1L).orElseThrow();
 
         // 🔍 최종 조회수 검증
         System.out.println("최종 viewCount: " + result.getViewCount());

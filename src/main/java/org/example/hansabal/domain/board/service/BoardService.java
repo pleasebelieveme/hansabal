@@ -46,7 +46,7 @@ public class BoardService {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Board board = Board.builder()
                 .user(user)
-                .category(BoardCategory.fromDisplayName(request.getCategory())) // ✅ 변경
+                .category(request.getCategory()) // ✅ 변경
                 .title(request.getTitle())
                 .content(request.getContent())
                 .dibCount(0)
@@ -67,7 +67,7 @@ public class BoardService {
         }
 
         // 카테고리 + 제목 + 내용 업데이트
-        board.update(BoardCategory.valueOf(request.getCategory().toUpperCase()), request.getTitle(), request.getContent());
+        board.update(request.getCategory(), request.getTitle(), request.getContent());
         return boardMapper.toResponse(board);
     }
     // === 게시글 삭제 ===
@@ -103,29 +103,20 @@ public class BoardService {
 
     // === 게시글 목록 조회 (카테고리 + 키워드 포함) ===
     @Transactional(readOnly = true)
-    public Page<BoardResponse> getPosts(String category, String keyword, int page, int size) {
+    public Page<BoardResponse> getPosts(BoardCategory category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Board> boardPage;
 
-        boolean isAll = category.equalsIgnoreCase("ALL");
+        boolean isAll = category == BoardCategory.ALL;
         boolean hasKeyword = keyword != null && !keyword.isBlank();
 
         if (isAll && hasKeyword) {
-            // 1. 전체 + 검색어 → 제목/내용에 키워드 포함된 게시글
             boardPage = boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
-
         } else if (!isAll && hasKeyword) {
-            // 2. 특정 카테고리 + 검색어
-            BoardCategory boardCategory = BoardCategory.fromDisplayName(category);
-            boardPage = boardRepository.searchByCategoryAndKeyword(boardCategory, keyword, pageable);
-
+            boardPage = boardRepository.searchByCategoryAndKeyword(category, keyword, pageable);
         } else if (!isAll) {
-            // 3. 특정 카테고리만
-            BoardCategory boardCategory = BoardCategory.fromDisplayName(category);
-            boardPage = boardRepository.findByCategory(boardCategory, pageable);
-
+            boardPage = boardRepository.findByCategory(category, pageable);
         } else {
-            // 4. 전체 조회
             boardPage = boardRepository.findAll(pageable);
         }
 

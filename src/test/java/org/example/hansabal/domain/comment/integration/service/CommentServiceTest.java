@@ -60,7 +60,7 @@ public class CommentServiceTest {
 		// given
 		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
 		Long boardId = 1L;
-		UserAuth userAuth = new UserAuth(1L, UserRole.USER, "nickname");
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
 		// when
 		CommentResponse response = commentService.createComment(request, userAuth, boardId);
@@ -75,7 +75,7 @@ public class CommentServiceTest {
 	void 댓글_생성_유저정보_불일치_예외(){
 		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
 		Long boardId = 1L;
-		UserAuth userAuth = new UserAuth(2L, UserRole.USER,"nickname");
+		UserAuth userAuth = new UserAuth(2L, UserRole.USER,"testnickname1");
 
 		assertThatThrownBy( () -> {
 			commentService.createComment(request, userAuth, boardId);
@@ -87,7 +87,7 @@ public class CommentServiceTest {
 	void 댓글_생성_보드정보_불일치_예외() {
 		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
 		Long boardId = 3L;
-		UserAuth userAuth = new UserAuth(1L, UserRole.USER, "nickname");
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
 		assertThatThrownBy( () -> {
 			commentService.createComment(request, userAuth, boardId);
@@ -100,7 +100,7 @@ public class CommentServiceTest {
 	void 댓글_수정(){
 		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
 		Long commentId = 1L;
-		UserAuth userAuth = new UserAuth(1L, UserRole.USER ,"nickname");
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
 		CommentResponse response = commentService.updateComment(request, commentId, userAuth);
 
@@ -111,7 +111,7 @@ public class CommentServiceTest {
 	void 댓글_수정_권한없음_예외(){
 		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
 		Long commentId = 1L;
-		UserAuth userAuth = new UserAuth(2L, UserRole.USER,"nickname");
+		UserAuth userAuth = new UserAuth(2L, UserRole.USER,"testnickname1");
 
 		assertThatThrownBy( () -> {
 			commentService.updateComment(request, commentId, userAuth);
