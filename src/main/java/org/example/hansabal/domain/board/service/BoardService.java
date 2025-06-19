@@ -37,13 +37,9 @@ public class BoardService {
     private final DibService dibService;
     private final CommentRepository commentRepository;
     private final BoardMapper boardMapper;
+    private final BoardServiceUtill boardServiceUtill;
 
-    @DistributedLock(key = "'DIB:BOARD:' + #postId")
-    public void ViewCount (Long postId) {
-        Board board = boardRepository.findById(postId)
-                .orElseThrow(() -> new BizException(BoardErrorCode.BOARD_NOT_FOUND));
-        board.increaseViewCount();
-    }
+
     // === 게시글 등록 ===
     @Transactional
     public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
@@ -90,12 +86,10 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BoardResponse getPost(Long postId) {
 
-        ViewCount(postId);
+        boardServiceUtill.ViewCount(postId);
         // 1. 게시글 엔티티 조회
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
-
-
 
         // 2. 좋아요(찜) 개수 - Board 엔티티의 필드값 사용
         int likeCount = board.getDibCount();

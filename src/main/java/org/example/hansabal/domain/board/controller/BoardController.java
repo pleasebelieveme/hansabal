@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.*;
 public class BoardController {
 
     private final BoardService boardService;
+
+
     // 게시글 등록
     @PostMapping
     public ResponseEntity<BoardResponse> createPost(
