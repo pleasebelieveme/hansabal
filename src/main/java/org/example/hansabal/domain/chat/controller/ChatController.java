@@ -5,7 +5,14 @@ import org.example.hansabal.common.exception.ErrorResponse;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.chat.dto.request.ChatMessageRequest;
 import org.example.hansabal.domain.chat.dto.response.ChatMessageResponse;
+import org.example.hansabal.domain.chat.dto.response.ChatMessageSimpleResponse;
 import org.example.hansabal.domain.chat.service.ChatService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -13,6 +20,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,5 +66,15 @@ public class ChatController {
 	@SendToUser("/queue/errors")
 	public ErrorResponse handleBizException(BizException e){
 		return ErrorResponse.of(e.getErrorCode());
+	}
+
+	@GetMapping
+	public ResponseEntity<Slice<ChatMessageSimpleResponse>> findChatHistory(
+		@RequestParam String receiver,
+		@AuthenticationPrincipal UserAuth userAuth,
+		@PageableDefault(size = 20, sort = "sentAt", direction = Sort.Direction.DESC) Pageable pageable
+	){
+		Slice<ChatMessageSimpleResponse> chatHistory = chatService.findChatHistory(receiver, userAuth, pageable);
+		return ResponseEntity.status(HttpStatus.OK).body(chatHistory);
 	}
 }
