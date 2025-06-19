@@ -27,7 +27,7 @@ public class PaymentController {
 
 	private final PaymentService paymentService;
 
-	@GetMapping("/payment/{uuid}")
+	@GetMapping("/api/payment/{uuid}")
 	public String paymentPage(@PathVariable(name = "uuid", required = false) String uuid,
 		Model model) {
 
@@ -37,7 +37,7 @@ public class PaymentController {
 	}
 
 	@ResponseBody
-	@PostMapping("/payment")
+	@PostMapping("/api/payment")
 	public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallbackRequest request) {
 		IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
 
@@ -46,12 +46,12 @@ public class PaymentController {
 		return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
 	}
 
-	@GetMapping("/success-payment")
+	@GetMapping("/api/success-payment")
 	public String successPaymentPage() {
 		return "success-payment";
 	}
 
-	@GetMapping("/fail-payment")
+	@GetMapping("/api/fail-payment")
 	public String failPaymentPage() {
 		return "fail-payment";
 	}

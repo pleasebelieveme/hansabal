@@ -8,7 +8,6 @@ import org.example.hansabal.domain.payment.dto.request.RequestPayDto;
 import org.example.hansabal.domain.payment.dto.request.PaymentCallbackRequest;
 import org.example.hansabal.domain.payment.entity.PaymentStatus;
 import org.example.hansabal.domain.payment.exception.PaymentErrorCode;
-import org.example.hansabal.domain.payment.repository.PaymentRepository;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
 import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
@@ -39,6 +38,8 @@ public class PaymentService   {
 		return RequestPayDto.builder()
 			.paymentPrice(history.getPrice())
 			.uuid(history.getUuid())
+			.buyerName(history.getWallet().getUserId().getName())
+			.buyerEmail(history.getWallet().getUserId().getEmail())
 			.build();
 	}
 
