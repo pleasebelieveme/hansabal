@@ -1,6 +1,6 @@
 package org.example.hansabal.domain.batch.processor;
 
-import org.example.hansabal.domain.admin.entity.ProductStatDaily;
+import org.example.hansabal.domain.admin.entity.ProductOrderStatDaily;
 import org.example.hansabal.domain.batch.entity.AdminProductOrderStatDaily;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
@@ -9,10 +9,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Component
-public class AdminProductOrderStatDailyProcessor implements ItemProcessor<ProductStatDaily, AdminProductOrderStatDaily> {
+public class AdminProductOrderStatDailyProcessor implements ItemProcessor<ProductOrderStatDaily, AdminProductOrderStatDaily> {
 
 	@Override
-	public AdminProductOrderStatDaily process(ProductStatDaily order) {
+	public AdminProductOrderStatDaily process(ProductOrderStatDaily order) {
 		// ✅ 핵심 변환 로직: ProductStatDaily → AdminProductOrderStatDaily
 		// ProductStatDaily의 date, orderCount, totalSales만 사용 중
 

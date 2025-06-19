@@ -2,8 +2,8 @@ package org.example.hansabal.domain.batch.writer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.hansabal.domain.admin.entity.AdminProductOrderStatMonthly;
 import org.example.hansabal.domain.admin.repository.AdminProductOrderStatMonthlyRepository;
+import org.example.hansabal.domain.batch.entity.AdminProductOrderStatMonthly;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
