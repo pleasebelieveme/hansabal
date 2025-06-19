@@ -4,6 +4,9 @@ import java.util.Arrays;
 
 public class SecurityUrlMatcher {
 	public static final String[] PUBLIC_URLS = {
+		"/api-docs",
+		"/swagger-ui.html",
+		"/swagger-ui/**",
 		"/api/users",
 		"/api/auth/login",
 		"/crawl",

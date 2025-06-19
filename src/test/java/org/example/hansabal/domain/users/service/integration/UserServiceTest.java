@@ -26,8 +26,6 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Optional;
-
 @SpringBootTest
 @Testcontainers
 @Transactional
@@ -35,7 +33,7 @@ import java.util.Optional;
 @Sql(scripts = {"/user_test_db.sql"}
         ,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
-public class UserTest {
+public class UserServiceTest {
 
     @Container
     static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")

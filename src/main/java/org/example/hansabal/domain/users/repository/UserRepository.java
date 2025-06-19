@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.users.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.example.hansabal.common.exception.BizException;
@@ -27,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	}
 
 	boolean existsByNickname(String nickname);
+
+	Optional<User> findByNickname(String nickname);
 }
