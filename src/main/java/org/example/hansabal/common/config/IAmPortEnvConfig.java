@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import com.siot.IamportRestClient.IamportClient;
 
 @Configuration
-public class AppConfig {
+public class IAmPortEnvConfig {
 
 	@Value("${portone.open}")
 	String apiKey;
