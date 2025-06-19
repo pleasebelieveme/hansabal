@@ -68,7 +68,7 @@ class ReviewServiceTest {
     void 리뷰_생성() {
         //given
         Long productId = 2L;
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"테스트닉네임");
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
         CreateReviewRequest request = new CreateReviewRequest("test review", 5);
 
         //when
@@ -86,7 +86,7 @@ class ReviewServiceTest {
     void 리뷰_중복생성_예외() {
         //given
         Long productId = 1L;
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"테스트닉네임");
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
         CreateReviewRequest request = new CreateReviewRequest("test review", 5);
 
         //when, then
@@ -99,7 +99,7 @@ class ReviewServiceTest {
         //given
         Long reviewId = 1L;
         UpdateReviewRequest updateReviewRequest = new UpdateReviewRequest("테스트 업데이트 리뷰", 4);
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"테스트닉네임");
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
         //when
         UpdateReviewResponse response = reviewService.updateReview(reviewId, updateReviewRequest, userAuth);
@@ -116,11 +116,12 @@ class ReviewServiceTest {
     void 리뷰수정_유져정보_불일치_예외() {
         //given
         Long reviewId = 1L;
-        UserAuth userAuth = new UserAuth(2L, UserRole.USER,"테스트닉네임");
+        UserAuth otherUserAuth = new UserAuth(2L, UserRole.USER,"testnickname1");
+
         UpdateReviewRequest updateReviewRequest = new UpdateReviewRequest("테스트 업데이트 리뷰", 4);
 
         //then,then
-        assertThatThrownBy(() -> reviewService.updateReview(reviewId, updateReviewRequest, userAuth))
+        assertThatThrownBy(() -> reviewService.updateReview(reviewId, updateReviewRequest, otherUserAuth))
                 .hasMessageContaining("권한이 없습니다.");
     }
 
