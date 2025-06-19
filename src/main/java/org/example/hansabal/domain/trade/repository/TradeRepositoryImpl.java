@@ -32,7 +32,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				trade.trader.nickname
 			))
 			.from(trade)
-			.where(trade.title.containing(title).and(trade.deletedAt.isNull()))
+			.where(trade.title.like(title).and(trade.deletedAt.isNull()))//이후 커스텀함수로 containing도입 예정
 			.orderBy(trade.id.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -41,7 +41,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		long total = queryFactory
 			.select(trade.id)
 			.from(trade)
-			.where(trade.title.containing(title))
+			.where(trade.title.like(title))//이후 커스텀함수로 containing도입 예정
 			.fetch()
 			.size();
 

@@ -1,4 +1,4 @@
 package org.example.hansabal.domain.wallet.dto.request;
 
-public record ChargeRequestDto(Long id, Long cash) {
+public record LoadRequestDto(Long id, Long cash) {
 }

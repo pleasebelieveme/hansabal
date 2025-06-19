@@ -1,7 +1,10 @@
 package org.example.hansabal.domain.wallet.service;
 
+import java.util.UUID;
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.payment.entity.Payment;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
@@ -29,25 +32,30 @@ public class WalletHistoryService {
 	private final UserRepository userRepository;
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public void historySaver(Wallet wallet, Long tradeId, Long price){//Wallet 작동시 기록 저장(인덱싱 필요-이걸로 5분발표해야징 =ㅅ=)
-		if(tradeId==0){
-			WalletHistory walletHistory= WalletHistory.builder()
-				.walletId(wallet)
-				.tradeId(tradeId)
-				.price(price)
-				.remain(wallet.getCash()+price)
-				.build();
-			walletHistoryRepository.save(walletHistory);
-		}
-		else{
-		WalletHistory walletHistory= WalletHistory.builder()
-			.walletId(wallet)
+	public void historySaver(Wallet wallet, Long tradeId, Long price, String type) {//tradeId가 0이라면 uid=imp_uid, 아닐경우 type 지정자
+		WalletHistory walletHistory = WalletHistory.builder()
+			.wallet(wallet)
+			.type(type)
 			.tradeId(tradeId)
 			.price(price)
-			.remain(wallet.getCash()-price)
+			.remain(wallet.getCash() - price)
 			.build();
 		walletHistoryRepository.save(walletHistory);
-		}
+	}
+
+	@Transactional
+	public String historyChargeSaver(Wallet wallet, Long price, Payment payment){
+		WalletHistory walletHistory = WalletHistory.builder()
+			.wallet(wallet)
+			.type("충전")
+			.tradeId(0L)
+			.payment(payment)
+			.price(price)
+			.remain(wallet.getCash()+price)
+			.uuid(UUID.randomUUID().toString())
+			.build();
+		walletHistoryRepository.save(walletHistory);
+		return walletHistory.getUuid();
 	}
 
 	@Transactional(readOnly=true)

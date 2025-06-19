@@ -2,11 +2,14 @@ package org.example.hansabal.domain.wallet.service;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.payment.entity.Payment;
+import org.example.hansabal.domain.payment.entity.PaymentStatus;
+import org.example.hansabal.domain.payment.repository.PaymentRepository;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
-import org.example.hansabal.domain.wallet.dto.request.ChargeRequestDto;
+import org.example.hansabal.domain.wallet.dto.request.LoadRequestDto;
 import org.example.hansabal.domain.wallet.dto.response.WalletResponseDto;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
@@ -28,6 +31,7 @@ public class WalletService {
 	private final RequestsRepository requestsRepository;
 	private final WalletHistoryService walletHistoryService;
 	private final WalletHistoryRepository walletHistoryRepository;
+	private final PaymentRepository paymentRepository;
 
 	@Transactional
 	public void createWallet(UserAuth userAuth) {
@@ -42,20 +46,23 @@ public class WalletService {
 	}
 
 	@Transactional
-	public WalletResponseDto chargeWallet(ChargeRequestDto request, UserAuth userAuth) {
-		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Wallet wallet = walletRepository.findById(request.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		//연결 후 구현 예정 -ㅅ-(실제 결제가 일어나는 구간)
-		wallet.updateWallet(wallet.getCash()+request.cash());
-		walletHistoryService.historySaver(wallet,0L, request.cash());
-		return new WalletResponseDto(user.getName(),wallet.getCash());
+	public Payment loadWallet(LoadRequestDto request, Wallet wallet) {
+		Payment payment = Payment.builder()
+			.price(request.cash())
+			.status(PaymentStatus.READY)
+			.build();
+		paymentRepository.save(payment);
+		// wallet.updateWallet(wallet.getCash()+request.cash()); 확인 후 충전으로 이동 예정
+		return payment;
 	}
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
 	public void walletPay(User user, Long tradeId, Long price){//trade 에서 비용 지불시 사용(거래 상태 PAID 으로 바꿀 때 작동)
 		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		if(wallet.getCash()<price)
+			throw new BizException(WalletErrorCode.NOT_ENOUGH_CASH);
 		wallet.updateWallet(wallet.getCash()-price);
-		walletHistoryService.historySaver(wallet,tradeId,price);
+		walletHistoryService.historySaver(wallet,tradeId,price,"구매");
 	}
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
@@ -63,13 +70,13 @@ public class WalletService {
 		requestsRepository.findById(requestsId).orElseThrow(()->new BizException(WalletErrorCode.WRONG_REQUESTS_CONNECTED));
 		User trader= trade.getTrader();
 		Wallet wallet = walletRepository.findByUserId(trader).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		WalletHistory walletHistory = walletHistoryRepository.findByTradeId(trade.getId());//혹시 이부분 묵시적 null check가 따로 되고 있나요? 아니면 null check가 아니라 empty check가 더 적절할까요?
+		WalletHistory walletHistory = walletHistoryRepository.findByTradeId(trade.getId());
 		if(walletHistory==null)
 			throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
 		if(!walletHistory.getPrice().equals(trade.getPrice()))
 			throw new BizException(WalletErrorCode.DATA_MISMATCH);
 		wallet.updateWallet(wallet.getCash()+trade.getPrice());
-		walletHistoryService.historySaver(wallet,trade.getId(),trade.getPrice());
+		walletHistoryService.historySaver(wallet,trade.getId(),trade.getPrice(),"판매수익");
 	}
 
 	@Transactional(readOnly=true)
