@@ -125,9 +125,10 @@ public class DibTest {
 
 		Thread.sleep(10000);
 
+		executor = Executors.newFixedThreadPool(100);
+
 		for (int i = 0; i < threadCount; i++) {
 			long userId = i + 1L;
-			executor = Executors.newFixedThreadPool(100);
 			executor.submit(() -> {
 				try {
 					cancelBarrier.await();

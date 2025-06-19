@@ -66,7 +66,7 @@ public class BoardServiceTest {
     @DisplayName("게시글 등록 성공")
     void 게시글_등록() {
         BoardRequest request = new BoardRequest("일상", "제목", "내용");
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
         BoardResponse response = boardService.createPost(userAuth, request);
 
@@ -80,7 +80,7 @@ public class BoardServiceTest {
     @DisplayName("게시글 수정 성공")
     void 게시글_수정() {
         BoardRequest request = new BoardRequest("DAILY", "수정 제목", "수정 내용");
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
         BoardResponse response = boardService.updatePost(userAuth, 1L, request);
 
@@ -92,7 +92,7 @@ public class BoardServiceTest {
     @Test
     @DisplayName("게시글 삭제 성공")
     void 게시글_삭제() {
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
         boardService.deletePost(userAuth, 1L);
 
@@ -103,7 +103,7 @@ public class BoardServiceTest {
     @Test
     @DisplayName("게시글 상세 조회 성공")
     void 게시글_상세조회() {
-        UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
         BoardResponse response = boardService.getPost(1L);
 
         assertThat(response).isNotNull();
@@ -142,7 +142,7 @@ public class BoardServiceTest {
     @DisplayName("게시글 수정 - 권한 없음 예외")
     void 게시글_수정_권한없음() {
         BoardRequest request = new BoardRequest("NOTICE", "제목", "내용");
-        UserAuth userAuth = new UserAuth(2L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(2L, UserRole.USER,"testnickname1");
 
         assertThatThrownBy(() -> boardService.updatePost(userAuth, 1L, request))
                 .isInstanceOf(BizException.class)
@@ -152,7 +152,7 @@ public class BoardServiceTest {
     @Test
     @DisplayName("게시글 삭제 - 권한 없음 예외")
     void 게시글_삭제_권한없음() {
-        UserAuth userAuth = new UserAuth(2L, UserRole.USER);
+        UserAuth userAuth = new UserAuth(2L, UserRole.USER,"testnickname1");
 
         assertThatThrownBy(() -> boardService.deletePost(userAuth, 1L))
                 .isInstanceOf(BizException.class)
