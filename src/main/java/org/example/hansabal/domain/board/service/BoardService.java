@@ -86,7 +86,7 @@ public class BoardService {
     @Transactional(readOnly = true)
     public BoardResponse getPost(Long postId) {
 
-        boardServiceUtill.ViewCount(postId);
+        boardServiceUtill.viewCount(postId);
         // 1. 게시글 엔티티 조회
         Board board = boardRepository.findById(postId)
                 .orElseThrow(() -> new BizException(BoardErrorCode.POST_NOT_FOUND));
