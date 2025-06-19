@@ -3,7 +3,6 @@ package org.example.hansabal.domain.batch.reader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.domain.admin.entity.ProductOrderStatDaily;
-import org.example.hansabal.domain.admin.entity.ProductStatDaily;
 import org.example.hansabal.domain.batch.repository.ProductOrderStatDailyRepository;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.stereotype.Component;
@@ -15,15 +14,15 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class ProductOrderStatMonthlyReader implements ItemReader<ProductStatDaily> {
+public class ProductOrderStatMonthlyReader implements ItemReader<ProductOrderStatDaily> {
 
 	private final ProductOrderStatDailyRepository dailyRepository;
 
 	// 일별 통계 데이터를 순차적으로 읽기 위한 Iterator
-	private Iterator<ProductStatDaily> dailyIterator;
+	private Iterator<ProductOrderStatDaily> dailyIterator;
 
 	@Override
-	public ProductStatDaily read() {
+	public ProductOrderStatDaily read() {
 		// 최초 호출 시에만 DB에서 해당 월 일별 통계 데이터를 조회
 		if (dailyIterator == null) {
 			LocalDate now = LocalDate.now();
@@ -35,7 +34,7 @@ public class ProductOrderStatMonthlyReader implements ItemReader<ProductStatDail
 			LocalDate to = now.withDayOfMonth(1);
 
 			// from (포함) ~ to (미포함) 기간의 일별 주문 통계 조회
-			List<ProductStatDaily> items = dailyRepository.findAllByDateRange(from, to);
+			List<ProductOrderStatDaily> items = dailyRepository.findAllByDateRange(from, to);
 
 			// 조회 결과를 Iterator로 변환하여 순차적으로 처리 준비
 			dailyIterator = items.iterator();
