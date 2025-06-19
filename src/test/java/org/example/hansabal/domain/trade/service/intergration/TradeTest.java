@@ -63,7 +63,7 @@ public class TradeTest {
 	void 거래_생성() {
 		//given
 		TradeRequestDto request = new TradeRequestDto("testTitle", "testContents", 5500L);
-		UserAuth userAuth = new UserAuth(10L, UserRole.USER);
+		UserAuth userAuth = new UserAuth(10L, UserRole.USER,"test");
 		//when
 		tradeService.createTrade(request, userAuth);
 		Trade trade = tradeRepository.findById(9L).orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
@@ -79,7 +79,7 @@ public class TradeTest {
 
 	@Test
 	void 거래_수정() {
-		UserAuth userAuth = new UserAuth(4L, UserRole.USER);
+		UserAuth userAuth = new UserAuth(4L, UserRole.USER,"test");
 		TradeRequestDto request = new TradeRequestDto("updatedTitle3", "updatedContents", 9900L);
 
 		tradeService.updateTrade(7L, request, userAuth);
@@ -92,7 +92,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_수정_실패_작성자id_불일치() {
-		UserAuth userAuth = new UserAuth(5L, UserRole.USER);
+		UserAuth userAuth = new UserAuth(5L, UserRole.USER,"test");
 		TradeRequestDto request = new TradeRequestDto("updatedTitle3", "updatedContents", 9900L);
 
 		assertThatThrownBy(() -> {
@@ -103,7 +103,7 @@ public class TradeTest {
 
 	@Test
 	void 거래_취소() {
-		UserAuth userAuth = new UserAuth(4L, UserRole.USER);
+		UserAuth userAuth = new UserAuth(4L, UserRole.USER,"test");
 		Long tradeId = 8L;
 
 		tradeService.cancelTrade(tradeId, userAuth);
@@ -114,7 +114,7 @@ public class TradeTest {
 
 	@Test
 	void 거래_요청_등록() {
-	UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+	UserAuth userAuth = new UserAuth(1L, UserRole.USER,"test");
 	RequestsRequestDto request = RequestsRequestDto.builder().tradeId(6L).build();
 
 	requestsService.createRequests(userAuth,request);
@@ -127,7 +127,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_요청_등록_실패_없는_거래_id(){
-		UserAuth userAuth = new UserAuth(1L, UserRole.USER);
+		UserAuth userAuth = new UserAuth(1L, UserRole.USER,"test");
 		RequestsRequestDto request = RequestsRequestDto.builder().tradeId(10L).build();
 
 		assertThatThrownBy(() -> {requestsService.createRequests(userAuth,request);
@@ -136,7 +136,7 @@ public class TradeTest {
 
 	@Test
 	void 거래_등록자에_의한_상태_업데이트(){//1번 rq사용
-		UserAuth userAuth = new UserAuth(1L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(1L,UserRole.USER,"test");
 		Long requestsId=1L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PENDING);
 
@@ -148,7 +148,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_상태_업데이트_실패_등록자_id_불일치(){//3번rq사용, tid=2
-		UserAuth userAuth = new UserAuth(1L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(1L,UserRole.USER,"test");
 		Long requestsId=3L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.SHIPPING);
 
@@ -158,7 +158,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_상태_업데이트_실패_잘못된_상태_업데이트(){//3번 rq사용, st:paid/done
-		UserAuth userAuth = new UserAuth(2L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(2L,UserRole.USER,"test");
 		Long requestsId=3L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.DONE);
 
@@ -168,7 +168,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_상태_업데이트_실패_점유된_거래의_추가_요청_수락_시도(){
-		UserAuth userAuth = new UserAuth(4L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(4L,UserRole.USER,"test");
 		Long requestsId=7L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PENDING);
 
@@ -178,7 +178,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_상태_업데이트_실패_지불된_요청을_지불_전으로_수정(){//rq3
-		UserAuth userAuth = new UserAuth(2L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(2L,UserRole.USER,"test");
 		Long requestsId=3L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PENDING);
 
@@ -188,7 +188,7 @@ public class TradeTest {
 
 	@Test
 	void 거래_요청_지불기능(){//2번 rq 사용 rt6
-		UserAuth userAuth = new UserAuth(6L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(6L,UserRole.USER,"test");
 		Long requestsId=2L;
 
 		requestsService.payTradeFee(requestsId,userAuth);
@@ -199,7 +199,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 거래_요청_완료(){//4번 rq 사용 rt8
-		UserAuth userAuth = new UserAuth(8L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(8L,UserRole.USER,"test");
 		Long requestsId=4L;
 
 		requestsService.confirmGoods(requestsId,userAuth);
@@ -212,7 +212,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 무료가_아닌_거래_요청_상태_잘못된_업데이트(){//6번 rq 사용 rt9 td4
-		UserAuth userAuth = new UserAuth(4L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(4L,UserRole.USER,"test");
 		Long requestsId=6L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.SHIPPING);
 
@@ -222,7 +222,7 @@ public class TradeTest {
 
 	@Test//고장
 	void 완료된_거래_상태_변경_시도(){//5번 rq 사용 rt9 td4
-		UserAuth userAuth = new UserAuth(4L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(4L,UserRole.USER,"test");
 		Long requestsId=5L;
 		RequestsStatusRequestDto request= new RequestsStatusRequestDto(RequestStatus.PENDING);
 
@@ -232,7 +232,7 @@ public class TradeTest {
 
 	@Test
 	void 거래요청_취소(){
-		UserAuth userAuth = new UserAuth(9L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(9L,UserRole.USER,"test");
 		Long requestsId=8L;
 
 		requestsService.cancelRequests(requestsId, userAuth);

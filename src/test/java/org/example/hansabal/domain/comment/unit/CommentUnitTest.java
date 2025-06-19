@@ -75,7 +75,7 @@ public class CommentUnitTest {
 		given(commentRepository.save(any())).willReturn(mockComment);
 
 		// when
-		CommentResponse response = commentService.createComment(request, new UserAuth(1L, UserRole.USER), 1L);
+		CommentResponse response = commentService.createComment(request, new UserAuth(1L, UserRole.USER, "nickname"), 1L);
 
 		// then
 		assertThat(response).isNotNull();
@@ -87,7 +87,7 @@ public class CommentUnitTest {
 		// given
 		CreateCommentRequest request = new CreateCommentRequest("테스트 댓글");
 		given(userRepository.findById(2L)).willReturn(Optional.empty()); // DB에 1L인데 요청은 2L
-		UserAuth userAuth = new UserAuth(2L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(2L,UserRole.USER, "nickname");
 
 		// when & then
 		assertThatThrownBy(() -> {
@@ -119,7 +119,7 @@ public class CommentUnitTest {
 		CreateCommentRequest request = new CreateCommentRequest("수정된 댓글");
 
 		given(commentRepository.findById(1L)).willReturn(Optional.of(comment));
-		UserAuth userAuth = new UserAuth(1L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(1L,UserRole.USER, "nickname");
 
 		// when
 		CommentResponse response = commentService.updateComment(request, 1L, userAuth);
@@ -137,7 +137,7 @@ public class CommentUnitTest {
 
 		given(commentRepository.findById(1L)).willReturn(Optional.of(comment));
 
-		UserAuth userAuth = new UserAuth(2L,UserRole.USER);
+		UserAuth userAuth = new UserAuth(2L,UserRole.USER, "nickname");
 
 		assertThatThrownBy( () -> {
 			commentService.updateComment(request,1L,userAuth);

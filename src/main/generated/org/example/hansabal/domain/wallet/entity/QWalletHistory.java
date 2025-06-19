@@ -32,7 +32,7 @@ public class QWalletHistory extends EntityPathBase<WalletHistory> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final NumberPath<Payment> payment = createNumber("payment", Payment.class);
+    public final org.example.hansabal.domain.payment.entity.QPayment payment;
 
     public final NumberPath<Long> price = createNumber("price", Long.class);
 
@@ -67,6 +67,7 @@ public class QWalletHistory extends EntityPathBase<WalletHistory> {
 
     public QWalletHistory(Class<? extends WalletHistory> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.payment = inits.isInitialized("payment") ? new org.example.hansabal.domain.payment.entity.QPayment(forProperty("payment")) : null;
         this.wallet = inits.isInitialized("wallet") ? new QWallet(forProperty("wallet"), inits.get("wallet")) : null;
     }
 
