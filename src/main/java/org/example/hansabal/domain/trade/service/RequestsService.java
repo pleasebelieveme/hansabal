@@ -13,7 +13,7 @@ import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
-//import org.example.hansabal.domain.wallet.service.WalletService;
+import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -28,7 +28,7 @@ public class RequestsService {
 	private final RequestsRepository requestsRepository;
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
-	//private final WalletService walletService;
+	private final WalletService walletService;
 
 	@Transactional
 	public void createRequests(UserAuth userAuth, RequestsRequestDto request) {
@@ -43,8 +43,7 @@ public class RequestsService {
 	public Page<RequestsResponseDto> getRequestList(Long tradeId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<Requests> requests = requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
-		return requests.map(RequestsResponseDto::from);
+		return requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
 
 	}
 
@@ -90,8 +89,8 @@ public class RequestsService {
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.PENDING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
-		//Long price = trade.getPrice();
-		//walletService.walletPay(user, trade.getId(), price);
+		Long price = trade.getPrice();
+		walletService.walletPay(user, trade.getId(), price);
 		requests.updateStatus(RequestStatus.PAID);
 	}
 
@@ -104,7 +103,7 @@ public class RequestsService {
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.SHIPPING)
 			throw new BizException(TradeErrorCode.WRONG_STAGE);
-		//walletService.walletConfirm(trade,requestsId);
+		walletService.walletConfirm(trade,requestsId);
 		requests.updateStatus(RequestStatus.DONE);
 		trade.softDelete();
 	}
