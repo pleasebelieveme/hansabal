@@ -68,6 +68,9 @@ dependencies {
     // O'Auth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
+    //batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+
     // WebSocket 지원
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
