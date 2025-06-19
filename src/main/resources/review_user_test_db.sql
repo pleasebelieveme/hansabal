@@ -9,13 +9,14 @@ CREATE TABLE users (
                        name VARCHAR(20) NOT NULL ,
                        nickname VARCHAR(20) NOT NULL ,
                        user_role VARCHAR(20) NOT NULL,
+                       user_status VARCHAR(20) NOT NULL ,
+                       last_login_at DATETIME(6),
                        created_at DATETIME(6),
                        updated_at DATETIME(6),
                        deleted_at DATETIME(6)
 ) ENGINE=InnoDB;
 
-INSERT INTO users (id, email, password, name, nickname, user_role,created_at, updated_at, deleted_at)
-VALUES (1,'test1@email.com','!Aa123456','testname','testnickname1','USER',NOW(),NULL,NULL),
-       (2,'test2@email.com','!Aa123456','testname','testnickname1','USER',NOW(),NULL,NULL);
+INSERT INTO users (id, email, password, name, nickname, user_role,user_status,last_login_at,created_at, updated_at, deleted_at)
+VALUES (1,'test@email.com','!Aa123456','testname','testnickname1','USER','ACTIVE',NOW(),NOW(),NOW(),NULL);
 
 SET FOREIGN_KEY_CHECKS = 0;

@@ -122,7 +122,7 @@ class ReviewServiceTest {
 
         //then,then
         assertThatThrownBy(() -> reviewService.updateReview(reviewId, updateReviewRequest, otherUserAuth))
-                .hasMessageContaining("권한이 없습니다.");
+                .hasMessageContaining("존재하지 않는 사용자입니다.");
     }
 
     @Test

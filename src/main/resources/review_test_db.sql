@@ -9,7 +9,7 @@ CREATE TABLE reviews (
                        user_id BIGINT NOT NULL ,
                        product_id BIGINT NOT NULL ,
                        FOREIGN KEY (user_id) REFERENCES users(id),
-                       FOREIGN KEY (product_id) REFERENCES products(id),
+                       FOREIGN KEY (product_id) REFERENCES product(id),
                        created_at DATETIME(6),
                        updated_at DATETIME(6),
                        deleted_at DATETIME(6)
