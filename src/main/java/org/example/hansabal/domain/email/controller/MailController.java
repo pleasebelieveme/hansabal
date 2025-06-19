@@ -24,13 +24,6 @@ public class MailController {
 
     @GetMapping("/send")
     public String send(@RequestBody MailRequest mail) {
-        List<String> recipientList = new ArrayList<>();
-        recipientList.add("imleo322@gmail.com");
-
-        mail.setTitle("이메일 보내기 테스트");
-        mail.setContent("이메일 내용");
-        mail.setRecipientList(recipientList);
-
 
         mailService.sendSimpleEmail(mail);
         return "이메일 보내기 완료";

@@ -18,6 +18,9 @@ public class MailService {
 
     public void sendSimpleEmail(MailRequest mail) {
         SimpleMailMessage message = new SimpleMailMessage();
+        List<String> recipientList = new ArrayList<>();
+        recipientList.add("imleo322@gmail.com");
+        mail.setRecipientList(recipientList);
 
         message.setSubject(mail.getTitle()); //메일제목
         //리스트를 배열로 만들건데 문자열 배열로 만들어주세요. 리스트 사이즈 만큼 변환할 것이다. 라는 뜻이다.
