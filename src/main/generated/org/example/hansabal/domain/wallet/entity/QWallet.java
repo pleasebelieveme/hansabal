@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.trade.entity;
+package org.example.hansabal.domain.wallet.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,20 +11,20 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QTrade is a Querydsl query type for Trade
+ * QWallet is a Querydsl query type for Wallet
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QTrade extends EntityPathBase<Trade> {
+public class QWallet extends EntityPathBase<Wallet> {
 
-    private static final long serialVersionUID = 1546722839L;
+    private static final long serialVersionUID = -47172445L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QTrade trade = new QTrade("trade");
+    public static final QWallet wallet = new QWallet("wallet");
 
     public final org.example.hansabal.common.base.QBaseEntity _super = new org.example.hansabal.common.base.QBaseEntity(this);
 
-    public final StringPath contents = createString("contents");
+    public final NumberPath<Long> cash = createNumber("cash", Long.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> createdAt = _super.createdAt;
@@ -34,36 +34,30 @@ public class QTrade extends EntityPathBase<Trade> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final BooleanPath isOccupied = createBoolean("isOccupied");
-
-    public final NumberPath<Long> price = createNumber("price", Long.class);
-
-    public final StringPath title = createString("title");
-
-    public final org.example.hansabal.domain.users.entity.QUser trader;
-
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public QTrade(String variable) {
-        this(Trade.class, forVariable(variable), INITS);
+    public final org.example.hansabal.domain.users.entity.QUser userId;
+
+    public QWallet(String variable) {
+        this(Wallet.class, forVariable(variable), INITS);
     }
 
-    public QTrade(Path<? extends Trade> path) {
+    public QWallet(Path<? extends Wallet> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QTrade(PathMetadata metadata) {
+    public QWallet(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QTrade(PathMetadata metadata, PathInits inits) {
-        this(Trade.class, metadata, inits);
+    public QWallet(PathMetadata metadata, PathInits inits) {
+        this(Wallet.class, metadata, inits);
     }
 
-    public QTrade(Class<? extends Trade> type, PathMetadata metadata, PathInits inits) {
+    public QWallet(Class<? extends Wallet> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.trader = inits.isInitialized("trader") ? new org.example.hansabal.domain.users.entity.QUser(forProperty("trader")) : null;
+        this.userId = inits.isInitialized("userId") ? new org.example.hansabal.domain.users.entity.QUser(forProperty("userId")) : null;
     }
 
 }
