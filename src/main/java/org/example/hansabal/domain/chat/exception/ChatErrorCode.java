@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum ChatErrorCode implements ErrorCode {
-	INVALID_NICKNAME(HttpStatus.BAD_REQUEST,"CH001","존재하지 않은 닉네임입니다.");
+	INVALID_NICKNAME(HttpStatus.BAD_REQUEST,"CH001","존재하지 않은 닉네임입니다."),
+	UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"CH002","권한이 없습니다. 로그인 먼저 해주세요");
 
 	private final HttpStatus httpStatus;
 	private final String code;

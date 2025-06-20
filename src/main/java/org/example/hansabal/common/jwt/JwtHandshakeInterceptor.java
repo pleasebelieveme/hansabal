@@ -37,7 +37,7 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 		Map<String, Object> attributes) throws Exception {
 
-		String token = extractToeknFromRequest(request);
+		String token = extractTokenFromRequest(request);
 		if (token == null || !jwtUtil.validateToken(token)){
 			log.warn("WebSocket 인증 실패: 토큰이 유효하지 않음");
 			response.setStatusCode(HttpStatus.UNAUTHORIZED);
@@ -65,17 +65,12 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 
 	}
 
-	private String extractToeknFromRequest(ServerHttpRequest request){
-		List<String> headers = request.getHeaders().get("Authorization");
-		if(headers == null || headers.isEmpty()){
+	private String extractTokenFromRequest(ServerHttpRequest request){
+		String query = request.getURI().getQuery();
+		if(query == null || !query.startsWith("token=")){
 			return null;
 		}
 
-		String bearer = headers.get(0);
-		if(bearer.startsWith("Bearer ")){
-			return bearer.substring(7);
-		}
-
-		return null;
+		return query.substring("token=".length());
 	}
 }
