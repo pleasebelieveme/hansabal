@@ -26,4 +26,4 @@ spring:
       initialize-schema: always
 
 jwt:
-  secret: TlSTtzcspRw0Ec1sUrK9WwJ7a5XHVWzisIs2/5rg+bU=
+  secret: ${SPRING_JWT_SECRET}
