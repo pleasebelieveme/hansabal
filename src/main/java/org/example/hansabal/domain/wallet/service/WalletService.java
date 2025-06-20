@@ -9,8 +9,8 @@ import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.repository.RequestsRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
-import org.example.hansabal.domain.wallet.dto.request.LoadRequestDto;
-import org.example.hansabal.domain.wallet.dto.response.WalletResponseDto;
+import org.example.hansabal.domain.wallet.dto.request.LoadRequest;
+import org.example.hansabal.domain.wallet.dto.response.WalletResponse;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
 import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
@@ -46,7 +46,7 @@ public class WalletService {
 	}
 
 	@Transactional
-	public Payment loadWallet(LoadRequestDto request, Wallet wallet) {
+	public Payment loadWallet(LoadRequest request, Wallet wallet) {
 		Payment payment = Payment.builder()
 			.price(request.cash())
 			.status(PaymentStatus.READY)
@@ -80,10 +80,10 @@ public class WalletService {
 	}
 
 	@Transactional(readOnly=true)
-	public WalletResponseDto getWallet(UserAuth userAuth) {
+	public WalletResponse getWallet(UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Wallet wallet = walletRepository.findById(user.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		return new WalletResponseDto(wallet.getId(), user.getName(),wallet.getCash());
+		return new WalletResponse(wallet.getId(), user.getName(),wallet.getCash());
 	}
 
 }

@@ -2,9 +2,9 @@ package org.example.hansabal.domain.trade.service;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
-import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
-import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsRequest;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequest;
+import org.example.hansabal.domain.trade.dto.response.RequestsResponse;
 import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.entity.Requests;
 import org.example.hansabal.domain.trade.entity.Trade;
@@ -31,17 +31,17 @@ public class RequestsService {
 	private final WalletService walletService;
 
 	@Transactional
-	public RequestsResponseDto createRequests(UserAuth userAuth, RequestsRequestDto request) {
+	public RequestsResponse createRequests(UserAuth userAuth, RequestsRequest request) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade = tradeRepository.findById(request.tradeId()).orElseThrow(()-> new BizException(
 			TradeErrorCode.TRADE_NOT_FOUND));
 		Requests requests = Requests.of(trade,user);
 		requestsRepository.save(requests);
-		return RequestsResponseDto.from(requests);
+		return RequestsResponse.from(requests);
 	}
 
 	@Transactional(readOnly=true)
-	public Page<RequestsResponseDto> getRequestList(Long tradeId, int page, int size) {
+	public Page<RequestsResponse> getRequestList(Long tradeId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		return requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
@@ -49,7 +49,7 @@ public class RequestsService {
 	}
 
 	@Transactional
-	public RequestsResponseDto updateRequestsByTrader(Long requestsId, RequestsStatusRequestDto request, UserAuth userAuth) {
+	public RequestsResponse updateRequestsByTrader(Long requestsId, RequestsStatusRequest request, UserAuth userAuth) {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		if(requests.getStatus()==RequestStatus.DONE)//완료된 거래 요청을 업데이트 하는것을 금지.
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
@@ -68,7 +68,7 @@ public class RequestsService {
 		requests.updateStatus(request.requestStatus());
 		if(!trade.getIsOccupied())
 			trade.occupiedCheck(true);
-		return RequestsResponseDto.from(requests);
+		return RequestsResponse.from(requests);
 	}
 
 	@Transactional

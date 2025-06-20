@@ -2,7 +2,7 @@ package org.example.hansabal.domain.trade.repository;
 
 import java.util.List;
 
-import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
+import org.example.hansabal.domain.trade.dto.response.TradeResponse;
 import org.example.hansabal.domain.trade.entity.QTrade;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -19,12 +19,12 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override//.containing은 커스텀 함수 처리 예정
-	public Page<TradeResponseDto> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
+	public Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
 		QTrade trade = QTrade.trade;
 
-		List<TradeResponseDto> content = queryFactory
+		List<TradeResponse> content = queryFactory
 			.select(Projections.constructor(
-				TradeResponseDto.class,
+				TradeResponse.class,
 				trade.id,
 				trade.title,
 				trade.contents,
@@ -50,12 +50,12 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	}
 
 	@Override
-	public Page<TradeResponseDto> findByTraderOrderByTradeIdDesc(Long tradeId, Pageable pageable) {
+	public Page<TradeResponse> findByTraderOrderByTradeIdDesc(Long tradeId, Pageable pageable) {
 		QTrade trade = QTrade.trade;
 
-		List<TradeResponseDto> content = queryFactory
+		List<TradeResponse> content = queryFactory
 			.select(Projections.constructor(
-				TradeResponseDto.class,
+				TradeResponse.class,
 				trade.id,
 				trade.title,
 				trade.contents,

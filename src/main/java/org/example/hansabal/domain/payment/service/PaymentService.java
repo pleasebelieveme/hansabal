@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.example.hansabal.common.exception.BizException;
-import org.example.hansabal.domain.payment.dto.request.RequestPayDto;
+import org.example.hansabal.domain.payment.dto.request.RequestPay;
 import org.example.hansabal.domain.payment.dto.request.PaymentCallbackRequest;
 import org.example.hansabal.domain.payment.entity.PaymentStatus;
 import org.example.hansabal.domain.payment.exception.PaymentErrorCode;
@@ -31,11 +31,11 @@ public class PaymentService   {
 	private final IamportClient iamportClient;
 	private final WalletHistoryRepository historyRepository;
 
-	public RequestPayDto findRequestDto(String id) {
+	public RequestPay findRequestDto(String id) {
 
 		WalletHistory history = historyRepository.findByUuid(id);
 
-		return RequestPayDto.builder()
+		return RequestPay.builder()
 			.paymentPrice(history.getPrice())
 			.uuid(history.getUuid())
 			.buyerName(history.getWallet().getUserId().getName())

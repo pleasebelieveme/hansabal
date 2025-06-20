@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record RequestsRequestDto(@NotNull Long tradeId) {
+public record RequestsRequest(@NotNull Long tradeId) {
 }

@@ -1,6 +1,6 @@
 package org.example.hansabal.domain.payment.controller;
 
-import org.example.hansabal.domain.payment.dto.request.RequestPayDto;
+import org.example.hansabal.domain.payment.dto.request.RequestPay;
 import org.example.hansabal.domain.payment.dto.request.PaymentCallbackRequest;
 import org.example.hansabal.domain.payment.service.PaymentService;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ public class PaymentController {
 	public String paymentPage(@PathVariable(name = "uuid", required = false) String uuid,
 		Model model) {
 
-		RequestPayDto requestDto = paymentService.findRequestDto(uuid);
+		RequestPay requestDto = paymentService.findRequestDto(uuid);
 		model.addAttribute("requestDto", requestDto);
 		return "payment";
 	}
