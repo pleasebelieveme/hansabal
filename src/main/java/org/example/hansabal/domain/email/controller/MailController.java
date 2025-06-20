@@ -24,11 +24,10 @@ public class MailController {
     @Resource(name = "mailService")
     private MailService mailService;
 
-    private final UserRepository userRepository;
-
     @PostMapping("/send-email")
     public String send(@RequestBody MailRequest request) {
         mailService.sendSimpleEmail(request);
         return "PaymentMail";
     }
+    // 이부분은 한번더 수정해야 되는 부분이 있어서 변경될 예정입니다
 }

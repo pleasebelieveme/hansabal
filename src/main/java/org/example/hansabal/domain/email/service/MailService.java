@@ -18,14 +18,15 @@ public class MailService {
     @Autowired
     private JavaMailSender javaMailSender; // 이메일 송수신 기능을 지원하는 주요 인터페이스
 
-    public void sendSimpleEmail(MailRequest dto) {
 
+    public void sendSimpleEmail(MailRequest dto) {
+// 이부분은 한번더 수정해야 되는 부분이 있어서 변경될 예정입니다
         try {
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); //MimeMessage 객체의 설정을 쉽게 도와주는 보조 클래스
-            helper.setSubject(dto.getTitle());
+            helper.setSubject("구매 완료 안내");
             helper.setTo(dto.getRecipient());
-            helper.setText(dto.getContent(), true);
+            helper.setText("결재가 완료되었습니다.", true);
             javaMailSender.send(message);
         }catch (Exception e){
             e.printStackTrace();
