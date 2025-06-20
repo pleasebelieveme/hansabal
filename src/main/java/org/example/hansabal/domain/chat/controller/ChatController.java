@@ -43,15 +43,21 @@ public class ChatController {
 	private final ChatService chatService;
 
 	/**
-	 * 클라이언트가 "/app/dm"으로 메시지를 보내면 이 메서드가 호출됨
-	 * @param message 수신자 닉네임과 메시지 내용을 포함한 DTO
-	 * @param userAuth 현재 WebSocket 인증된 사용자 (보내는 사람)
+	 * 클라이언트가 "/app/dm" 경로로 STOMP 메시지를 보내면 호출되는 메서드
+	 * 1:1 DM을 처리하며, 메시지를 DB에 저장하고 수신자에게 실시간으로 전달한다.
+	 *
+	 * @param message   수신자 닉네임과 메시지 내용을 담은 요청 객체
+	 * @param principal WebSocket 세션의 인증 주체 (Handshake 또는 STOMP CONNECT에서 설정한 사용자 정보)
 	 */
 	@MessageMapping("/dm")
 	public void directMessage(@Payload ChatMessageRequest message, Principal principal) {
+
+		// principal이 UsernamePasswordAuthenticationToken 타입이고,
+		// 그 안에 실제 인증 객체가 우리가 만든 UserAuth 타입일 경우만 처리
 		if(principal instanceof UsernamePasswordAuthenticationToken token &&
 		token.getPrincipal() instanceof UserAuth userAuth) {
 
+			// 인증된 사용자의 닉네임 로그로 출력 (보낸 사람)
 			log.info("✅ [WebSocket] 인증된 사용자 닉네임: {}", userAuth.getNickname());
 
 			// 보낸 사람 = 현재 인증된 사용자의 닉네임
@@ -72,6 +78,8 @@ public class ChatController {
 				receiverId, "/queue/messages", payload
 			);
 		} else {
+			// principal이 null이거나 인증 객체가 우리가 기대한 형식이 아닐 경우
+			// 보안 상 이유로 메시지 처리를 중단하고 예외 발생시킴
 			log.warn("❌ WebSocket 인증 실패: principal 정보가 유효하지 않음");
 			throw new BizException(ChatErrorCode.UNAUTHORIZED);
 		}
