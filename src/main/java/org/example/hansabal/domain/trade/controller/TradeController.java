@@ -1,11 +1,11 @@
 package org.example.hansabal.domain.trade.controller;
 
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.trade.dto.request.RequestsRequestDto;
-import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequestDto;
-import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
-import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
-import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
+import org.example.hansabal.domain.trade.dto.request.RequestsRequest;
+import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequest;
+import org.example.hansabal.domain.trade.dto.request.TradeRequest;
+import org.example.hansabal.domain.trade.dto.response.RequestsResponse;
+import org.example.hansabal.domain.trade.dto.response.TradeResponse;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
 import org.springframework.data.domain.Page;
@@ -35,34 +35,34 @@ public class TradeController {
 	private final RequestsService requestsService;
 
 	@PostMapping
-	public ResponseEntity<Void> createTrade(@Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth) {
-		tradeService.createTrade(request, userAuth);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<TradeResponse> createTrade(@Valid @RequestBody TradeRequest request, @AuthenticationPrincipal UserAuth userAuth) {
+		TradeResponse response = tradeService.createTrade(request, userAuth);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping// full-scan 발생 주의보, full-text-index 및 커스텀 함수 처리 후 개선 예정
-	public ResponseEntity<Page<TradeResponseDto>> getTradesByTitle(@RequestParam(defaultValue = "1") @Positive int page, @RequestParam(defaultValue = "10") @Positive int size, @RequestParam(required=false, value="title") String title){
-		Page<TradeResponseDto> tradeList = tradeService.getTradeListByTitle(page, size, title);
+	public ResponseEntity<Page<TradeResponse>> getTradesByTitle(@RequestParam(defaultValue = "1") @Positive int page, @RequestParam(defaultValue = "10") @Positive int size, @RequestParam(required=false, value="title") String title){
+		Page<TradeResponse> tradeList = tradeService.getTradeListByTitle(page, size, title);
 		return ResponseEntity.status(HttpStatus.OK).body(tradeList);
 	}
 
 	@GetMapping("/{tradeId}")
-	public ResponseEntity<TradeResponseDto> getTrade(@PathVariable Long tradeId){
-		TradeResponseDto response = tradeService.getTrade(tradeId);
+	public ResponseEntity<TradeResponse> getTrade(@PathVariable Long tradeId){
+		TradeResponse response = tradeService.getTrade(tradeId);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping("/my")// full-scan 발생 주의보, full-text-index 및 커스텀 함수 처리 후 개선 예정
-	public ResponseEntity<Page<TradeResponseDto>> getMyTrades(
+	public ResponseEntity<Page<TradeResponse>> getMyTrades(
 		@RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size, @AuthenticationPrincipal UserAuth userAuth){
-		Page<TradeResponseDto> myTradeList = tradeService.getMyTrade(userAuth, page, size);
+		Page<TradeResponse> myTradeList = tradeService.getMyTrade(userAuth, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(myTradeList);
 	}
 
 	@PatchMapping("/{tradeId}")
-	public ResponseEntity<Void> updateTrade(@PathVariable Long tradeId, @Valid @RequestBody TradeRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		tradeService.updateTrade(tradeId, request, userAuth);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<TradeResponse> updateTrade(@PathVariable Long tradeId, @Valid @RequestBody TradeRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		TradeResponse response = tradeService.updateTrade(tradeId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@DeleteMapping("/{tradeId}")
@@ -72,22 +72,22 @@ public class TradeController {
 	}
 
 	@PostMapping("/requests")
-	public ResponseEntity<Void> createRequests(@Valid @RequestBody RequestsRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.createRequests(userAuth, request);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+	public ResponseEntity<RequestsResponse> createRequests(@Valid @RequestBody RequestsRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		RequestsResponse response = requestsService.createRequests(userAuth, request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping("/{tradeId}/requests")
-	public ResponseEntity<Page<RequestsResponseDto>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size){
-		Page<RequestsResponseDto> requestsList = requestsService.getRequestList(tradeId, page, size);
+	public ResponseEntity<Page<RequestsResponse>> getRequests(@PathVariable Long tradeId, @RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size){
+		Page<RequestsResponse> requestsList = requestsService.getRequestList(tradeId, page, size);
 		return ResponseEntity.status(HttpStatus.OK).body(requestsList);
 
 	}
 
 	@PatchMapping("/requests/{requestsId}")
-	public ResponseEntity<Void> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.updateRequestsByTrader(requestsId, request, userAuth);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	public ResponseEntity<RequestsResponse> updateRequests(@PathVariable Long requestsId, @Valid @RequestBody RequestsStatusRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		RequestsResponse response = requestsService.updateRequestsByTrader(requestsId, request, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@DeleteMapping("/requests/{requestsId}")

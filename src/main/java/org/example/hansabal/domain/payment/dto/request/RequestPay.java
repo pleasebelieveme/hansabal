@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class RequestPayDto {
+public class RequestPay {
 	private String uuid;
 	private Long paymentPrice;
 	private String buyerName;
 	private String buyerEmail;
 
 	@Builder
-	public RequestPayDto(String uuid,Long paymentPrice, String buyerName, String buyerEmail) {
+	public RequestPay(String uuid,Long paymentPrice, String buyerName, String buyerEmail) {
 		this.uuid = uuid;
 		this.paymentPrice = paymentPrice;
 		this.buyerName = buyerName;

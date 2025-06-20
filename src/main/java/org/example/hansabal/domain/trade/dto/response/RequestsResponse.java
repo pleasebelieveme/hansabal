@@ -7,9 +7,9 @@ import org.example.hansabal.domain.trade.entity.Requests;
 import lombok.Builder;
 
 @Builder
-public record RequestsResponseDto(Long requestsId, RequestStatus status, Long tradeId, Long requesterId){
-	public static RequestsResponseDto from(Requests requests){
-		return new RequestsResponseDto(requests.getId(), requests.getStatus(),
+public record RequestsResponse(Long requestsId, RequestStatus status, Long tradeId, Long requesterId){
+	public static RequestsResponse from(Requests requests){
+		return new RequestsResponse(requests.getId(), requests.getStatus(),
 			requests.getTrade().getId(), requests.getRequester().getId());
 	}
 }

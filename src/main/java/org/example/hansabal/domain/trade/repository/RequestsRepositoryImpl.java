@@ -2,9 +2,8 @@ package org.example.hansabal.domain.trade.repository;
 
 import java.util.List;
 
-import org.example.hansabal.domain.trade.dto.response.RequestsResponseDto;
+import org.example.hansabal.domain.trade.dto.response.RequestsResponse;
 import org.example.hansabal.domain.trade.entity.QRequests;
-import org.example.hansabal.domain.trade.entity.Requests;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +19,12 @@ public class RequestsRepositoryImpl implements RequestsRepositoryCustom{
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Page<RequestsResponseDto> findByTradeIdOrderByRequestsIdAsc(Long tradeId, Pageable pageable){
+	public Page<RequestsResponse> findByTradeIdOrderByRequestsIdAsc(Long tradeId, Pageable pageable){
 		QRequests requests = QRequests.requests;
 
-		List<RequestsResponseDto> content = queryFactory
+		List<RequestsResponse> content = queryFactory
 			.select(Projections.constructor(
-				RequestsResponseDto.class,
+				RequestsResponse.class,
 				requests.id,
 				requests.status,
 				requests.trade,
