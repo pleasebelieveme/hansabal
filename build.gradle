@@ -13,6 +13,10 @@ java {
     }
 }
 
+compileJava {
+    options.compilerArgs << "-parameters"
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -77,6 +81,7 @@ dependencies {
     // iamport
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()

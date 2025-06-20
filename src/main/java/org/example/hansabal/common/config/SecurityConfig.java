@@ -40,12 +40,20 @@ public class SecurityConfig {
 				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
-				.anyRequest().authenticated()
+					.requestMatchers("/write").authenticated()
+					.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth -> oauth
+					.loginPage("/login")
 				.userInfoEndpoint(user -> user.userService(customOAuth2UserService))
 				.successHandler(oAuth2LoginSuccessHandler)
 			)
+				.logout(logout -> logout
+						.logoutUrl("/logout")                         // 로그아웃 URL
+						.logoutSuccessUrl("/home")                    // 로그아웃 성공 후 이동할 경로
+						.invalidateHttpSession(true)                  // 세션 무효화
+						.deleteCookies("accessToken")                 // accessToken 쿠키 삭제
+				)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

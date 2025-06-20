@@ -11,6 +11,15 @@ public class SecurityUrlMatcher {
 		"/api/auth/login",
 		"/crawl",
 		"/home",
+			"/community",
+			"/img/**",
+			"/",
+			"/login",
+			"/oauth2/**",
+			"/api/payment/success",
+			"/success-payment",
+			"/fail-payment",
+
 		"/api/shop/search/**"
 	};
 

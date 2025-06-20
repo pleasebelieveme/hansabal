@@ -2,6 +2,7 @@ package org.example.hansabal.domain.board.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.common.redisson.DistributedLock;
@@ -27,7 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -44,6 +45,12 @@ public class BoardService {
     @Transactional
     public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+
+        log.info("🔥 BoardService.createPost() 진입");
+        log.info("작성자 ID: {}", userAuth.getId());
+        log.info("제목: {}", request.getTitle());
+        log.info("카테고리: {}", request.getCategory());
+
         Board board = Board.builder()
                 .user(user)
                 .category(request.getCategory()) // ✅ 변경
@@ -53,6 +60,9 @@ public class BoardService {
                 .viewCount(0)
                 .build();
         Board saved = boardRepository.save(board);
+
+        // 4. 저장 결과 확인
+        log.info("✅ 저장된 글 ID: {}", saved.getId());
         return boardMapper.toResponse(saved);
     }
 

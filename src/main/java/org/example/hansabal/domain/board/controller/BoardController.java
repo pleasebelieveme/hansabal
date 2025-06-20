@@ -3,6 +3,7 @@ package org.example.hansabal.domain.board.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
@@ -31,6 +33,10 @@ public class BoardController {
             @RequestBody @Valid BoardRequest request,
             @AuthenticationPrincipal UserAuth userAuth
     ) {
+        log.info("📨 writePost 진입!");
+        log.info("title = {}, content = {}, category = {}", request.getTitle(), request.getContent(), request.getCategory());
+
+        System.out.println("✅ createPost 도착함");
         BoardResponse response = boardService.createPost(userAuth, request);
         return ResponseEntity.status(201).body(response);
     }

@@ -1,5 +1,6 @@
 package org.example.hansabal.common.jwt;
 
+import jakarta.servlet.http.Cookie;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +63,14 @@ public class JwtUtil {
 		String bearer = request.getHeader("Authorization");
 		if(bearer != null && bearer.startsWith("Bearer ")){
 			return bearer.substring(7);
+		}
+		// 2. accessToken 쿠키 확인
+		if (request.getCookies() != null) {
+			for (Cookie cookie : request.getCookies()) {
+				if ("accessToken".equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
 		}
 		return null;
 	}
