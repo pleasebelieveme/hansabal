@@ -1,34 +1,40 @@
 package org.example.hansabal.domain.email.service;
 
 import jakarta.mail.internet.MimeMessage;
-import org.example.hansabal.domain.email.dto.request.MailRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
+
 /*
 이메일의 제목, 본문, 수신자, 첨부파일 등 각종 속성을 간단한 메소드로 편리하게 설정
 HTML 본문이나 여러 수신자, 첨부파일, 인라인 이미지와 같은 복잡한 이메일 작성 가능
 문자 인코딩(UTF-8 등) 설정 간편
 */
 @Service("mailService")
+@RequiredArgsConstructor
 public class MailService {
 
     @Autowired
     private JavaMailSender javaMailSender; // 이메일 송수신 기능을 지원하는 주요 인터페이스
+    @Autowired
+    private SpringTemplateEngine templateEngine;
 
-
-    public void sendSimpleEmail(MailRequest dto) {
-// 이부분은 한번더 수정해야 되는 부분이 있어서 변경될 예정입니다
+    public void sendSimpleEmail(String name, String email) {
         try {
+            Context context = new Context();
+            context.setVariable("name", name);
+            String html = templateEngine.process("PaymentMail", context);
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); //MimeMessage 객체의 설정을 쉽게 도와주는 보조 클래스
+            helper.setTo(email);
             helper.setSubject("구매 완료 안내");
-            helper.setTo(dto.getRecipient());
-            helper.setText("결재가 완료되었습니다.", true);
+            helper.setText(html, true);
             javaMailSender.send(message);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
