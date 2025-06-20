@@ -79,6 +79,10 @@ dependencies {
 
     // iamport
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-websocket'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework:spring-messaging'
 }
 
 tasks.named('test') {
