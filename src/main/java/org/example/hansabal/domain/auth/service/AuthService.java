@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,6 +35,12 @@ public class AuthService {
 	@Transactional
 	public TokenResponse login(LoginRequest request) {
 		User user = userRepository.findByEmailOrElseThrow(request.email());
+
+		if (user.getLastLoginAt() != null && user.getLastLoginAt().isBefore(LocalDateTime.now().minusYears(1))) {
+			user.markAsDormant();
+			userRepository.save(user);
+			throw new BizException(UserErrorCode.DORMANT_ACCOUNT); // 휴면 전환 후 로그인 차단
+		}
 
 		if (user.getUserStatus() != UserStatus.ACTIVE) {
 			throw new BizException(UserErrorCode.DORMANT_ACCOUNT);
