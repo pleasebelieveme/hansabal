@@ -4,9 +4,12 @@ import jakarta.annotation.Resource;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.email.dto.request.MailRequest;
 import org.example.hansabal.domain.email.service.MailService;
+import org.example.hansabal.domain.payment.dto.request.RequestPayDto;
+import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.stylesheets.LinkStyle;
 
@@ -14,17 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.LongStream;
 
-@RestController
-@RequestMapping("/send-email")
+@Controller
 @RequiredArgsConstructor
 public class MailController {
 
     @Resource(name = "mailService")
     private MailService mailService;
 
-    @PostMapping
+    private final UserRepository userRepository;
+
+    @PostMapping("/send-email")
     public String send(@RequestBody MailRequest request) {
         mailService.sendSimpleEmail(request);
-        return "이메일 보내기 성공";
+        return "PaymentMail";
     }
 }
