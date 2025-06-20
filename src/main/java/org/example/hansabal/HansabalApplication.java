@@ -11,5 +11,4 @@ public class HansabalApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HansabalApplication.class, args);
 	}
-
 }
