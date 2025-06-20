@@ -19,7 +19,7 @@ public class BoardMapper {
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
-                .category(board.getCategory().getDisplayName())
+                .category(board.getCategory())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())

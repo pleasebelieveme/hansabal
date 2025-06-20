@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>한사발 결제 진행</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #e1f5fe, #b3e5fc);
+            font-family: 'Segoe UI', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+
+        .readonly-display {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 24px;
+        }
+
+        #pay-button {
+            width: 100%;
+            padding: 14px;
+            background-color: #03a9f4;
+            border: none;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        #pay-button:hover {
+            background-color: #0288d1;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 숨겨진 입력값들 -->
+    <input type="hidden" id="orderUid" value="[[${requestDto.uuid}]]">
+    <input type="hidden" id="itemName" value="[[${requestDto.itemName}]]">
+    <input type="hidden" id="buyerName" value="[[${requestDto.buyerName}]]">
+    <input type="hidden" id="buyerEmail" value="[[${requestDto.buyerEmail}]]">
+    <input type="hidden" id="buyerAddress" value="[[${requestDto.buyerAddress}]]">
+    <input type="hidden" id="paymentPrice" value="[[${requestDto.paymentPrice}]]">
+
+    <!-- 사용자에게 보여줄 결제 금액 -->
+    <div class="readonly-display">
+        ₩ [[${requestDto.paymentPrice}]] 결제 예정
+    </div>
+
+    <button id="pay-button">결제하기</button>
+</div>
+<script>
+    const IMP = window.IMP;
+    IMP.init("imp17705270");
+
+    document.getElementById("pay-button").addEventListener("click", function () {
+        const orderUid = document.getElementById("orderUid").value;
+        const itemName = document.getElementById("itemName").value;
+        const paymentPrice = parseInt(document.getElementById("paymentPrice").value);
+        const buyerName = document.getElementById("buyerName").value;
+        const buyerEmail = document.getElementById("buyerEmail").value;
+        const buyerAddress = document.getElementById("buyerAddress").value;
+
+        IMP.request_pay({
+            pg: 'html5_inicis.INIpayTest',
+            pay_method: 'card',
+            merchant_uid: orderUid,
+            name: itemName,
+            amount: paymentPrice,
+            buyer_email: buyerEmail,
+            buyer_name: buyerName,
+            buyer_addr: buyerAddress
+        }, function (rsp) {
+            if (rsp.success) {
+                $.ajax({
+                    url: "/api/payment",
+                    method: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        payment_uid: rsp.imp_uid,
+                        order_uid: rsp.merchant_uid
+                    }),
+                    success: function () {
+                        window.location.href = "/success-payment";
+                    },
+                    error: function () {
+                        alert("결제 검증 실패");
+                        window.location.href = "/fail-payment";
+                    }
+                });
+            } else {
+                alert("결제 실패");
+                window.location.href = "/fail-payment";
+            }
+        });
+    });
+</script>
+</body>
+</html>

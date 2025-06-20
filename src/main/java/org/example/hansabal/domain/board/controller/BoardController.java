@@ -68,7 +68,7 @@ public class BoardController {
     // 게시글 목록 조회 (페이징)
     @GetMapping
     public ResponseEntity<Page<BoardResponse>> getPosts(
-            @RequestParam(defaultValue = "ALL") String category,
+            @RequestParam(defaultValue = "ALL") BoardCategory category,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
