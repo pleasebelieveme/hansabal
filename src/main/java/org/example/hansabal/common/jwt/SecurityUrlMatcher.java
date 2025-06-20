@@ -10,6 +10,7 @@ public class SecurityUrlMatcher {
 		"/api/users",
 		"/api/auth/login",
 		"/crawl",
+		"/home",
 		"/api/shop/search/**"
 	};
 

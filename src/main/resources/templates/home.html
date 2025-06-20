@@ -3,9 +3,149 @@
 <head>
     <meta charset="UTF-8">
     <title>한사발</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fff0f5;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px 10px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #d81b60;
+            flex: 1;
+        }
+
+        .category-bar {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex: 2;
+        }
+
+        .category-bar a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #3c3c3c;
+            font-size: 15px;
+        }
+
+        .category-bar a:hover {
+            color: #d81b60;
+        }
+
+        .top-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+            justify-content: flex-end;
+        }
+
+        .icon {
+            color: #444;
+            font-size: 18px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .icon .badge {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background-color: #03a9f4;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 11px;
+        }
+
+        .join-link {
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .join-link:hover {
+            color: #d81b60;
+        }
+
+        hr {
+            border: none;
+            border-top: 2px solid #f48fb1;
+            width: 100%;
+            margin: 0 auto 20px;
+        }
+
+        .main-hero {
+            text-align: center;
+            padding: 60px 20px 40px;
+        }
+
+        .main-hero h2 {
+            font-size: 38px;
+            color: #d81b60;
+            margin-bottom: 10px;
+        }
+
+        .main-hero p {
+            font-size: 16px;
+            color: #555;
+        }
+
+        .hero-image {
+            margin-top: 30px;
+        }
+
+        .hero-image img {
+            max-width: 300px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-<h1>한사발 막걸리 커뮤니티입니다.</h1>
-<a href="/api/wallet">지갑페이지로 이동</a>
+<!-- 상단바 -->
+<div class="top-bar">
+    <div class="logo">한사발 막걸리</div>
+
+    <nav class="category-bar">
+        <a href="/wallet">지갑</a>
+        <a href="/shop">쇼핑</a>
+        <a href="/community">커뮤니티</a>
+        <a href="/event">이벤트</a>
+    </nav>
+
+    <div class="top-icons">
+        <i class="fas fa-user icon" title="로그인"></i>
+        <div class="icon" title="장바구니">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge">0</span>
+        </div>
+        <a href="/join" class="join-link">JOIN</a>
+    </div>
+</div>
+
+<!-- 구분선 -->
+<hr>
+<section class="main-hero">
+    <h2>오늘도 <strong>한사발</strong> 하시려고요?</h2>
+    <p>막갈리 쇼핑, 리뷰, 카테고리까지 하나로!</p>
+    <div class="hero-image">
+        <img src="/img/makgeolli-bottle.png" alt="막갈리 이미지">
+    </div>
+</section>
 </body>
 </html>

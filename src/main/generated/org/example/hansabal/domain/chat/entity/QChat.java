@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.review.entity;
+package org.example.hansabal.domain.chat.entity;
 
 import static com.querydsl.core.types.PathMetadataFactory.*;
 
@@ -11,16 +11,16 @@ import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
- * QReview is a Querydsl query type for Review
+ * QChat is a Querydsl query type for Chat
  */
 @Generated("com.querydsl.codegen.DefaultEntitySerializer")
-public class QReview extends EntityPathBase<Review> {
+public class QChat extends EntityPathBase<Chat> {
 
-    private static final long serialVersionUID = 1856809249L;
+    private static final long serialVersionUID = -2079112095L;
 
     private static final PathInits INITS = PathInits.DIRECT2;
 
-    public static final QReview review = new QReview("review");
+    public static final QChat chat = new QChat("chat");
 
     public final org.example.hansabal.common.base.QBaseEntity _super = new org.example.hansabal.common.base.QBaseEntity(this);
 
@@ -34,35 +34,35 @@ public class QReview extends EntityPathBase<Review> {
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
-    public final org.example.hansabal.domain.product.entity.QProduct product;
+    public final org.example.hansabal.domain.users.entity.QUser receiver;
 
-    public final NumberPath<Integer> rating = createNumber("rating", Integer.class);
+    public final org.example.hansabal.domain.users.entity.QUser sender;
+
+    public final DateTimePath<java.time.LocalDateTime> sentAt = createDateTime("sentAt", java.time.LocalDateTime.class);
 
     //inherited
     public final DateTimePath<java.time.LocalDateTime> updatedAt = _super.updatedAt;
 
-    public final org.example.hansabal.domain.users.entity.QUser user;
-
-    public QReview(String variable) {
-        this(Review.class, forVariable(variable), INITS);
+    public QChat(String variable) {
+        this(Chat.class, forVariable(variable), INITS);
     }
 
-    public QReview(Path<? extends Review> path) {
+    public QChat(Path<? extends Chat> path) {
         this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
-    public QReview(PathMetadata metadata) {
+    public QChat(PathMetadata metadata) {
         this(metadata, PathInits.getFor(metadata, INITS));
     }
 
-    public QReview(PathMetadata metadata, PathInits inits) {
-        this(Review.class, metadata, inits);
+    public QChat(PathMetadata metadata, PathInits inits) {
+        this(Chat.class, metadata, inits);
     }
 
-    public QReview(Class<? extends Review> type, PathMetadata metadata, PathInits inits) {
+    public QChat(Class<? extends Chat> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.product = inits.isInitialized("product") ? new org.example.hansabal.domain.product.entity.QProduct(forProperty("product")) : null;
-        this.user = inits.isInitialized("user") ? new org.example.hansabal.domain.users.entity.QUser(forProperty("user")) : null;
+        this.receiver = inits.isInitialized("receiver") ? new org.example.hansabal.domain.users.entity.QUser(forProperty("receiver")) : null;
+        this.sender = inits.isInitialized("sender") ? new org.example.hansabal.domain.users.entity.QUser(forProperty("sender")) : null;
     }
 
 }

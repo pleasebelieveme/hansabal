@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 public class BoardServiceUtill {
-    BoardRepository boardRepository;
+    private final BoardRepository boardRepository;
 
     @DistributedLock(key = "'DIB:BOARD:' + #postId")
     public void viewCount (Long postId) {
