@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.domain.board.entity.Board;
+import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.users.entity.User;
 
@@ -21,7 +22,7 @@ public class BoardResponse {
     private Long userId;
     private String nickname;
     private String email;
-    private String category;
+    private BoardCategory category;
     private String title;
     private String content;
     private Integer viewCount;
@@ -40,7 +41,7 @@ public class BoardResponse {
                 .userId(user.getId())
                 .nickname(user.getNickname())
                 .email(user.getEmail())
-                .category(board.getCategory().getDisplayName()) // or .toString()
+                .category(board.getCategory()) // or .toString()
                 .title(board.getTitle())
                 .content(board.getContent())
                 .viewCount(board.getViewCount())
