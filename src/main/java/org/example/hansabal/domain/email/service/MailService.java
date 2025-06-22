@@ -27,11 +27,27 @@ public class MailService {
         try {
             Context context = new Context();
             context.setVariable("name", name);
-            String html = templateEngine.process("PaymentMail", context);
+            String html = templateEngine.process("paymentMail", context);
             MimeMessage message = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); //MimeMessage 객체의 설정을 쉽게 도와주는 보조 클래스
             helper.setTo(email);
             helper.setSubject("구매 완료 안내");
+            helper.setText(html, true);
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void signUpEmail() {
+        try {
+            Context context = new Context();
+            context.setVariable("name", "이귀현");
+            String html = templateEngine.process("signUpMail", context);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); //MimeMessage 객체의 설정을 쉽게 도와주는 보조 클래스
+            helper.setTo("imleo322@hanmail.net");
+            helper.setSubject("회원가입완료 안내");
             helper.setText(html, true);
             javaMailSender.send(message);
         } catch (Exception e) {
