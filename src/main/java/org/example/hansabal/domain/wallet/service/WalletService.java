@@ -82,7 +82,9 @@ public class WalletService {
 	@Transactional(readOnly=true)
 	public WalletResponse getWallet(UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Wallet wallet = walletRepository.findById(user.getId()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+
+		Wallet wallet = walletRepository.findByUserId(user)
+				.orElseThrow(() -> new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		return new WalletResponse(wallet.getId(), user.getName(),wallet.getCash());
 	}
 

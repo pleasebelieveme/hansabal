@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>한사발 로그인</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fffaf0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box {
+      padding: 30px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .login-box h2 {
+      margin-bottom: 20px;
+    }
+    .login-box a {
+      display: block;
+      margin: 10px 0;
+      text-decoration: none;
+      background-color: #4285F4;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+    .error {
+      color: red;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="login-box">
+  <h2>소셜 로그인</h2>
+  <div th:if="${param.error}" class="error">
+    로그인 실패. 다시 시도해주세요.
+  </div>
+  <a href="/oauth2/authorization/google">Google 로그인</a>
+  <a href="/oauth2/authorization/kakao" class="kakao">Kakao 로그인</a>
+  <a href="/oauth2/authorization/naver" class="naver">Naver 로그인</a>
+</div>
+</body>
+</html>

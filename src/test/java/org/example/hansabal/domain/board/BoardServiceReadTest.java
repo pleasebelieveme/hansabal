@@ -56,7 +56,7 @@ public class BoardServiceReadTest {
                 "테스트 제목",
                 "테스트 내용"
         );
-        boardService.createPost(userAuth, boardRequest);
+        boardService.createBoard(userAuth, boardRequest);
 
 
 

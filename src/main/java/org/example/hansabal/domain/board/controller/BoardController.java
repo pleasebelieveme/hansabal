@@ -7,11 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
+import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.service.BoardService;
 import org.example.hansabal.domain.board.service.BoardServiceUtill;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class BoardController {
         log.info("title = {}, content = {}, category = {}", request.getTitle(), request.getContent(), request.getCategory());
 
         System.out.println("✅ createPost 도착함");
-        BoardResponse response = boardService.createPost(userAuth, request);
+        BoardResponse response = boardService.createBoard(userAuth, request);
         return ResponseEntity.status(201).body(response);
     }
 
@@ -73,13 +72,13 @@ public class BoardController {
 
     // 게시글 목록 조회 (페이징)
     @GetMapping
-    public ResponseEntity<Page<BoardResponse>> getPosts(
+    public ResponseEntity<Page<BoardSimpleResponse>> getPosts(
             @RequestParam(defaultValue = "ALL") BoardCategory category,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<BoardResponse> list = boardService.getPosts(category, keyword, page, size);
+        Page<BoardSimpleResponse> list = boardService.getPosts(category, keyword, page, size);
         return ResponseEntity.ok(list);
     }
 

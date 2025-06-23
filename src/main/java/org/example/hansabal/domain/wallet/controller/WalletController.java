@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.wallet.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.payment.entity.Payment;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/wallet")
@@ -42,6 +44,12 @@ public class WalletController {
 
 	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
 	public ResponseEntity<String> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		if (userAuth == null) {
+			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
+		}
+
+		log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
+
 		WalletResponse response = walletService.getWallet(userAuth);
 		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		Payment payment = walletService.loadWallet(request, wallet);

@@ -1,22 +1,16 @@
 package org.example.hansabal.domain.board;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.example.hansabal.domain.board.entity.BoardCategory.DAILY;
-import static org.example.hansabal.domain.users.entity.QUser.user;
-import static org.example.hansabal.domain.users.entity.UserRole.USER;
 
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
-import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.board.service.BoardService;
 import org.example.hansabal.domain.board.service.BoardServiceUtill;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
-import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
-import org.example.hansabal.domain.users.repository.UserRepository;
 import org.example.hansabal.domain.users.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -72,7 +66,7 @@ public class BoardServiceUtillTest {
                     "테스트 제목",
                     "테스트 내용"
             );
-            boardService.createPost(userAuth, boardRequest);
+            boardService.createBoard(userAuth, boardRequest);
 
 
 
