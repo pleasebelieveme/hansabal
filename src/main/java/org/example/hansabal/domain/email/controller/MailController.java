@@ -15,7 +15,9 @@ public class MailController {
 
     @PostMapping("/send-email")
     public String send() {
-        mailService.signUpEmail();
+        String name = "이귀현";
+        String email = "imleo322@hanmail.net";
+        mailService.signUpCompletedEmail(name, email);
         return "PaymentMail";
     }
 }

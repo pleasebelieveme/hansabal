@@ -41,7 +41,7 @@ public class SecurityConfig {
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
 				.requestMatchers("/ws/**", "/connection/**", "/**/info", "/**/sockjs/**").permitAll()
-				.anyRequest().authenticated()
+				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth -> oauth
 				.userInfoEndpoint(user -> user.userService(customOAuth2UserService))
