@@ -34,11 +34,11 @@ public class WalletController {
 	private final WalletHistoryService walletHistoryService;
 	private final WalletRepository walletRepository;
 
-	@PostMapping("/new")
-	public ResponseEntity<Void> createWallet(@AuthenticationPrincipal UserAuth userAuth){
-		walletService.createWallet(userAuth);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
+	// @PostMapping("/new")
+	// public ResponseEntity<Void> createWallet(@AuthenticationPrincipal UserAuth userAuth){
+	// 	walletService.createWallet(userAuth);
+	// 	return ResponseEntity.status(HttpStatus.CREATED).build();
+	// }
 
 	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
 	public String loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
