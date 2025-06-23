@@ -5,6 +5,7 @@ import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
+import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.service.BoardService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
@@ -77,7 +78,7 @@ public class BoardServiceReadTest {
     @Test
     @DisplayName("게시글 목록 조회 - 전체 + 키워드")
     void 게시글_목록조회_전체_키워드() {
-        Page<BoardResponse> result = boardService.getPosts(BoardCategory.ALL, "테스트", 0, 10);
+        Page<BoardSimpleResponse> result = boardService.getPosts(BoardCategory.ALL, "테스트", 0, 10);
 
         assertThat(result.getContent()).isNotEmpty();
     }
@@ -85,7 +86,7 @@ public class BoardServiceReadTest {
     @Test
     @DisplayName("게시글 목록 조회 - 카테고리만")
     void 게시글_목록조회_카테고리() {
-        Page<BoardResponse> result = boardService.getPosts(BoardCategory.DAILY, null, 0, 10);
+        Page<BoardSimpleResponse> result = boardService.getPosts(BoardCategory.DAILY, null, 0, 10);
 
         assertThat(result.getContent()).isNotEmpty();
         assertThat(result.getContent().get(0).getCategory()).isEqualTo(BoardCategory.DAILY);
@@ -94,7 +95,7 @@ public class BoardServiceReadTest {
     @Test
     @DisplayName("게시글 목록 조회 - 카테고리 + 키워드")
     void 게시글_목록조회_카테고리_키워드() {
-        Page<BoardResponse> result = boardService.getPosts(BoardCategory.DAILY, "내용", 0, 10);
+        Page<BoardSimpleResponse> result = boardService.getPosts(BoardCategory.DAILY, "내용", 0, 10);
 
         assertThat(result.getContent()).isNotEmpty();
     }
