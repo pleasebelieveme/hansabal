@@ -81,7 +81,7 @@ public class PaymentService   {
 			//결제 완료점
 			Wallet wallet = history.getWallet();
 			wallet.updateWallet(wallet.getCash()+price);
-			mailService.sendSimpleEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
+			mailService.purchaseCompletedEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
 			return iamportResponse;
 
 		} catch (IamportResponseException e) {
