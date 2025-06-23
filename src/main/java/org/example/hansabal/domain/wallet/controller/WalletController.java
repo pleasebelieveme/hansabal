@@ -44,7 +44,7 @@ public class WalletController {
 	public String loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		WalletResponse response = walletService.getWallet(userAuth);
 		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		Payment payment = walletService.loadWallet(request, wallet);
+		Payment payment = walletService.loadWallet(request);
 		String uuid = walletHistoryService.historyChargeSaver(wallet, request.cash(), payment);
 		return "redirect:/api/payment?uuid="+uuid;
 	}

@@ -46,7 +46,7 @@ public class WalletService {
 	}
 
 	@Transactional
-	public Payment loadWallet(LoadRequest request, Wallet wallet) {
+	public Payment loadWallet(LoadRequest request) {
 		Payment payment = Payment.builder()
 			.price(request.cash())
 			.status(PaymentStatus.READY)
