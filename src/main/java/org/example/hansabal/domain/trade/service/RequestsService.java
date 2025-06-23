@@ -76,14 +76,14 @@ public class RequestsService {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		if(requests.getStatus()!= RequestStatus.AVAILABLE)
 			throw new BizException(TradeErrorCode.NOT_IDLE_REQUESTS);
-		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
+		tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		if(!requests.getRequester().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.softDelete();
 	}
 
 	@Transactional
-	public void payTradeFee(Long requestsId, UserAuth userAuth) {
+	public RequestsResponse payTradeFee(Long requestsId, UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
@@ -94,10 +94,11 @@ public class RequestsService {
 		Long price = trade.getPrice();
 		walletService.walletPay(user, trade.getId(), price);
 		requests.updateStatus(RequestStatus.PAID);
+		return RequestsResponse.from(requests);
 	}
 
 	@Transactional
-	public void confirmGoods(Long requestsId, UserAuth userAuth) {
+	public RequestsResponse confirmGoods(Long requestsId, UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
@@ -108,5 +109,6 @@ public class RequestsService {
 		walletService.walletConfirm(trade,requestsId);
 		requests.updateStatus(RequestStatus.DONE);
 		trade.softDelete();
+		return RequestsResponse.from(requests);
 	}
 }

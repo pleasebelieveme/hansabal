@@ -96,15 +96,15 @@ public class TradeController {
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
-	@PostMapping("/requests/{requestsId}")
-	public ResponseEntity<Void> payTradeFee(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.payTradeFee(requestsId, userAuth);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	@PatchMapping("/requests/{requestsId}/pay")
+	public ResponseEntity<RequestsResponse> payTradeFee(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
+		RequestsResponse response = requestsService.payTradeFee(requestsId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@PostMapping("/requests/{requestsId}/confirm")
-	public ResponseEntity<Void> confirmGoods(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
-		requestsService.confirmGoods(requestsId, userAuth);
-		return ResponseEntity.status(HttpStatus.OK).build();
+	@PatchMapping("/requests/{requestsId}/confirm")
+	public ResponseEntity<RequestsResponse> confirmGoods(@PathVariable Long requestsId, @AuthenticationPrincipal UserAuth userAuth){
+		RequestsResponse response = requestsService.confirmGoods(requestsId, userAuth);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
