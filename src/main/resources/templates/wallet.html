@@ -182,6 +182,8 @@
                         alert("결제 페이지 이동 실패");
                     }
                 }
+                const uuid = await res.text();  // ✅ uuid만 받아옴
+                window.location.href = `/payment?uuid=${uuid}&cash=${cash}`;  // ✅ 직접 이동
             } catch (err) {
                 alert("요청 중 오류 발생: " + err.message);
             }

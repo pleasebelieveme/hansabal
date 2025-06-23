@@ -2,8 +2,8 @@ package org.example.hansabal.domain.trade.service;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
-import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
+import org.example.hansabal.domain.trade.dto.request.TradeRequest;
+import org.example.hansabal.domain.trade.dto.response.TradeResponse;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
@@ -24,7 +24,7 @@ public class TradeService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public void createTrade(TradeRequestDto request, UserAuth userAuth) {
+	public TradeResponse createTrade(TradeRequest request, UserAuth userAuth) {
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Trade trade= Trade.builder()
 			.title(request.title())
@@ -34,40 +34,42 @@ public class TradeService {
 			.isOccupied(false)
 			.build();
 		tradeRepository.save(trade);
+		return TradeResponse.from(trade);
 	}
 
 	@Transactional(readOnly=true)
-	public Page<TradeResponseDto> getTradeListByTitle(int page, int size, String title) {
+	public Page<TradeResponse> getTradeListByTitle(int page, int size, String title) {
 		if(title==null)
 			title="";
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<TradeResponseDto> trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
+		Page<TradeResponse> trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
 		return trades;
 	}
 
 	@Transactional(readOnly=true)
-	public TradeResponseDto getTrade(Long tradeId) {
+	public TradeResponse getTrade(Long tradeId) {
 		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
-		return TradeResponseDto.from(trade);
+		return TradeResponse.from(trade);
 	}
 
 	@Transactional(readOnly=true)
-	public Page<TradeResponseDto> getMyTrade(UserAuth userAuth, int page, int size) {
+	public Page<TradeResponse> getMyTrade(UserAuth userAuth, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Long traderId=user.getId();
-		Page<TradeResponseDto> trades = tradeRepository.findByTraderOrderByTradeIdDesc(traderId,pageable);
+		Page<TradeResponse> trades = tradeRepository.findByTraderOrderByTradeIdDesc(traderId,pageable);
 		return trades;
 	}
 
 	@Transactional
-	public void updateTrade(Long tradeId, TradeRequestDto request, UserAuth userAuth) {
+	public TradeResponse updateTrade(Long tradeId, TradeRequest request, UserAuth userAuth) {
 		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		if(!trade.getTrader().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.updateTrade(request.title(),request.contents(), request.price());
+		return TradeResponse.from(trade);
 	}
 
 	@Transactional

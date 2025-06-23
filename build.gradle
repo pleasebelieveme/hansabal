@@ -50,7 +50,10 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
+    // batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
+    testImplementation 'org.springframework.batch:spring-batch-test'
+
     implementation 'at.favre.lib:bcrypt:0.10.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
@@ -80,6 +83,10 @@ dependencies {
 
     // iamport
     implementation 'com.github.iamport:iamport-rest-client-java:0.2.23'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-websocket'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework:spring-messaging'
 }
 
 

@@ -40,8 +40,10 @@ public class SecurityConfig {
 				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
-					.requestMatchers("/write").authenticated()
-					.anyRequest().authenticated()
+					.requestMatchers("/ws/**", "/connection/**", "/info", "/sockjs/**").permitAll()
+				.requestMatchers("/write").authenticated()
+				.anyRequest().authenticated()
+
 			)
 			.oauth2Login(oauth -> oauth
 					.loginPage("/login")

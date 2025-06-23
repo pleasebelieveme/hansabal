@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket STOMP 테스트</title>
+</head>
+<body>
+<h2>STOMP 채팅 테스트</h2>
+<div>
+    <label>Access Token: <input type="text" id="tokenInput" size="80"></label><br><br>
+    <label>Sender Nickname: <input type="text" id="senderInput"></label><br><br>
+    <label>Receiver Nickname: <input type="text" id="receiverInput"></label><br><br>
+    <button onclick="connect()">연결</button>
+    <button onclick="sendMessage()">메시지 전송</button>
+</div>
+<pre id="log"></pre>
+
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    let stompClient = null;
+    let senderNickname = "";
+
+    function log(message) {
+        const logEl = document.getElementById("log");
+        logEl.textContent += message + "\n";
+    }
+
+    function connect() {
+        const token = document.getElementById("tokenInput").value.trim();
+        senderNickname = document.getElementById("senderInput").value.trim();
+
+        const socket = new SockJS("http://localhost:8080/ws?token=" + token);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function (frame) {
+            log("✅ 연결 성공: " + frame);
+
+            stompClient.subscribe("/user/" + senderNickname + "/queue/messages", function (message) {
+                log("📩 받은 메시지: " + message.body);
+            });
+        }, function (error) {
+            log("❌ 연결 실패: " + error);
+        });
+    }
+
+    function sendMessage() {
+        const receiver = document.getElementById("receiverInput").value.trim();
+
+        const payload = {
+            receiverNickname: receiver,
+            content: "안녕하세요!"
+        };
+
+        stompClient.send("/app/dm", {}, JSON.stringify(payload));
+        log("📤 메시지 전송: " + JSON.stringify(payload));
+    }
+</script>
+</body>
+</html>

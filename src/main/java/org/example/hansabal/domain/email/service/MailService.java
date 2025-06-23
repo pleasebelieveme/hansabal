@@ -1,29 +1,41 @@
 package org.example.hansabal.domain.email.service;
 
-import org.example.hansabal.domain.email.dto.request.MailRequest;
+import jakarta.mail.internet.MimeMessage;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.LongStream;
-
+/*
+이메일의 제목, 본문, 수신자, 첨부파일 등 각종 속성을 간단한 메소드로 편리하게 설정
+HTML 본문이나 여러 수신자, 첨부파일, 인라인 이미지와 같은 복잡한 이메일 작성 가능
+문자 인코딩(UTF-8 등) 설정 간편
+*/
 @Service("mailService")
+@RequiredArgsConstructor
 public class MailService {
 
     @Autowired
-    private JavaMailSender javaMailSender;
+    private JavaMailSender javaMailSender; // 이메일 송수신 기능을 지원하는 주요 인터페이스
+    @Autowired
+    private SpringTemplateEngine templateEngine;
 
-    public void sendSimpleEmail(MailRequest mail) {
-        SimpleMailMessage message = new SimpleMailMessage();
-
-        message.setSubject(mail.getTitle()); //메일제목
-        //리스트를 배열로 만들건데 문자열 배열로 만들어주세요. 리스트 사이즈 만큼 변환할 것이다. 라는 뜻이다.
-        message.setTo(mail.getRecipientList().toArray(new String[mail.getRecipientList().size()])); //보낼사람들
-        message.setText(mail.getContent()); //메일 내용
-
-        javaMailSender.send(message);
+    public void sendSimpleEmail(String name, String email) {
+        try {
+            Context context = new Context();
+            context.setVariable("name", name);
+            String html = templateEngine.process("PaymentMail", context);
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8"); //MimeMessage 객체의 설정을 쉽게 도와주는 보조 클래스
+            helper.setTo(email);
+            helper.setSubject("구매 완료 안내");
+            helper.setText(html, true);
+            javaMailSender.send(message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

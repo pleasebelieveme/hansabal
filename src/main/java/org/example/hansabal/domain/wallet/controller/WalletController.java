@@ -3,10 +3,9 @@ package org.example.hansabal.domain.wallet.controller;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.payment.entity.Payment;
-import org.example.hansabal.domain.users.repository.UserRepository;
-import org.example.hansabal.domain.wallet.dto.request.LoadRequestDto;
-import org.example.hansabal.domain.wallet.dto.response.HistoryResponseDto;
-import org.example.hansabal.domain.wallet.dto.response.WalletResponseDto;
+import org.example.hansabal.domain.wallet.dto.request.LoadRequest;
+import org.example.hansabal.domain.wallet.dto.response.HistoryResponse;
+import org.example.hansabal.domain.wallet.dto.response.WalletResponse;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
 import org.example.hansabal.domain.wallet.repository.WalletRepository;
@@ -42,24 +41,29 @@ public class WalletController {
 	}
 
 	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
-	public String loadWallet(@RequestBody LoadRequestDto request, @AuthenticationPrincipal UserAuth userAuth){
-		WalletResponseDto response = walletService.getWallet(userAuth);
+	public ResponseEntity<String> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		WalletResponse response = walletService.getWallet(userAuth);
 		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		Payment payment = walletService.loadWallet(request, wallet);
 		String uuid = walletHistoryService.historyChargeSaver(wallet, request.cash(), payment);
-		return "redirect:/api/payment?uuid="+uuid;
+//		return "redirect:/api/payment?uuid="+uuid;
+		return ResponseEntity.ok(uuid);
 	}
 
 	@GetMapping()
-	public ResponseEntity<WalletResponseDto> getWallet(@AuthenticationPrincipal UserAuth userAuth) {
-		WalletResponseDto response = walletService.getWallet(userAuth);
+	public ResponseEntity<WalletResponse> getWallet(@AuthenticationPrincipal UserAuth userAuth) {
+		WalletResponse response = walletService.getWallet(userAuth);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@GetMapping("/History")
-	public ResponseEntity<Page<HistoryResponseDto>> getHistory(@RequestParam(defaultValue="1") @Positive int page,
+	public ResponseEntity<Page<HistoryResponse>> getHistory(@RequestParam(defaultValue="1") @Positive int page,
 		@RequestParam(defaultValue="10") @Positive int size,@AuthenticationPrincipal UserAuth userAuth){
-		Page<HistoryResponseDto> response = walletHistoryService.getHistory(page, size, userAuth);
+		Page<HistoryResponse> response = walletHistoryService.getHistory(page, size, userAuth);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+	@GetMapping("/test")
+	public ResponseEntity<String> test() {
+		return ResponseEntity.ok("WalletController mapping OK!");
 	}
 }
