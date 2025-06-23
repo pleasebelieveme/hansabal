@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.domain.email.service.MailService;
 import org.example.hansabal.domain.payment.dto.request.RequestPay;
 import org.example.hansabal.domain.payment.dto.request.PaymentCallbackRequest;
 import org.example.hansabal.domain.payment.entity.PaymentStatus;
@@ -30,6 +31,7 @@ public class PaymentService   {
 
 	private final IamportClient iamportClient;
 	private final WalletHistoryRepository historyRepository;
+	private final MailService mailService;
 
 	public RequestPay findRequestDto(String id) {
 
@@ -79,6 +81,7 @@ public class PaymentService   {
 			//결제 완료점
 			Wallet wallet = history.getWallet();
 			wallet.updateWallet(wallet.getCash()+price);
+			mailService.sendSimpleEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
 			return iamportResponse;
 
 		} catch (IamportResponseException e) {
