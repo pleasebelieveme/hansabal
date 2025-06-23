@@ -26,7 +26,7 @@ public class MailService {
     //Math.random() : 0.0 이상 1.0 미만의 난수(무작위 실수)를 생성해줍니다.
     //0 ~ 89999에 100000을 더하면, 100000 ~ 189999 범위의 값이 됩니다.
     //(int) Math.random() * (최댓값-최소값+1) + 최소값
-    private static int number;
+    private int number;
 
     public void createNumber() {
         number = (int) (Math.random() * (90000)) + 100000;
