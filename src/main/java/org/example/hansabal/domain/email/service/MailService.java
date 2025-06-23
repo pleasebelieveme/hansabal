@@ -70,7 +70,7 @@ public class MailService {
         }
     }
 
-    //회원가입완료 이메일 //todo 일단 테스트 해보고 수정 ㄱㄱ
+    //회원가입완료 이메일
     public void signUpCompletedEmail(String name, String email) {
         try {
             Context context = new Context();
