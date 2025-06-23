@@ -26,10 +26,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 			content = queryFactory
 				.select(Projections.constructor(
 					TradeResponse.class,
-					trade.id,
 					trade.title,
 					trade.contents,
-					trade.trader.id,
 					trade.trader.nickname
 				))
 				.from(trade)
@@ -43,10 +41,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		content = queryFactory
 			.select(Projections.constructor(
 				TradeResponse.class,
-				trade.id,
 				trade.title,
 				trade.contents,
-				trade.trader.id,
 				trade.trader.nickname
 			))
 			.from(trade)
@@ -75,10 +71,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		List<TradeResponse> content = queryFactory
 			.select(Projections.constructor(
 				TradeResponse.class,
-				trade.id,
 				trade.title,
 				trade.contents,
-				trade.trader.id,
 				trade.trader.nickname
 			))
 			.from(trade)
