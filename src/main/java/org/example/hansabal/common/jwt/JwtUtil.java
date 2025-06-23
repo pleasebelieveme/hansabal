@@ -64,14 +64,7 @@ public class JwtUtil {
 		if(bearer != null && bearer.startsWith("Bearer ")){
 			return bearer.substring(7);
 		}
-		// 2. accessToken 쿠키 확인
-		if (request.getCookies() != null) {
-			for (Cookie cookie : request.getCookies()) {
-				if ("accessToken".equals(cookie.getName())) {
-					return cookie.getValue();
-				}
-			}
-		}
+
 		return null;
 	}
 
