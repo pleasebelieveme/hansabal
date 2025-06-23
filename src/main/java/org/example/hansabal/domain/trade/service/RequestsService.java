@@ -76,7 +76,7 @@ public class RequestsService {
 		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		if(requests.getStatus()!= RequestStatus.AVAILABLE)
 			throw new BizException(TradeErrorCode.NOT_IDLE_REQUESTS);
-		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
+		tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 		if(!requests.getRequester().getId().equals(userAuth.getId()))
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		requests.softDelete();
