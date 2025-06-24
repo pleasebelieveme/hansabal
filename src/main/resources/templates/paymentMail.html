@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>결제 완료 안내</title>
+<!--
+실제 이메일 환경에서는 모든 CSS가 다 적용되는 것이 아니므로, 되도록 핵심 스타일은 인라인 스타일로 직접 입력하는 방식을 권장한다.
+외부 리소스(예: 구글 폰트)는 제거하고,눈에 보여야 하는 색상, 글씨 크기, 정렬 등은 해당 HTML 태그에 직접 style=""을 넣어주십시오.
+-->
+</head>
+<body style="background: linear-gradient(135deg, #6e8efb 0%, #a777e3 100%); min-height:100vh; margin:0; font-family: Arial, sans-serif;">
+<div style="background: rgba(255,255,255,0.95); max-width:450px; margin:80px auto; box-shadow:0 8px 28px rgba(50,50,93,.1), 0 1.5px 6px rgba(0,0,0,0.08); border-radius:18px; padding:48px 36px 42px; text-align:center;">
+    <div style="font-size:2.2rem; font-weight:700; color:#5f2df6; margin-bottom:38px; letter-spacing:0.07em;">결제 완료 안내</div>
+    <div style="background: linear-gradient(90deg, #f9f6fa 0, #e3f2fd 75%); border-radius:14px; padding:30px 10px 26px 10px; font-size:1.35rem; font-weight:700; color:#311b92; min-height:42px; letter-spacing:0.01em; box-shadow:0 1px 8px rgba(95,45,246,0.08); margin-top:8px; margin-bottom:10px; line-height:2;">
+        <span th:text="${name}"></span>님! 결제가 완료되었습니다!<br>
+        결제 관련 사항은 1:1로 문의해주세요.
+    </div>
+</div>
+</body>
+</html>

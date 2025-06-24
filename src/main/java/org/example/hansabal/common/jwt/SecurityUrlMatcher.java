@@ -9,6 +9,8 @@ public class SecurityUrlMatcher {
 		"/swagger-ui/**",
 		"/api/users",
 		"/api/auth/login",
+		"/oauth2/**",
+		"/login/oauth2/code/**",
 		"/crawl",
 		"/home",
 		"/api/shop/search/**"
