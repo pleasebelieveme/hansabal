@@ -3,7 +3,6 @@
 //import jakarta.annotation.Resource;
 //import lombok.RequiredArgsConstructor;
 //import org.example.hansabal.domain.email.service.MailService;
-//import org.example.hansabal.domain.payment.dto.request.RequestPayDto;
 //import org.springframework.stereotype.Controller;
 //import org.springframework.web.bind.annotation.*;
 //
@@ -16,8 +15,10 @@
 //
 //    @PostMapping("/send-email")
 //    public String send() {
-//        mailService.sendSimpleEmail();
+//        String name = "이귀현";
+//        String email = "imleo322@hanmail.net";
+//        mailService.signUpCompletedEmail(name, email);
 //        return "PaymentMail";
 //    }
 //}
-// 일단 테스트 해보고 구현확인후 추후에 삭제하겠습니다.
+//
