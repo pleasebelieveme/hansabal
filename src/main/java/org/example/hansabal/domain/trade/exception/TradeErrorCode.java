@@ -19,8 +19,12 @@ public enum TradeErrorCode implements ErrorCode {
 	ALREADY_OCCUPIED(HttpStatus.BAD_REQUEST,"T008","이미 요청을 수락한 거래입니다."),
 	REQUESTS_NOT_FOUND(HttpStatus.NOT_FOUND,"T009","해당하는 거래요청을 찾을 수 없습니다."),
 	NOT_IDLE_REQUESTS(HttpStatus.BAD_REQUEST,"T010","이미 수락된 요청은 취소할 수 없습니다."),
-	ALREADY_PAID(HttpStatus.BAD_REQUEST,"T011","이미 지불된 요청을 지불 전으로 돌릴 수 없습니다.");
-
+	ALREADY_PAID(HttpStatus.BAD_REQUEST,"T011","이미 지불된 요청을 지불 전으로 돌릴 수 없습니다."),
+	INVALID_TRADE_STATUS(HttpStatus.FORBIDDEN,"T012", "유효하지않은 교환상태"),
+	PRODUCT_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "T013","주인이 맞지않습니다."),
+	Trade_ALREADY_FINISHED(HttpStatus.BAD_REQUEST,"T014","거래가 이미 완료 됬습니다."),
+	ALREADY_COMPLETED(HttpStatus.BAD_REQUEST,"T015","이미 완료 됬습니다."),
+	Trade_NOT_FOUND(HttpStatus.NOT_FOUND,"T016","해당하는 거래요청을 찾을 수 없습니다.");
 
 
 	private final HttpStatus httpStatus;

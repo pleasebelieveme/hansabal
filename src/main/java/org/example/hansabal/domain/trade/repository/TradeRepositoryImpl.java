@@ -19,7 +19,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override//.containing은 커스텀 함수 처리 예정
-	public Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
+	public Page<TradeResponseDto> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
 		QTrade trade = QTrade.trade;
 		List<TradeResponse> content;
 		if(title.isEmpty()){

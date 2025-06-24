@@ -8,7 +8,7 @@ import org.example.hansabal.domain.payment.entity.Payment;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
-import org.example.hansabal.domain.wallet.dto.response.HistoryResponse;
+import org.example.hansabal.domain.wallet.dto.response.HistoryResponseDto;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
 import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
