@@ -34,17 +34,17 @@ public class WalletController {
 	private final WalletHistoryService walletHistoryService;
 	private final WalletRepository walletRepository;
 
-	@PostMapping("/new")
-	public ResponseEntity<Void> createWallet(@AuthenticationPrincipal UserAuth userAuth){
-		walletService.createWallet(userAuth);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
-	}
+	// @PostMapping("/new")
+	// public ResponseEntity<Void> createWallet(@AuthenticationPrincipal UserAuth userAuth){
+	// 	walletService.createWallet(userAuth);
+	// 	return ResponseEntity.status(HttpStatus.CREATED).build();
+	// }
 
 	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
 	public String loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		WalletResponse response = walletService.getWallet(userAuth);
 		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		Payment payment = walletService.loadWallet(request, wallet);
+		Payment payment = walletService.loadWallet(request);
 		String uuid = walletHistoryService.historyChargeSaver(wallet, request.cash(), payment);
 		return "redirect:/api/payment?uuid="+uuid;
 	}

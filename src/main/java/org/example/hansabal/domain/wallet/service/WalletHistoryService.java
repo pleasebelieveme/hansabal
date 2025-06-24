@@ -32,7 +32,7 @@ public class WalletHistoryService {
 	private final UserRepository userRepository;
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public void historySaver(Wallet wallet, Long tradeId, Long price, String type) {//tradeId가 0이라면 uid=imp_uid, 아닐경우 type 지정자
+	public void historySaver(Wallet wallet, Long tradeId, Long price, String type) {//일반 기록 저장
 		WalletHistory walletHistory = WalletHistory.builder()
 			.wallet(wallet)
 			.type(type)
@@ -44,7 +44,7 @@ public class WalletHistoryService {
 	}
 
 	@Transactional
-	public String historyChargeSaver(Wallet wallet, Long price, Payment payment){
+	public String historyChargeSaver(Wallet wallet, Long price, Payment payment){//결제(충전) 관련 기록 저장
 		WalletHistory walletHistory = WalletHistory.builder()
 			.wallet(wallet)
 			.type("충전")
