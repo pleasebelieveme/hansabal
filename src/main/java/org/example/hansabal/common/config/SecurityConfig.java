@@ -40,7 +40,6 @@ public class SecurityConfig {
 				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
-				.requestMatchers("/ws/**", "/connection/**", "/**/info", "/**/sockjs/**").permitAll()
 				.anyRequest().permitAll()
 			)
 			.oauth2Login(oauth -> oauth
