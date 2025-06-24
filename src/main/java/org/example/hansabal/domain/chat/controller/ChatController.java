@@ -1,19 +1,22 @@
 package org.example.hansabal.domain.chat.controller;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.exception.ErrorResponse;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.chat.dto.request.ChatMessageRequest;
+import org.example.hansabal.domain.chat.dto.response.ChatCursorSliceResponse;
 import org.example.hansabal.domain.chat.dto.response.ChatMessageResponse;
-import org.example.hansabal.domain.chat.dto.response.ChatMessageSimpleResponse;
+import org.example.hansabal.domain.chat.dto.response.ChatCursorResponse;
 import org.example.hansabal.domain.chat.exception.ChatErrorCode;
 import org.example.hansabal.domain.chat.service.ChatService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
@@ -22,9 +25,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -93,12 +94,13 @@ public class ChatController {
 	}
 
 	@GetMapping
-	public ResponseEntity<Slice<ChatMessageSimpleResponse>> findChatHistory(
+	public ResponseEntity<ChatCursorSliceResponse> findChatHistory(
 		@RequestParam String receiver,
+		@RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursor,
 		@AuthenticationPrincipal UserAuth userAuth,
 		@PageableDefault(size = 20, sort = "sentAt", direction = Sort.Direction.DESC) Pageable pageable
 	){
-		Slice<ChatMessageSimpleResponse> chatHistory = chatService.findChatHistory(receiver, userAuth, pageable);
+		ChatCursorSliceResponse chatHistory = chatService.findChatHistory(receiver, userAuth, cursor,pageable);
 		return ResponseEntity.status(HttpStatus.OK).body(chatHistory);
 	}
 }
