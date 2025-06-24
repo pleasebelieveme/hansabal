@@ -189,10 +189,10 @@ public class AuthTest {
         // when & then
         Assertions.assertThatThrownBy(() -> authService.reissue(null))
                 .isInstanceOf(BizException.class)
-                .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
+                .hasMessageContaining("Authorization 헤더 형식이 잘못되었습니다.");
         Assertions.assertThatThrownBy(() -> authService.reissue("InvalidToken"))
                 .isInstanceOf(BizException.class)
-                .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
+                .hasMessageContaining("Authorization 헤더 형식이 잘못되었습니다.");
     }
 
     @Test
@@ -214,7 +214,7 @@ public class AuthTest {
         // when & then
         Assertions.assertThatThrownBy(() -> authService.reissue("Bearer " + invalidRefreshToken))
                 .isInstanceOf(BizException.class)
-                .hasMessageContaining("리프레시 토큰 정보가 일치하지 않습니다.");
+                .hasMessageContaining("리프레시 토큰이 유효하지 않습니다.");
     }
 
     @Test
