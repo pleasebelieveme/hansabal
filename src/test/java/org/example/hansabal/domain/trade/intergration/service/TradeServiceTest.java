@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.trade.service.intergration;
+package org.example.hansabal.domain.trade.intergration.service;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Sql(scripts = {"/trade_user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
-public class TradeTest {
+public class TradeServiceTest {
 
 	@Container
 	static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
