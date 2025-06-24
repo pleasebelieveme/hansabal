@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>한사발 지갑 충전</title>
@@ -7,7 +7,7 @@
         body {
             margin: 0; padding: 0;
             font-family: 'Segoe UI', sans-serif;
-            background-color: #fff0f5;
+            background-color: #FFF0F5;
             height: 100vh;
             display: flex;
             align-items: center;
@@ -22,7 +22,7 @@
         }
         h2 {
             text-align: center;
-            color: #d81b60;
+            color: #D81B60;
             margin-bottom: 30px;
         }
         label {
@@ -42,7 +42,7 @@
         button {
             width: 100%;
             padding: 14px;
-            background-color: #d81b60;
+            background-color: #D81B60;
             border: none;
             color: white;
             font-size: 16px;
@@ -51,7 +51,7 @@
             cursor: pointer;
         }
         button:hover {
-            background-color: #b0003a;
+            background-color: #B0003A;
         }
     </style>
 </head>
@@ -61,95 +61,35 @@
     <label for="cash">충전 금액 (₩)</label>
     <input type="number" id="cash" name="cash" required placeholder="예: 10000" min="1" />
     <button id="submitBtn" type="button">결제 페이지로 이동</button>
-    <a href="/home" style="
-        display: block;
-        margin-top: 20px;
-        text-align: center;
-        color: #777;
-        text-decoration: none;
-        font-weight: bold;
-        font-size: 14px;
-        cursor: pointer;
-    "
-       onmouseover="this.style.color='#d81b60';"
+    <a href="/home"
+       style="display: block; margin-top: 20px; text-align: center; color: #777;
+            text-decoration: none; font-weight: bold; font-size: 14px; cursor: pointer;"
+       onmouseover="this.style.color='#D81B60';"
        onmouseout="this.style.color='#777';"
     >홈으로 가기</a>
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const token = localStorage.getItem("accessToken");
-
-        // 로그인 확인
+        // :흰색_확인_표시: 쿠키에서 accessToken 추출
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+        const token = getCookie("accessToken");
         if (!token) {
             alert("로그인이 필요합니다.");
-            window.location.href = "/oauth2/authorization/google";
+            location.href = "/login";
             return;
         }
-
-        // JWT 디코딩 함수
-        function parseJwt(token) {
-            try {
-                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                console.error("JWT 디코딩 실패:", e);
-                return null;
-            }
-        }
-
-        // ❌ topIcons가 없는 페이지이므로 관련 코드는 제거 or 안전 처리
-        const payload = parseJwt(token);
-        const topIcons = document.querySelector(".top-icons");
-        if (topIcons && payload?.nickname) {
-            const joinLink = topIcons.querySelector(".join-link");
-            if (joinLink) joinLink.remove();
-            const userIcon = topIcons.querySelector(".fa-user");
-            if (userIcon) userIcon.remove();
-
-            const nicknameSpan = document.createElement("span");
-            nicknameSpan.style.fontWeight = "bold";
-            nicknameSpan.style.color = "#d81b60";
-            nicknameSpan.textContent = payload.nickname;
-
-            const logoutLink = document.createElement("a");
-            logoutLink.href = "/logout";
-            logoutLink.textContent = "로그아웃";
-            logoutLink.style.marginLeft = "10px";
-            logoutLink.style.color = "#d81b60";
-            logoutLink.style.fontWeight = "bold";
-
-            topIcons.insertBefore(nicknameSpan, topIcons.firstChild);
-            topIcons.insertBefore(logoutLink, topIcons.children[1]);
-        }
-
-        // 장바구니 뱃지 갱신
-        const badge = document.querySelector(".badge");
-        if (badge) {
-            fetch("/api/cart/count", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-                .then(res => res.json())
-                .then(data => {
-                    badge.textContent = data.count || 0;
-                })
-                .catch(() => {
-                    badge.textContent = 0;
-                });
-        }
-
-        // 결제 페이지 이동 처리
+        // :흰색_확인_표시: API 요청 시 Authorization 헤더로 토큰 추가
         document.getElementById("submitBtn").addEventListener("click", async () => {
             const cash = document.getElementById("cash").value;
             if (!cash || cash <= 0) {
                 alert("충전 금액을 올바르게 입력해주세요.");
                 return;
             }
-
             try {
                 const res = await fetch("/api/wallet/load", {
                     method: "POST",
@@ -157,38 +97,34 @@
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${token}`
                     },
-                    body: JSON.stringify({ id: 1, cash: Number(cash) })
+                    body: JSON.stringify({ id: 0, cash: Number(cash) })
                 });
-
                 if (!res.ok) {
                     if (res.status === 401) {
                         alert("세션이 만료되었습니다. 다시 로그인해주세요.");
-                        localStorage.clear();
-                        window.location.href = "/oauth2/authorization/google";
+                        document.cookie = "accessToken=; path=/; max-age=0";
+                        location.href = "/login";
                         return;
-                    } else {
-                        throw new Error("서버 요청 실패");
                     }
+                    throw new Error("요청 실패");
                 }
-
-                const location = res.headers.get("Location");
-                if (location) {
-                    window.location.href = location;
+                const data = await res.json();
+                if (data.uuid) {
+                    location.href = `/payment?uuid=${data.uuid}`;
                 } else {
-                    const data = await res.json();
-                    if (data.uuid) {
-                        window.location.href = `/payment?uuid=${data.uuid}`;
-                    } else {
-                        alert("결제 페이지 이동 실패");
-                    }
+                    alert("결제 페이지 이동 실패");
                 }
-                const uuid = await res.text();  // ✅ uuid만 받아옴
-                window.location.href = `/payment?uuid=${uuid}&cash=${cash}`;  // ✅ 직접 이동
             } catch (err) {
-                alert("요청 중 오류 발생: " + err.message);
+                alert("에러 발생: " + err.message);
             }
         });
     });
 </script>
 </body>
 </html>
+
+
+
+
+
+

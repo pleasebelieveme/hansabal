@@ -41,7 +41,10 @@ public class WalletController {
 	// 	walletService.createWallet(userAuth);
 	// 	return ResponseEntity.status(HttpStatus.CREATED).build();
 	// }
-
+	@GetMapping("/wallet")
+	public String walletPage() {
+		return "wallet";  // resources/templates/wallet.html 로 렌더링됨
+	}
 	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
 	public ResponseEntity<String> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		if (userAuth == null) {

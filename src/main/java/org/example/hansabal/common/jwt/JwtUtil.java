@@ -99,4 +99,5 @@ public class JwtUtil {
 
 		return claims.getExpiration().getTime() - System.currentTimeMillis();
 	}
+
 }
