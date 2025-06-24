@@ -9,6 +9,7 @@ import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,7 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final WalletService walletService;
 
 	public void createUser(@RequestBody UserCreateRequest request) {
 
@@ -40,6 +42,7 @@ public class UserService {
 			.build();
 
 		userRepository.save(user);
+		walletService.createWallet(user);
 	}
 
 	public UserResponse findById(UserAuth userAuth) {

@@ -6,6 +6,7 @@ import org.example.hansabal.domain.users.entity.UserStatus;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -45,6 +46,7 @@ public class DormantUserJobConfig {
     }
 
     @Bean
+    @StepScope
     public ItemReader<User> reader() {
         LocalDateTime threshold = LocalDateTime.now().minusYears(1);
         return new IteratorItemReader<>(

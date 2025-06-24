@@ -21,14 +21,28 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	@Override//.containing은 커스텀 함수 처리 예정
 	public Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
 		QTrade trade = QTrade.trade;
-
-		List<TradeResponse> content = queryFactory
+		List<TradeResponse> content;
+		if(title.isEmpty()){
+			content = queryFactory
+				.select(Projections.constructor(
+					TradeResponse.class,
+					trade.title,
+					trade.contents,
+					trade.trader.nickname
+				))
+				.from(trade)
+				.where(trade.deletedAt.isNull())
+				.orderBy(trade.id.desc())
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
+		}
+		else{
+		content = queryFactory
 			.select(Projections.constructor(
 				TradeResponse.class,
-				trade.id,
 				trade.title,
 				trade.contents,
-				trade.trader.id,
 				trade.trader.nickname
 			))
 			.from(trade)
@@ -37,6 +51,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
+		}
 
 		long total = queryFactory
 			.select(trade.id)
@@ -56,10 +71,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		List<TradeResponse> content = queryFactory
 			.select(Projections.constructor(
 				TradeResponse.class,
-				trade.id,
 				trade.title,
 				trade.contents,
-				trade.trader.id,
 				trade.trader.nickname
 			))
 			.from(trade)

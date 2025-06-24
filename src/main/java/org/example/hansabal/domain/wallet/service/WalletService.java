@@ -34,8 +34,8 @@ public class WalletService {
 	private final PaymentRepository paymentRepository;
 
 	@Transactional
-	public void createWallet(UserAuth userAuth) {
-		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+	public void createWallet(User user) {
+
 		if(walletRepository.existsByUserId(user))
 			throw new BizException(WalletErrorCode.DUPLICATE_WALLET_NOT_ALLOWED);
 		Wallet wallet =  Wallet.builder()
@@ -46,7 +46,7 @@ public class WalletService {
 	}
 
 	@Transactional
-	public Payment loadWallet(LoadRequest request, Wallet wallet) {
+	public Payment loadWallet(LoadRequest request) {
 		Payment payment = Payment.builder()
 			.price(request.cash())
 			.status(PaymentStatus.READY)
