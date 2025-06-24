@@ -8,7 +8,7 @@ import org.example.hansabal.domain.pointHistory.entity.PointUseHistory;
 import java.util.List;
 
 public interface CustomPointHistoryRepository {
-	List<PointHistory> findUnusedPointsOrderByCreatedDateAsc(Long userId);
+	List<PointHistory> findUnusedPointsTradeByCreatedDateAsc(Long userId);
 
 	public List<PointUseHistory> applyUserPointUsage(Long userId, Integer point);
 }

@@ -1,11 +1,11 @@
 package org.example.hansabal.domain.batch.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.hansabal.domain.admin.entity.ProductOrderStatDaily;
-import org.example.hansabal.domain.admin.entity.ProductOrderStatMonthly;
-import org.example.hansabal.domain.batch.entity.AdminProductOrderStatDaily;
-import org.example.hansabal.domain.batch.entity.AdminProductOrderStatMonthly;
-import org.example.hansabal.domain.order.entity.Order;
+import org.example.hansabal.domain.admin.entity.ProductTradeStatDaily;
+import org.example.hansabal.domain.admin.entity.ProductTradeStatMonthly;
+import org.example.hansabal.domain.batch.entity.AdminProductTradeStatDaily;
+import org.example.hansabal.domain.batch.entity.AdminProductTradeStatMonthly;
+import org.example.hansabal.domain.trade.entity.Trade;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -34,26 +34,26 @@ public class ProductStatBatchConfig {
 	 * 상점 주문 통계 배치 잡 정의
 	 * 실행 순서:
 	 * 1. 상품 일일 통계 생성 (productStatDailyStep)
-	 * 2. 관리자 상품 일일 통계 생성 (AdminProductOrderStatDailyStep)
+	 * 2. 관리자 상품 일일 통계 생성 (AdminProductTradeStatDailyStep)
 	 * 3. 월 첫날 여부 판단 (firstDayOfMonthDecider)
 	 * 4. 월 첫날이면 월별 통계 생성, 아니면 종료
 	 */
 	@Bean
-	public Job ProductOrderStatJob(
+	public Job ProductTradeStatJob(
 			JobRepository jobRepository,
 			Step productStatDailyStep,
-			Step AdminProductOrderStatDailyStep,
-			Step productOrderStatMonthlyStep,
-			Step AdminProductOrderStatMonthlyStep,
+			Step AdminProductTradeStatDailyStep,
+			Step productTradeStatMonthlyStep,
+			Step AdminProductTradeStatMonthlyStep,
 			FirstDayOfMonthDecider firstDayOfMonthDecider
 	) {
-		return new JobBuilder("ProductOrderStatJob", jobRepository)
+		return new JobBuilder("ProductTradeStatJob", jobRepository)
 				.start(productStatDailyStep)                    // 상품 일일 통계 생성
-				.next(AdminProductOrderStatDailyStep)                // 관리자 상품 일일 통계 생성
+				.next(AdminProductTradeStatDailyStep)                // 관리자 상품 일일 통계 생성
 				.next(firstDayOfMonthDecider)                   // 월 첫날 여부 판단
 				.on(FIRST_DAY)                                  // 월 첫날인 경우
-				.to(productOrderStatMonthlyStep)                     // 상품 월별 통계 생성
-				.next(AdminProductOrderStatMonthlyStep)              // 관리자 상품 월별 통계 생성
+				.to(productTradeStatMonthlyStep)                     // 상품 월별 통계 생성
+				.next(AdminProductTradeStatMonthlyStep)              // 관리자 상품 월별 통계 생성
 				.from(firstDayOfMonthDecider)
 				.on(NOT_FIRST_DAY)                              // 월 첫날이 아닌 경우
 				.end()                                          // 배치 종료
@@ -63,7 +63,7 @@ public class ProductStatBatchConfig {
 
 	/**
 	 * 상품 일일 통계 생성 스텝
-	 * 주문 데이터(Order)를 읽어서 상품별 일일 통계(ProductStatDaily)를 생성합니다.
+	 * 주문 데이터(Trade)를 읽어서 상품별 일일 통계(ProductStatDaily)를 생성합니다.
 	 * - 청크 크기: 1000개
 	 * - 오류 발생 시 최대 3회 재시도
 	 * - 최대 5개 아이템 스킵 허용
@@ -72,12 +72,12 @@ public class ProductStatBatchConfig {
 	public Step productStatDailyStep(
 			JobRepository jobRepository,
 			PlatformTransactionManager transactionManager,
-			ItemReader<Order> reader,                           // 주문 데이터 읽기
-			ItemProcessor<Order, ProductOrderStatDaily> processor,   // 주문을 상품 일일 통계로 변환
-			ItemWriter<ProductOrderStatDaily> writer                 // 상품 일일 통계 저장
+			ItemReader<Trade> reader,                           // 주문 데이터 읽기
+			ItemProcessor<Trade, ProductTradeStatDaily> processor,   // 주문을 상품 일일 통계로 변환
+			ItemWriter<ProductTradeStatDaily> writer                 // 상품 일일 통계 저장
 	) {
 		return new StepBuilder("productStatDailyStep", jobRepository)
-				.<Order, ProductOrderStatDaily>chunk(1000, transactionManager)
+				.<Trade, ProductTradeStatDaily>chunk(1000, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)
@@ -92,22 +92,22 @@ public class ProductStatBatchConfig {
 
 	/**
 	 * 관리자 상품 일일 통계 생성 스텝
-	 * 상품 일일 통계(ProductStatDaily)를 읽어서 관리자용 상품 일일 통계(AdminProductOrderStatDaily)를 생성합니다.
+	 * 상품 일일 통계(ProductStatDaily)를 읽어서 관리자용 상품 일일 통계(AdminProductTradeStatDaily)를 생성합니다.
 	 * - 청크 크기: 100개
 	 * - 오류 발생 시 최대 3회 재시도
 	 * - 최대 1개 아이템 스킵 허용
 	 */
 	@Bean
-	public Step AdminProductOrderStatDailyStep(
+	public Step AdminProductTradeStatDailyStep(
 			JobRepository jobRepository,
 			PlatformTransactionManager transactionManager,
-			@Qualifier("adminProductOrderStatDailyReader")
-			ItemReader<ProductOrderStatDaily> reader,                              // 상품 일일 통계 읽기
-			ItemProcessor<ProductOrderStatDaily, AdminProductOrderStatDaily> processor, // 관리자 상품 일일 통계로 변환
-			ItemWriter<AdminProductOrderStatDaily> writer                          // 관리자 상품 일일 통계 저장
+			@Qualifier("adminProductTradeStatDailyReader")
+			ItemReader<ProductTradeStatDaily> reader,                              // 상품 일일 통계 읽기
+			ItemProcessor<ProductTradeStatDaily, AdminProductTradeStatDaily> processor, // 관리자 상품 일일 통계로 변환
+			ItemWriter<AdminProductTradeStatDaily> writer                          // 관리자 상품 일일 통계 저장
 	) {
-		return new StepBuilder("AdminProductOrderStatDailyStep", jobRepository)
-				.<ProductOrderStatDaily, AdminProductOrderStatDaily>chunk(100, transactionManager)
+		return new StepBuilder("AdminProductTradeStatDailyStep", jobRepository)
+				.<ProductTradeStatDaily, AdminProductTradeStatDaily>chunk(100, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)
@@ -128,16 +128,16 @@ public class ProductStatBatchConfig {
 	 * - 최대 1개 아이템 스킵 허용
 	 */
 	@Bean
-	public Step productOrderStatMonthlyStep(
+	public Step productTradeStatMonthlyStep(
 			JobRepository jobRepository,
 			PlatformTransactionManager transactionManager,
-			@Qualifier("productOrderStatMonthlyReader")
-			ItemReader<ProductOrderStatDaily> reader,                          // 상품 일일 통계 읽기
-			ItemProcessor<ProductOrderStatDaily, ProductOrderStatMonthly> processor, // 상품 월별 통계로 변환
-			ItemWriter<ProductOrderStatMonthly> writer                         // 상품 월별 통계 저장
+			@Qualifier("productTradeStatMonthlyReader")
+			ItemReader<ProductTradeStatDaily> reader,                          // 상품 일일 통계 읽기
+			ItemProcessor<ProductTradeStatDaily, ProductTradeStatMonthly> processor, // 상품 월별 통계로 변환
+			ItemWriter<ProductTradeStatMonthly> writer                         // 상품 월별 통계 저장
 	) {
-		return new StepBuilder("productOrderStatMonthlyStep", jobRepository)
-				.<ProductOrderStatDaily, ProductOrderStatMonthly>chunk(100, transactionManager)
+		return new StepBuilder("productTradeStatMonthlyStep", jobRepository)
+				.<ProductTradeStatDaily, ProductTradeStatMonthly>chunk(100, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)
@@ -152,22 +152,22 @@ public class ProductStatBatchConfig {
 
 	/**
 	 * 관리자 상품 월별 통계 생성 스텝 (월 첫날에만 실행)
-	 * 상품 월별 통계(ProductStatMonthly)를 읽어서 관리자용 상품 월별 통계(AdminProductOrderStatMonthly)를 생성합니다.
+	 * 상품 월별 통계(ProductStatMonthly)를 읽어서 관리자용 상품 월별 통계(AdminProductTradeStatMonthly)를 생성합니다.
 	 * - 청크 크기: 100개
 	 * - 오류 발생 시 최대 3회 재시도
 	 * - 최대 1개 아이템 스킵 허용
 	 */
 	@Bean
-	public Step AdminProductOrderStatMonthlyStep(
+	public Step AdminProductTradeStatMonthlyStep(
 			JobRepository jobRepository,
 			PlatformTransactionManager transactionManager,
-			@Qualifier("adminProductOrderStatMonthlyReader")
-			ItemReader<ProductOrderStatMonthly> reader,                              // 상품 월별 통계 읽기
-			ItemProcessor<ProductOrderStatMonthly, AdminProductOrderStatMonthly> processor, // 관리자 상품 월별 통계로 변환
-			ItemWriter<AdminProductOrderStatMonthly> writer                          // 관리자 상품 월별 통계 저장
+			@Qualifier("adminProductTradeStatMonthlyReader")
+			ItemReader<ProductTradeStatMonthly> reader,                              // 상품 월별 통계 읽기
+			ItemProcessor<ProductTradeStatMonthly, AdminProductTradeStatMonthly> processor, // 관리자 상품 월별 통계로 변환
+			ItemWriter<AdminProductTradeStatMonthly> writer                          // 관리자 상품 월별 통계 저장
 	) {
-		return new StepBuilder("AdminProductOrderStatMonthlyStep", jobRepository)
-				.<ProductOrderStatMonthly, AdminProductOrderStatMonthly>chunk(100, transactionManager)
+		return new StepBuilder("AdminProductTradeStatMonthlyStep", jobRepository)
+				.<ProductTradeStatMonthly, AdminProductTradeStatMonthly>chunk(100, transactionManager)
 				.reader(reader)
 				.processor(processor)
 				.writer(writer)

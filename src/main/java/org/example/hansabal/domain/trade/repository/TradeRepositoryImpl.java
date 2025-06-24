@@ -19,7 +19,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	private final JPAQueryFactory queryFactory;
 
 	@Override//.containing은 커스텀 함수 처리 예정
-	public Page<TradeResponseDto> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
+	public Page<TradeResponseDto> findByTitleContainingAndDeletedAtIsNullTradeByIdDesc(String title, Pageable pageable) {
 		QTrade trade = QTrade.trade;
 
 		List<TradeResponseDto> content = queryFactory
@@ -28,8 +28,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				trade.id,
 				trade.title,
 				trade.contents,
-				trade.trader.id,
-				trade.trader.nickname
+				trade.writer.id,
+				trade.writer.nickname
 			))
 			.from(trade)
 			.where(trade.title.like(title).and(trade.deletedAt.isNull()))//이후 커스텀함수로 containing도입 예정
@@ -50,7 +50,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	}
 
 	@Override
-	public Page<TradeResponseDto> findByTraderOrderByTradeIdDesc(Long tradeId, Pageable pageable) {
+	public Page<TradeResponseDto> findByTraderTradeByTradeIdDesc(Long tradeId, Pageable pageable) {
 		QTrade trade = QTrade.trade;
 
 		List<TradeResponseDto> content = queryFactory
@@ -59,8 +59,8 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				trade.id,
 				trade.title,
 				trade.contents,
-				trade.trader.id,
-				trade.trader.nickname
+				trade.writer.id,
+				trade.writer.nickname
 			))
 			.from(trade)
 			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))

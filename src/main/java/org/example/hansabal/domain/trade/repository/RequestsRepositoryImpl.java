@@ -20,7 +20,7 @@ public class RequestsRepositoryImpl implements RequestsRepositoryCustom{
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public Page<RequestsResponseDto> findByTradeIdOrderByRequestsIdAsc(Long tradeId, Pageable pageable){
+	public Page<RequestsResponseDto> findByTradeIdTradeByRequestsIdAsc(Long tradeId, Pageable pageable){
 		QRequests requests = QRequests.requests;
 
 		List<RequestsResponseDto> content = queryFactory

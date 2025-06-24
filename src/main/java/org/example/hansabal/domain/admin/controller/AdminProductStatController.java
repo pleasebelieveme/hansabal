@@ -3,8 +3,8 @@ package org.example.hansabal.domain.admin.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.hansabal.domain.admin.request.ProductOrderStatRequest;
-import org.example.hansabal.domain.admin.response.ProductOrderStatResponse;
+import org.example.hansabal.domain.admin.request.ProductTradeStatRequest;
+import org.example.hansabal.domain.admin.response.ProductTradeStatResponse;
 import org.example.hansabal.domain.admin.service.AdminProductStatService;
 import org.example.hansabal.domain.product.entity.Product;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +20,11 @@ public class AdminProductStatController {
 
 	private final AdminProductStatService productStatService;
 
-	@GetMapping("/orders")
-	public ResponseEntity<ProductOrderStatResponse> getOrderStat(
-		@Valid @ModelAttribute ProductOrderStatRequest req
+	@GetMapping("/Trades")
+	public ResponseEntity<ProductTradeStatResponse> getTradeStat(
+		@Valid @ModelAttribute ProductTradeStatRequest req
 	) {
-		ProductOrderStatResponse res = productStatService.getOrderStat(req);
+		ProductTradeStatResponse res = productStatService.getTradeStat(req);
 		return ResponseEntity.ok(res);
 	}
 }

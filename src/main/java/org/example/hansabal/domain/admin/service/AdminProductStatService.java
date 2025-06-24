@@ -4,10 +4,10 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.admin.exception.StatErrorCode;
-import org.example.hansabal.domain.admin.request.ProductOrderStatPeriodType;
-import org.example.hansabal.domain.admin.request.ProductOrderStatRequest;
-import org.example.hansabal.domain.admin.response.ProductOrderStatResponse;
-import org.example.hansabal.domain.admin.service.strategy.AdminProductOrderStatStrategy;
+import org.example.hansabal.domain.admin.request.ProductTradeStatPeriodType;
+import org.example.hansabal.domain.admin.request.ProductTradeStatRequest;
+import org.example.hansabal.domain.admin.response.ProductTradeStatResponse;
+import org.example.hansabal.domain.admin.service.strategy.AdminProductTradeStatStrategy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,21 +19,21 @@ import java.util.stream.Collectors;
 @Service
 public class AdminProductStatService {
 
-	private final List<AdminProductOrderStatStrategy> ProductOrderStatStrategies;
+	private final List<AdminProductTradeStatStrategy> ProductTradeStatStrategies;
 
-	private Map<ProductOrderStatPeriodType, AdminProductOrderStatStrategy> ProductOrderStatMap;
+	private Map<ProductTradeStatPeriodType, AdminProductTradeStatStrategy> ProductTradeStatMap;
 
 	@PostConstruct
 	private void initStrategyMap() {
-		this.ProductOrderStatMap = ProductOrderStatStrategies.stream()
+		this.ProductTradeStatMap = ProductTradeStatStrategies.stream()
 			.collect(Collectors.toMap(
-				AdminProductOrderStatStrategy::getPeriodType,
+				AdminProductTradeStatStrategy::getPeriodType,
 				Function.identity()
 			));
 	}
 
-	public ProductOrderStatResponse getOrderStat(ProductOrderStatRequest req) {
-		AdminProductOrderStatStrategy strategy = ProductOrderStatMap.get(req.period());
+	public ProductTradeStatResponse getTradeStat(ProductTradeStatRequest req) {
+		AdminProductTradeStatStrategy strategy = ProductTradeStatMap.get(req.period());
 		if (strategy == null) {
 			throw new BizException(StatErrorCode.UNSUPPORTED_STAT_PERIOD);
 		}

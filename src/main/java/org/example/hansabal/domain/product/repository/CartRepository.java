@@ -15,13 +15,13 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     @Modifying(clearAutomatically = true)
-    void deleteAllByStoreId(Long storeId);
+    void deleteAllByProductId(Long productId);
 
     @EntityGraph(attributePaths = {"menu", "menuOption"})
     List<Cart> findByUserId(Long userId);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("UPDATE Cart c SET c.deletedDate = current_timestamp WHERE c.user.id = :userId")
+    @Query("UPDATE Cart c SET c.deletedAt = current_timestamp WHERE c.user.id = :userId")
         //@Query("DELETE FROM Cart c WHERE c.user.id = :userId")
     void deleteAllByUserId(@Param("userId") Long userId);
 
@@ -29,7 +29,7 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     void deleteAllById(Long cartId);
 
     @Modifying
-    @Query("DELETE FROM Cart c WHERE c.modifiedDate <= :expiredTime")
+    @Query("DELETE FROM Cart c WHERE c.updatedAt <= :expiredTime")
     void deleteAllExpired(@Param("expiredTime") LocalDateTime expiredTime);
 
     @EntityGraph(attributePaths = {"user"})

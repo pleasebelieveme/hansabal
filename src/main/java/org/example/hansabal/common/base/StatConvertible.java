@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public interface StatConvertible {
 	LocalDate getDate();
 
-	Integer getOrderCount();
+	Integer getTradeCount();
 
 	Long getTotalSales();
 }

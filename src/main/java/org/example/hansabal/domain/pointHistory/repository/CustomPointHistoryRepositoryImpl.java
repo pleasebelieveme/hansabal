@@ -19,7 +19,7 @@ public class CustomPointHistoryRepositoryImpl implements CustomPointHistoryRepos
 	private final JPAQueryFactory queryFactory;
 
 	@Override
-	public List<PointHistory> findUnusedPointsOrderByCreatedDateAsc(Long userId) {
+	public List<PointHistory> findUnusedPointsTradeByCreatedDateAsc(Long userId) {
 		QPointHistory qPointHistory = QPointHistory.pointHistory;
 
 		return queryFactory

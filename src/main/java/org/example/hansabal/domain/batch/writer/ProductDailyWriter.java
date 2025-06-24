@@ -2,10 +2,10 @@ package org.example.hansabal.domain.batch.writer;
 
 
 import lombok.RequiredArgsConstructor;
-import org.example.hansabal.domain.admin.entity.ProductOrderStatDaily;
-import org.example.hansabal.domain.admin.entity.ProductOrderStatId;
+import org.example.hansabal.domain.admin.entity.ProductTradeStatDaily;
+import org.example.hansabal.domain.admin.entity.ProductTradeStatId;
 import org.example.hansabal.domain.admin.entity.ProductStatDaily;
-import org.example.hansabal.domain.batch.service.ProductOrderStatBatchService;
+import org.example.hansabal.domain.batch.service.ProductTradeStatBatchService;
 import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
@@ -16,9 +16,9 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-public class ProductDailyWriter implements ItemWriter<ProductOrderStatDaily> {
+public class ProductDailyWriter implements ItemWriter<ProductTradeStatDaily> {
 
-	private final ProductOrderStatBatchService service;
+	private final ProductTradeStatBatchService service;
 
 	/**
 	 * 배치 처리된 일별 주문 통계 아이템들을 저장하는 메서드
@@ -26,22 +26,22 @@ public class ProductDailyWriter implements ItemWriter<ProductOrderStatDaily> {
 	 * @param items Spring Batch가 전달하는 청크 단위의 ProductStatDaily 리스트
 	 */
 	@Override
-	public void write(Chunk<? extends ProductOrderStatDaily> items) {
+	public void write(Chunk<? extends ProductTradeStatDaily> items) {
 		// ProductStatId 기준으로 같은 키를 가진 일별 통계 데이터 그룹화
-		Map<ProductOrderStatId, List<ProductOrderStatDaily>> grouped = items.getItems().stream()
-				.collect(Collectors.groupingBy(ProductOrderStatDaily::getId));
+		Map<ProductTradeStatId, List<ProductTradeStatDaily>> grouped = items.getItems().stream()
+				.collect(Collectors.groupingBy(ProductTradeStatDaily::getId));
 
 		// 그룹별로 주문 건수와 총 매출 합산 후, 새로운 ProductStatDaily 객체 생성
-		List<ProductOrderStatDaily> merged = grouped.entrySet().stream()
+		List<ProductTradeStatDaily> merged = grouped.entrySet().stream()
 				.map(e -> {
-					int orderCount = e.getValue().stream()
-							.mapToInt(ProductOrderStatDaily::getOrderCount)
+					int TradeCount = e.getValue().stream()
+							.mapToInt(ProductTradeStatDaily::getTradeCount)
 							.sum();
 					long totalSales = e.getValue().stream()
-							.mapToLong(ProductOrderStatDaily::getTotalSales)
+							.mapToLong(ProductTradeStatDaily::getTotalSales)
 							.sum();
 					// 정적 팩토리 메서드 사용하여 새로운 객체 생성
-					return ProductOrderStatDaily.of(e.getKey(), orderCount, totalSales);
+					return ProductTradeStatDaily.of(e.getKey(), TradeCount, totalSales);
 				})
 				.toList();
 
