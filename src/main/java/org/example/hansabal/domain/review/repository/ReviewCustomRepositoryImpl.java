@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.expression.spel.ast.Projection;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
@@ -36,11 +37,12 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        Long total = queryFactory
+        Long total = Optional.ofNullable(queryFactory
                 .select(review.count())
                 .from(review)
                 .where(product.id.eq(productId))
-                .fetchOne();
+                .fetchOne()).orElse(0L) ;
+        //todo GPT로 공부
 
         return new PageImpl<>(results, pageable, total);
     }
