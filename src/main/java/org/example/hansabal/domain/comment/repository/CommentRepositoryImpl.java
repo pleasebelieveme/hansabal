@@ -1,6 +1,7 @@
 package org.example.hansabal.domain.comment.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
@@ -38,12 +39,12 @@ public class CommentRepositoryImpl implements CommentRepositoryCustom {
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		long total = queryFactory
-			.select(comment.id)
+		Long total = Optional.ofNullable(queryFactory
+			.select(comment.count())
 			.from(comment)
-			.where(comment.board.id.eq(boardId))
-			.fetch()
-			.size();
+			.where(comment.board.id.eq(boardId).and(comment.deletedAt.isNull()))
+			.fetchOne()
+		).orElse(0L);
 
 		return new PageImpl<>(content,pageable,total);
 	}
