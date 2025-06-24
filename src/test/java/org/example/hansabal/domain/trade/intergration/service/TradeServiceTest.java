@@ -1,4 +1,4 @@
-package org.example.hansabal.domain.trade.service.intergration;
+package org.example.hansabal.domain.trade.intergration.service;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -6,7 +6,6 @@ import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequest;
 import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequest;
-import org.example.hansabal.domain.trade.dto.request.TradeRequest;
 import org.example.hansabal.domain.trade.dto.request.TradeRequest;
 import org.example.hansabal.domain.trade.dto.response.TradeResponse;
 import org.example.hansabal.domain.trade.entity.RequestStatus;
@@ -19,6 +18,7 @@ import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @Sql(scripts = {"/trade_user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
-public class TradeTest {
+public class TradeServiceTest {
 
 	@Container
 	static MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.0")
@@ -61,7 +61,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래_생성() {
+	@DisplayName("거래_생성")
+	void tradePostTest() {
 		//given
 		TradeRequest request = new TradeRequest("testTitle", "testContents", 5500L);
 		UserAuth userAuth = new UserAuth(10L, UserRole.USER,"testnickname10");
@@ -79,7 +80,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래_수정() {
+	@DisplayName("거래_수정")
+	void tradeUpdateTest() {
 		UserAuth userAuth = new UserAuth(4L, UserRole.USER,"testnickname4");
 		TradeRequest request = new TradeRequest("updatedTitle3", "updatedContents", 9900L);
 
@@ -92,7 +94,8 @@ public class TradeTest {
 	}
 
 	@Test//고장
-	void 거래_수정_실패_작성자id_불일치() {
+	@DisplayName("거래_수정_실패_작성자id_불일치")
+	void tradeUpdateTestFailByWrongId() {
 		UserAuth userAuth = new UserAuth(5L, UserRole.USER,"testnickname5");
 		TradeRequest request = new TradeRequest("updatedTitle3", "updatedContents", 9900L);
 
@@ -103,7 +106,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래_취소() {
+	@DisplayName("거래_취소")
+	void tradeCancelTest() {
 		UserAuth userAuth = new UserAuth(4L, UserRole.USER,"testnickname4");
 		Long tradeId = 8L;
 
@@ -114,7 +118,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래_요청_등록() {
+	@DisplayName("거래_요청_등록")
+	void requestsPostTest() {
 	UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 	RequestsRequest request = RequestsRequest.builder().tradeId(6L).build();
 
@@ -127,7 +132,8 @@ public class TradeTest {
 	}
 
 	@Test//고장
-	void 거래_요청_등록_실패_없는_거래_id(){
+	@DisplayName("거래_요청_등록_실패_없는_거래_id")
+	void requestsPostTestFailByTradeIdNotExist(){
 		UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 		RequestsRequest request = RequestsRequest.builder().tradeId(10L).build();
 
@@ -136,7 +142,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래_등록자에_의한_상태_업데이트(){//1번 rq사용
+	@DisplayName("거래_등록자에_의한_상태_업데이트")
+	void requestsStatusUpdateByTraderTest(){//1번 rq사용
 		UserAuth userAuth = new UserAuth(1L,UserRole.USER,"testnickname1");
 		Long requestsId=1L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.PENDING);
@@ -148,7 +155,8 @@ public class TradeTest {
 	}
 
 	@Test//고장
-	void 거래_상태_업데이트_실패_등록자_id_불일치(){//3번rq사용, tid=2
+	@DisplayName("거래_상태_업데이트_실패_등록자_id_불일치")
+	void requestsStatusUpdateTestFailByWrongId(){//3번rq사용, tid=2
 		UserAuth userAuth = new UserAuth(1L,UserRole.USER,"testnickname1");
 		Long requestsId=3L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.SHIPPING);
@@ -158,7 +166,8 @@ public class TradeTest {
 	}
 
 	@Test//고장
-	void 거래_상태_업데이트_실패_잘못된_상태_업데이트(){//3번 rq사용, st:paid/done
+	@DisplayName("거래_상태_업데이트_실패_잘못된_상태_업데이트")
+	void requestsUpdateTestFailByWrongStatusCase1(){//3번 rq사용, st:paid/done
 		UserAuth userAuth = new UserAuth(2L,UserRole.USER,"testnickname2");
 		Long requestsId=3L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.DONE);
@@ -167,8 +176,9 @@ public class TradeTest {
 		}).isInstanceOf(BizException.class).hasMessageContaining("올바르지 않은 상태값입니다.");
 	}
 
-	@Test//고장
-	void 거래_상태_업데이트_실패_점유된_거래의_추가_요청_수락_시도(){
+	@Test
+	@DisplayName("거래_상태_업데이트_실패_점유된_거래의_추가_요청_수락_시도")
+	void requestsStatusUpdateTestFailByOccupancy(){
 		UserAuth userAuth = new UserAuth(4L,UserRole.USER,"testnickname4");
 		Long requestsId=7L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.PENDING);
@@ -177,8 +187,9 @@ public class TradeTest {
 		}).isInstanceOf(BizException.class).hasMessageContaining("이미 요청을 수락한 거래입니다.");
 	}
 
-	@Test//고장
-	void 거래_상태_업데이트_실패_지불된_요청을_지불_전으로_수정(){//rq3
+	@Test
+	@DisplayName("거래_상태_업데이트_실패_지불된_요청을_지불_전으로_수정")
+	void requestsUpdateTestFailByWrongStatusCase2(){//rq3
 		UserAuth userAuth = new UserAuth(2L,UserRole.USER,"testnickname2");
 		Long requestsId=3L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.PENDING);
@@ -188,7 +199,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래_요청_지불기능(){//2번 rq 사용 rt6
+	@DisplayName("거래_요청_지불기능")
+	void requestsPayTest(){//2번 rq 사용 rt6
 		UserAuth userAuth = new UserAuth(6L,UserRole.USER,"testnickname6");
 		Long requestsId=2L;
 
@@ -198,8 +210,9 @@ public class TradeTest {
 		assertThat(requests.getStatus()).isEqualTo(RequestStatus.PAID);
 	}
 
-	@Test//고장
-	void 거래_요청_완료(){//4번 rq 사용 rt8
+	@Test
+	@DisplayName("거래_요청_완료")
+	void requestsConfirmTest(){//4번 rq 사용 rt8
 		UserAuth userAuth = new UserAuth(8L,UserRole.USER,"testnickname8");
 		Long requestsId=4L;
 
@@ -211,8 +224,9 @@ public class TradeTest {
 		assertThat(trade.getDeletedAt()).isNotNull();
 	}
 
-	@Test//고장
-	void 무료가_아닌_거래_요청_상태_잘못된_업데이트(){//6번 rq 사용 rt9 td4
+	@Test
+	@DisplayName("무료가_아닌_거래_요청_상태_잘못된_업데이트")
+	void requestsUpdateTestFailedByStatusError1(){//6번 rq 사용 rt9 td4
 		UserAuth userAuth = new UserAuth(4L,UserRole.USER,"testnickname4");
 		Long requestsId=6L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.SHIPPING);
@@ -221,8 +235,9 @@ public class TradeTest {
 		}).isInstanceOf(BizException.class).hasMessageContaining("무료가 아닌 거래는 바로 배송단계로 넘길 수 없습니다.");
 	}
 
-	@Test//고장
-	void 완료된_거래_상태_변경_시도(){//5번 rq 사용 rt9 td4
+	@Test
+	@DisplayName("완료된_거래_상태_변경_시도")
+	void requestsUpdateTestFailedByStatusError2(){//5번 rq 사용 rt9 td4
 		UserAuth userAuth = new UserAuth(4L,UserRole.USER,"testnickname4");
 		Long requestsId=5L;
 		RequestsStatusRequest request= new RequestsStatusRequest(RequestStatus.PENDING);
@@ -232,7 +247,8 @@ public class TradeTest {
 	}
 
 	@Test
-	void 거래요청_취소(){
+	@DisplayName("거래요청_취소")
+	void requestsCancelTest(){
 		UserAuth userAuth = new UserAuth(9L,UserRole.USER,"testnickname9");
 		Long requestsId=8L;
 

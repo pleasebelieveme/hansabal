@@ -1,14 +1,17 @@
 package org.example.hansabal.domain.chat.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.example.hansabal.domain.chat.dto.response.ChatMessageSimpleResponse;
+import org.example.hansabal.domain.chat.dto.response.ChatCursorResponse;
+import org.example.hansabal.domain.chat.dto.response.ChatCursorSliceResponse;
 import org.example.hansabal.domain.chat.entity.QChat;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -19,23 +22,32 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public Slice<ChatMessageSimpleResponse> findAllBySenderAndReceiver(Long senderId, Long receiverId,
-		Pageable pageable) {
+	public ChatCursorSliceResponse findAllBySenderAndReceiver(Long senderId, Long receiverId,
+		LocalDateTime cursor, Pageable pageable) {
 		QChat chat = QChat.chat;
 
-		List<ChatMessageSimpleResponse> content = jpaQueryFactory
+		// 양방향 채팅 조건 : 보낸 메시지, 받은 메시지
+		BooleanExpression baseCondition =
+			(chat.sender.id.eq(senderId).and(chat.receiver.id.eq(receiverId)))
+				.or(chat.sender.id.eq(receiverId).and(chat.receiver.id.eq(senderId)));
+		/*
+		 * 커서 기반 페이징 조건:
+		 * 이전 페이지의 마지막 메시지의 sentAt 시간보다 더 과거의 메시지만 조회
+		 * 즉, DESC 정렬이므로 cursor보다 작은 sentAt이 다음 페이지에 해당
+		 * */
+		BooleanExpression cursorCondition = cursor != null ? chat.sentAt.lt(cursor) : null;
+
+		List<ChatCursorResponse> content = jpaQueryFactory
 			.select(Projections.constructor(
-				ChatMessageSimpleResponse.class,
+				ChatCursorResponse.class,
 				chat.sender,
 				chat.content,
 				chat.sentAt
 			))
 			.from(chat)
-			.where(
-				(chat.sender.id.eq(senderId).and(chat.receiver.id.eq(receiverId)))
-					.or(chat.sender.id.eq(receiverId).and(chat.receiver.id.eq(senderId))))
-			.orderBy(chat.sentAt.desc())
-			.offset(pageable.getOffset())
+			.where(baseCondition.and(cursorCondition))
+			.orderBy(chat.sentAt.desc(),chat.id.desc())
+			// .offset(pageable.getOffset()) 커서 기반 페이징은 offset이 필요없음
 			.limit(pageable.getPageSize() + 1) // Slice는 기본 size의 +1 까지 추출하여 확인해서 다음 페이지가 있는지만 파악함
 			.fetch();
 
@@ -46,8 +58,8 @@ public class ChatRepositoryImpl implements ChatRepositoryCustom {
 			content.remove(pageable.getPageSize());
 		}
 
-		return new SliceImpl<>(content,pageable,hasNext);
-	}
+		LocalDateTime nextCursor = hasNext ? content.get(content.size()-1).sentAt() : null;
 
-	// 이후 커서 기반 페이징으로 리팩토링 할 예정(고도화 작업 때)
+		return new ChatCursorSliceResponse(content,nextCursor,hasNext);
+	}
 }
