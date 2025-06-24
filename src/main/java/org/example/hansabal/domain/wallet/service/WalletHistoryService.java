@@ -44,7 +44,7 @@ public class WalletHistoryService {
 	}
 
 	@Transactional
-	public String historyChargeSaver(Wallet wallet, Long price, Payment payment){//결제(충전) 관련 기록 저장
+	public String historyLoadSaver(Wallet wallet, Long price, Payment payment){//결제(충전) 관련 기록 저장
 		WalletHistory walletHistory = WalletHistory.builder()
 			.wallet(wallet)
 			.type("충전")
