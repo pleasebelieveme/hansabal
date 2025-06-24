@@ -13,6 +13,10 @@ java {
     }
 }
 
+compileJava {
+    options.compilerArgs << "-parameters"
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -84,6 +88,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-messaging'
 }
+
 
 tasks.named('test') {
     useJUnitPlatform()

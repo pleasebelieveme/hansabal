@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.wallet.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.payment.entity.Payment;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class WalletService {
@@ -81,9 +83,21 @@ public class WalletService {
 
 	@Transactional(readOnly=true)
 	public WalletResponse getWallet(UserAuth userAuth) {
-		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		return new WalletResponse(wallet.getId(), user.getName(),wallet.getCash());
-	}
+		log.info("✅ getWallet 진입");
+		try {
+			User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+			Wallet wallet = walletRepository.findByUserId(user)
+					.orElseThrow(() -> new BizException(WalletErrorCode.NO_WALLET_FOUND));
 
+			log.info("💳 walletgetId : {}, userName : {}, walletcash : {}", wallet.getId(), user.getName(), wallet.getCash());
+			log.info("🔎 userId 확인: {}", user.getId());
+			log.info("🔎 지갑 존재 여부: {}", walletRepository.existsByUserId(user));
+
+			return new WalletResponse(wallet.getId(), user.getName(), wallet.getCash());
+		} catch (Exception e) {
+			log.error("❌ getWallet 내부에서 예외 발생", e);
+			throw e;
+		}
+
+	}
 }

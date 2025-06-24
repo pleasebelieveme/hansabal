@@ -2,18 +2,17 @@ package org.example.hansabal.domain.board.service;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.common.redisson.DistributedLock;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
+import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.exception.BoardErrorCode;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
-import org.example.hansabal.domain.comment.dto.response.CommentResponse;
-import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
 import org.example.hansabal.domain.comment.service.CommentService;
 import org.example.hansabal.domain.comment.service.DibService;
@@ -27,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BoardService {
@@ -42,8 +41,17 @@ public class BoardService {
 
     // === 게시글 등록 ===
     @Transactional
-    public BoardResponse createPost(UserAuth userAuth, BoardRequest request) {
+    public BoardResponse createBoard(UserAuth userAuth, BoardRequest request) {
+        if(request.getCategory().equals(BoardCategory.ALL)){
+            throw new BizException(BoardErrorCode.INVALID_CATEGORY);
+        }
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
+
+        log.info("🔥 BoardService.createPost() 진입");
+        log.info("작성자 ID: {}", userAuth.getId());
+        log.info("제목: {}", request.getTitle());
+        log.info("카테고리: {}", request.getCategory());
+
         Board board = Board.builder()
                 .user(user)
                 .category(request.getCategory()) // ✅ 변경
@@ -53,6 +61,9 @@ public class BoardService {
                 .viewCount(0)
                 .build();
         Board saved = boardRepository.save(board);
+
+        // 4. 저장 결과 확인
+        log.info("✅ 저장된 글 ID: {}", saved.getId());
         return boardMapper.toResponse(saved);
     }
 
@@ -103,23 +114,9 @@ public class BoardService {
 
     // === 게시글 목록 조회 (카테고리 + 키워드 포함) ===
     @Transactional(readOnly = true)
-    public Page<BoardResponse> getPosts(BoardCategory category, String keyword, int page, int size) {
+    public Page<BoardSimpleResponse> getPosts(BoardCategory category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Board> boardPage;
 
-        boolean isAll = category == BoardCategory.ALL;
-        boolean hasKeyword = keyword != null && !keyword.isBlank();
-
-        if (isAll && hasKeyword) {
-            boardPage = boardRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
-        } else if (!isAll && hasKeyword) {
-            boardPage = boardRepository.searchByCategoryAndKeyword(category, keyword, pageable);
-        } else if (!isAll) {
-            boardPage = boardRepository.findByCategory(category, pageable);
-        } else {
-            boardPage = boardRepository.findAll(pageable);
-        }
-
-        return boardPage.map(boardMapper::toResponse);
+        return boardRepository.searchByCategoryAndKeyword(category, keyword, pageable);
     }
 }

@@ -11,39 +11,37 @@
             font-family: 'Segoe UI', sans-serif;
             background-color: #fff0f5;
         }
-
         .top-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 20px 40px 10px;
         }
-
         .logo {
             font-size: 26px;
             font-weight: bold;
             color: #d81b60;
             flex: 1;
         }
-
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
         .category-bar {
             display: flex;
             gap: 20px;
             justify-content: center;
             flex: 2;
         }
-
         .category-bar a {
             text-decoration: none;
             font-weight: bold;
             color: #3c3c3c;
             font-size: 15px;
         }
-
         .category-bar a:hover {
             color: #d81b60;
         }
-
         .top-icons {
             display: flex;
             align-items: center;
@@ -51,14 +49,12 @@
             flex: 1;
             justify-content: flex-end;
         }
-
         .icon {
             color: #444;
             font-size: 18px;
             position: relative;
             cursor: pointer;
         }
-
         .icon .badge {
             position: absolute;
             top: -8px;
@@ -69,57 +65,76 @@
             padding: 2px 6px;
             font-size: 11px;
         }
-
         .join-link {
             text-decoration: none;
             color: #444;
             font-weight: bold;
             font-size: 14px;
         }
-
         .join-link:hover {
             color: #d81b60;
         }
-
         hr {
             border: none;
             border-top: 2px solid #f48fb1;
             width: 100%;
             margin: 0 auto 20px;
         }
-
         .main-hero {
             text-align: center;
             padding: 60px 20px 40px;
         }
-
         .main-hero h2 {
             font-size: 38px;
             color: #d81b60;
             margin-bottom: 10px;
         }
-
         .main-hero p {
             font-size: 16px;
             color: #555;
         }
-
         .hero-image {
             margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
         }
-
         .hero-image img {
             max-width: 300px;
+            width: 100%;
             height: auto;
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+
+        @media (max-width: 640px) {
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .category-bar {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+            .main-hero h2 {
+                font-size: 28px;
+            }
+            .hero-image img {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
+
 <body>
 <!-- 상단바 -->
 <div class="top-bar">
-    <div class="logo">한사발 막걸리</div>
+    <div class="logo">
+        <a href="/home" style="text-decoration:none; color:#d81b60;">한사발 막걸리</a>
+    </div>
 
     <nav class="category-bar">
         <a href="/wallet">지갑</a>
@@ -129,23 +144,112 @@
     </nav>
 
     <div class="top-icons">
-        <i class="fas fa-user icon" title="로그인"></i>
+        <!-- 로그인 상태 -->
+        <div id="logged-in" style="display: none; align-items: center; font-size: 13px; gap: 10px;">
+            <span id="nickname" style="font-weight:bold; color:#d81b60; white-space: nowrap; max-width: 100px; overflow: hidden; text-overflow: ellipsis;">유저</span>
+            <a href="/logout" style="color:#d81b60; font-weight:bold;">로그아웃</a>
+        </div>
+
+        <!-- 비로그인 상태 -->
+        <div id="guest" style="display: none;">
+            <i class="fas fa-user icon" title="로그인" onclick="location.href='/oauth2/authorization/google'"></i>
+            <a href="/join" class="join-link">JOIN</a>
+        </div>
+
         <div class="icon" title="장바구니">
             <i class="fas fa-shopping-cart"></i>
             <span class="badge">0</span>
         </div>
-        <a href="/join" class="join-link">JOIN</a>
     </div>
 </div>
 
+
 <!-- 구분선 -->
 <hr>
+
+<!-- 본문 -->
 <section class="main-hero">
     <h2>오늘도 <strong>한사발</strong> 하시려고요?</h2>
     <p>막갈리 쇼핑, 리뷰, 카테고리까지 하나로!</p>
     <div class="hero-image">
-        <img src="/img/makgeolli-bottle.png" alt="막갈리 이미지">
+        <img src="/img/918_temp_16407631780101view.jpg" alt="밤막걸리 이미지">
+        <img src="/img/918_temp_16407631780101view.jpg" alt="밤막걸리 이미지">
+        <img src="/img/918_temp_16407631780101view.jpg" alt="밤막걸리 이미지">
     </div>
 </section>
+<!-- 공통 JS 스크립트 (accessToken 기반 사용자 인증 및 UI 조작용) -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("accessToken");
+        const loggedInEl = document.getElementById("logged-in");
+        const guestEl = document.getElementById("guest");
+        const nicknameEl = document.getElementById("nickname");
+
+        // JWT 디코딩 함수
+        function parseJwt(token) {
+            try {
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                }).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("JWT 디코딩 실패:", e);
+                return null;
+            }
+        }
+
+        // 로그인 여부 확인
+        if (!token) {
+            // 비로그인 UI 노출
+            guestEl.style.display = "flex";
+            loggedInEl.style.display = "none";
+            return;
+        }
+
+        const payload = parseJwt(token);
+        if (payload && payload.nickname) {
+            // 로그인 UI 활성화
+            nicknameEl.textContent = payload.nickname;
+            loggedInEl.style.display = "flex";
+            guestEl.style.display = "none";
+        } else {
+            // 토큰 파싱 실패 시 로그아웃 처리
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            window.location.href = "/logout";
+            return;
+        }
+
+        // 로그아웃 버튼에 이벤트 연결
+        const logoutLink = loggedInEl.querySelector("a");
+        logoutLink.addEventListener("click", (e) => {
+            e.preventDefault();
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            window.location.href = "/logout";
+        });
+
+        // 장바구니 수 표시
+        fetch("/api/cart/count", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Unauthorized");
+                return res.json();
+            })
+            .then(data => {
+                const badge = document.querySelector('.badge');
+                if (badge) badge.textContent = data.count || 0;
+            })
+            .catch(() => {
+                const badge = document.querySelector('.badge');
+                if (badge) badge.textContent = 0;
+            });
+    });
+</script>
+
 </body>
 </html>

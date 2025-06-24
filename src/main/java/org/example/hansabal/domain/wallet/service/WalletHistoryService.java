@@ -10,6 +10,7 @@ import org.example.hansabal.domain.payment.entity.Payment;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.example.hansabal.domain.wallet.dto.request.LoadRequest;
 import org.example.hansabal.domain.wallet.dto.response.HistoryResponse;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
@@ -69,5 +70,20 @@ public class WalletHistoryService {
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		Page<WalletHistory> walletHistory = walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet);
 		return walletHistory.map(HistoryResponse::from);
+	}
+	@Transactional(readOnly = true)
+	public LoadRequest getLoadRequestDto(String uuid, UserAuth userAuth) {
+		WalletHistory history = walletHistoryRepository.findByUuid(uuid);
+		if (history == null) {
+			throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
+		}
+
+		Wallet wallet = history.getWallet();
+
+		if (!wallet.getUserId().getId().equals(userAuth.getId())) {
+			throw new BizException(WalletErrorCode.INVALID_ACCESS);
+		}
+
+		return new LoadRequest(wallet.getId(), history.getPrice());
 	}
 }

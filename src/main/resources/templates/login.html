@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>한사발 로그인</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #FFFAF0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .login-box {
+      padding: 30px 40px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    .login-box h2 {
+      margin-bottom: 20px;
+      color: #D81B60;
+      text-align: center;
+    }
+    .login-box form {
+      display: flex;
+      flex-direction: column;
+    }
+    .login-box input {
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .login-box button {
+      padding: 10px;
+      background-color: #D81B60;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .login-box a {
+      display: block;
+      margin: 8px 0;
+      text-decoration: none;
+      background-color: #4285F4;
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .kakao { background-color: #FEE500; color: #3C1E1E; }
+    .naver { background-color: #03C75A; color: white; }
+    .error {
+      color: red;
+      margin-bottom: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="login-box">
+  <h2>로그인</h2>
+  <!-- 서버 렌더링용 에러 (Thymeleaf) -->
+  <div th:if="${param.error}" class="error">
+    로그인 실패. 이메일 또는 비밀번호를 확인하세요.
+  </div>
+  <!-- JS 제어용 에러 메시지 -->
+  <div id="error-msg" class="error" style="display: none;"></div>
+  <!-- 자체 로그인 폼 -->
+  <form id="loginForm">
+    <input type="email" name="email" placeholder="이메일" required />
+    <input type="password" name="password" placeholder="비밀번호" required />
+    <button type="submit">로그인</button>
+  </form>
+  <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;" />
+  <!-- 소셜 로그인 -->
+  <a href="/oauth2/authorization/google">Google 로그인</a>
+  <a href="/oauth2/authorization/kakao" class="kakao">Kakao 로그인</a>
+  <a href="/oauth2/authorization/naver" class="naver">Naver 로그인</a>
+</div>
+<!-- :흰색_확인_표시: JS는 바디 맨 아래에서 DOMContentLoaded 후 실행 -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = e.target.email.value.trim();
+      const password = e.target.password.value.trim();
+      const errorMsg = document.getElementById("error-msg");
+      errorMsg.style.display = "none";
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+        if (!res.ok) {
+          errorMsg.textContent = "로그인 실패: 이메일 또는 비밀번호가 틀렸습니다.";
+          errorMsg.style.display = "block";
+          return;
+        }
+        const token = await res.json();
+        // :흰색_확인_표시: 쿠키에 저장
+        document.cookie = `accessToken=${token.accessToken}; path=/; Secure; SameSite=Lax`;
+        document.cookie = `refreshToken=${token.refreshToken}; path=/; Secure; SameSite=Lax`;
+        // 이동
+        window.location.replace("/wallet");
+      } catch (err) {
+        console.error("로그인 오류:", err);
+        errorMsg.textContent = "서버 오류로 로그인에 실패했습니다.";
+        errorMsg.style.display = "block";
+      }
+    });
+  });
+</script>
+</body>
+</html>
