@@ -4,14 +4,16 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.domain.email.exception.EmailErrorCode;
+import org.example.hansabal.domain.users.repository.RedisRepository;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
-import static io.lettuce.core.pubsub.PubSubOutput.Type.message;
+import java.time.Duration;
 
 /*
 이메일의 제목, 본문, 수신자, 첨부파일 등 각종 속성을 간단한 메소드로 편리하게 설정
@@ -34,6 +36,7 @@ public class MailService {
 
     private final JavaMailSender javaMailSender; // 이메일 송수신 기능을 지원하는 주요 인터페이스
     private final SpringTemplateEngine templateEngine;
+    private final RedisRepository redisRepository;
 
     //인증번호 이메일
     public void numberVerificationEmail(String email) {
@@ -86,4 +89,43 @@ public class MailService {
             log.error("이메일 발송 실패. 대상: , 원인: {}", e.getMessage(), e);
         }
     }
+
+    public void sendVerificationCode(String email) {
+        // 인증번호 생성
+        String code = String.valueOf((int)(Math.random() * 900000) + 100000);
+
+        // Redis에 저장 (예: 3분 유효)
+        redisRepository.saveEmailAuthCode(email, code, Duration.ofMinutes(3));
+
+        // 이메일 전송
+        Context context = new Context();
+        context.setVariable("number", code); // mail_verification.html에서 ${number} 사용
+        String html = templateEngine.process("mail_verification", context);
+
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(email);
+            helper.setSubject("이메일 인증번호");
+            helper.setText(html, true);
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new BizException(EmailErrorCode.SEND_FAILED);
+        }
+    }
+
+    public void verifyCode(String email, String code) {
+        String storedCode = redisRepository.getEmailAuthCode(email); // BizException 던짐
+
+        if (!storedCode.equals(code)) {
+            throw new BizException(EmailErrorCode.CODE_NOT_MATCHED);
+        }
+
+        // 인증 성공 → 인증 플래그 저장 (예: 30분 유효)
+        redisRepository.save("EMAIL_VERIFIED:" + email, "true", Duration.ofMinutes(30));
+
+        // 인증 코드는 삭제
+        redisRepository.deleteEmailAuthCode(email); // 인증 성공 시 삭제
+    }
+
 }
