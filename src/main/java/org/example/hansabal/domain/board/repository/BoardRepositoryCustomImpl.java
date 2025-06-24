@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
@@ -49,11 +50,13 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        long total = queryFactory
-                .select(board.count())
-                .from(board)
-                .where(flag)
-                .fetchOne();
+        Long total = Optional.ofNullable(
+                queryFactory
+                        .select(board.count())
+                        .from(board)
+                        .where(flag)
+                        .fetchOne()
+        ).orElse(0L);
 
         return new PageImpl<>(contents, pageable, total);
     }
