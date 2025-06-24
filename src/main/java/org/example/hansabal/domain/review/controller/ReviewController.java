@@ -7,6 +7,7 @@ import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
 import org.example.hansabal.domain.review.dto.response.ReviewResponse;
+import org.example.hansabal.domain.review.dto.response.ReviewSimpleResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;
 import org.springframework.data.domain.Page;
@@ -33,12 +34,12 @@ public class ReviewController {
     }
 
     @GetMapping("products/{productId}") // 리뷰 페이징
-    public ResponseEntity<Page<ReviewResponse>> getReviews(
+    public ResponseEntity<Page<ReviewSimpleResponse>> getReviews(
             @PathVariable Long productId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<ReviewResponse> reviewsList = reviewService.getReviews(productId, page, size);
+        Page<ReviewSimpleResponse> reviewsList = reviewService.getReviews(productId, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(reviewsList);
     }
 

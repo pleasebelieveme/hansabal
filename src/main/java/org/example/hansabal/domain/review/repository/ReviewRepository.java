@@ -10,17 +10,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewCustomRepository {
 
-public interface ReviewRepository extends JpaRepository<Review, Long> {
-
-    @EntityGraph(attributePaths = "product")
-    @Query(value = "SELECT r FROM Review r WHERE r.product.id= :productId",
-    countQuery = "SELECT count(r) FROM Review r WHERE r.product.id= :productId")
-
-    Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
+//    @EntityGraph(attributePaths = "product")
+//    @Query(value = "SELECT r FROM Review r WHERE r.product.id= :productId",
+//    countQuery = "SELECT count(r) FROM Review r WHERE r.product.id= :productId")
+//
+//    Page<Review> findReviewsByProductId(@Param("productId") Long productId, Pageable pageable);
 
     default Review findByIdOrThrow(Long id) {
         return findById(id).orElseThrow(() -> new BizException(ReviewErrorCode.REVIEW_NOT_FOUND));
