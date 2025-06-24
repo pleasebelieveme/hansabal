@@ -110,6 +110,6 @@ public class PaymentService   {
 			.userId(user)
 			.cash(5000L)
 			.build();
-		mailService.sendSimpleEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
+		mailService.purchaseCompletedEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
 	}
 }
