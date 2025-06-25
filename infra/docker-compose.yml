@@ -1,24 +1,74 @@
+version: "3.9"
+
 services:
   mysql:
     image: mysql:latest
+    container_name: hansabal_mysql
     ports:
       - '3306:3306'
     environment:
       MYSQL_DATABASE: 'hansabal'
-      MYSQL_USER: 'testuser'
-      MYSQL_PASSWORD: 'testpass'
+      MYSQL_USER: 'hansabal_user'
+      MYSQL_PASSWORD: 'hansabal_pass'
       MYSQL_ROOT_PASSWORD: 'root'
     volumes:
       - ./mysql/data:/var/lib/mysql
+    networks:
+      - promnet
+
   redis:
     image: redis:latest
+    container_name: hansabal_redis
     ports:
       - 6379:6379
     volumes:
       - ./redis/data:/data
       - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
     labels:
-      - "name=redis"
+      - "name=hansabal_redis"
       - "mode=standalone"
     restart: always
     command: redis-server /usr/local/conf/redis.conf
+    networks:
+      - promnet
+
+  prometheus:
+    user: "root"
+    image: prom/prometheus
+    container_name: hansabal_prometheus
+    volumes:
+      - ./prometheus/config:/etc/prometheus
+      - ./prometheus/volume:/prometheus/data
+    ports:
+      - 9090:9090
+    command:
+      - '--web.enable-lifecycle'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+    networks:
+      - promnet
+
+  grafana:
+    user: "root"
+    image: grafana/grafana
+    container_name: hansabal_grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/volume:/var/lib/grafana
+    restart: always
+    networks:
+      - promnet
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: hansabal_node_exporter
+    restart: always
+    ports:
+      - 9100:9100
+    networks:
+      - promnet
+
+networks:
+  promnet:
+    driver: bridge
