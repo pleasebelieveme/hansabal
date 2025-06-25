@@ -16,7 +16,8 @@ public enum WalletErrorCode implements ErrorCode {
 	DATA_MISMATCH(HttpStatus.BAD_REQUEST,"W005","거래 기록과 거래가 일치하지 않습니다."),
 	WRONG_REQUESTS_CONNECTED(HttpStatus.NOT_FOUND,"W006","연결된 거래요청을 찾을 수 없습니다."),
 	NOT_ENOUGH_CASH(HttpStatus.BAD_REQUEST,"W007","잔액이 부족하여 거래를 진행할 수 없습니다."),
-	CASH_LOAD_FAIL(HttpStatus.BAD_REQUEST,"W008","전자화폐 충전 결재 실패.");
+	CASH_LOAD_FAIL(HttpStatus.BAD_REQUEST,"W008","전자화폐 충전 결재 실패."),
+	INVALID_ACCESS(HttpStatus.FORBIDDEN, "W009", "유효하지 않은 접근입니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;

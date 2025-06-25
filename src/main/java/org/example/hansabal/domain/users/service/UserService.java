@@ -2,6 +2,7 @@ package org.example.hansabal.domain.users.service;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.email.service.MailService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.dto.request.UserUpdateRequest;
 import org.example.hansabal.domain.users.dto.response.UserResponse;
@@ -24,6 +25,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final WalletService walletService;
+	private final MailService mailService;
 
 	public void createUser(@RequestBody UserCreateRequest request) {
 
@@ -43,6 +45,7 @@ public class UserService {
 
 		userRepository.save(user);
 		walletService.createWallet(user);
+		mailService.signUpCompletedEmail(request.name(), request.email());
 	}
 
 	public UserResponse findById(UserAuth userAuth) {

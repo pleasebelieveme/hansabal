@@ -15,4 +15,6 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 	Optional<Wallet> findByUserId(@Param("id")User userId);
 
 	boolean existsByUserId(User userId);
+
+	User userId(User userId);
 }

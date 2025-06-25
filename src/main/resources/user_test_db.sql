@@ -1,22 +1,27 @@
-SET FOREIGN_KEY_CHECKS = 0;
+SET
+FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS users;
 
 
-CREATE TABLE users (
-                       id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                       email VARCHAR(50) NOT NULL ,
-                       password VARCHAR(100) NOT NULL ,
-                       name VARCHAR(20) NOT NULL ,
-                       nickname VARCHAR(20) NOT NULL ,
-                       user_role VARCHAR(20) NOT NULL,
-                       user_status VARCHAR(20) NOT NULL,
-                       created_at DATETIME(6),
-                       updated_at DATETIME(6),
-                       deleted_at DATETIME(6),
-                       last_login_at DATETIME(6)
+CREATE TABLE users
+(
+    id            BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email         VARCHAR(50)  NOT NULL,
+    password      VARCHAR(100) NOT NULL,
+    name          VARCHAR(20)  NOT NULL,
+    nickname      VARCHAR(20)  NOT NULL,
+    user_role     VARCHAR(20)  NOT NULL,
+    user_status   VARCHAR(20)  NOT NULL,
+    created_at    DATETIME(6),
+    updated_at    DATETIME(6),
+    deleted_at    DATETIME(6),
+    last_login_at DATETIME(6)
 ) ENGINE=InnoDB;
 -- password: !Aa123456
-INSERT INTO users (id, email, password, name, nickname, user_role, user_status, created_at, updated_at, deleted_at, last_login_at)
-VALUES (1,'test@email.com','$2a$10$KSlx0SYrksH0u7ePgjALXuojnoawGXcngfyWgAwNiTu69GLgr01Gq','testname','testnickname1','USER', 'ACTIVE', NOW(),NOW(),NULL, NOW());
+INSERT INTO users (id, email, password, name, nickname, user_role, user_status, created_at, updated_at, deleted_at,
+                   last_login_at)
+VALUES (1, 'test@email.com', '$2a$10$KSlx0SYrksH0u7ePgjALXuojnoawGXcngfyWgAwNiTu69GLgr01Gq', 'testname',
+        'testnickname1', 'USER', 'ACTIVE', NOW(), NOW(), NULL, NOW());
 
-SET FOREIGN_KEY_CHECKS = 1;
+SET
+FOREIGN_KEY_CHECKS = 1;

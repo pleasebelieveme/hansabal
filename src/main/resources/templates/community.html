@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>한사발 커뮤니티</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px 10px;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: bold;
+      color: #d81b60;
+      flex: 1;
+    }
+
+    .category-bar {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex: 2;
+    }
+
+    .category-bar a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #3c3c3c;
+      font-size: 15px;
+    }
+
+    .category-bar a:hover {
+      color: #d81b60;
+    }
+
+    .top-icons {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1;
+      justify-content: flex-end;
+    }
+
+    .icon {
+      color: #444;
+      font-size: 18px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .icon .badge {
+      position: absolute;
+      top: -8px;
+      right: -10px;
+      background-color: #03a9f4;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 11px;
+    }
+
+    .join-link {
+      text-decoration: none;
+      color: #444;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .join-link:hover {
+      color: #d81b60;
+    }
+    hr {
+      border: none;
+      border-top: 2px solid #f48fb1;
+      width: 100%;
+      margin: 0 auto 20px;
+    }
+    .board-categories {
+      margin: 15px auto 10px;
+      max-width: 900px;
+      text-align: center;
+    }
+    .board-categories ul {
+      list-style: none;
+      padding: 0;
+      display: inline-flex;
+      gap: 25px;
+      border-bottom: 2px solid #f48fb1;
+      margin: 0 auto;
+    }
+    .board-categories a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #d81b60;
+      padding-bottom: 8px;
+      display: inline-block;
+    }
+    .board-categories a:hover {
+      color: #a31543;
+      border-bottom: 2px solid #a31543;
+    }
+    .search-form {
+      max-width: 900px;
+      margin: 20px auto;
+      text-align: center;
+    }
+    .search-form select,
+    .search-form input[type="text"] {
+      padding: 8px 12px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-right: 10px;
+      min-width: 150px;
+    }
+    .search-form button {
+      padding: 8px 18px;
+      background-color: #d81b60;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .search-form button:hover {
+      background-color: #a31543;
+    }
+    .container {
+      max-width: 900px;
+      margin: 20px auto 40px;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .post {
+      border-bottom: 1px solid #f1c1d1;
+      padding: 20px 0;
+      cursor: pointer;
+    }
+    .post:last-child {
+      border-bottom: none;
+    }
+    .post-title {
+      font-size: 20px;
+      color: #d81b60;
+      margin: 0 0 6px 0;
+    }
+    .post-meta {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 12px;
+    }
+    .post-content {
+      font-size: 16px;
+      color: #555;
+      white-space: pre-wrap;
+    }
+    .pagination {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .pagination a {
+      text-decoration: none;
+      color: #d81b60;
+      font-weight: bold;
+      margin: 0 10px;
+    }
+    .pagination a:hover {
+      color: #a31543;
+    }
+    .pagination span {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="logo"><a href="/home" style="text-decoration:none; color:#d81b60;">한사발 막걸리</a></div>
+  <nav class="category-bar">
+    <a href="/wallet">지갑</a>
+    <a href="/shop">쇼핑</a>
+    <a href="/community">커뮤니티</a>
+    <a href="/event">이벤트</a>
+  </nav>
+  <div class="top-icons">
+    <i class="fas fa-user icon" title="로그인"></i>
+    <div class="icon" title="장바구니">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge">0</span>
+    </div>
+    <a href="/join" class="join-link">JOIN</a>
+  </div>
+</div>
+<hr>
+
+<!-- 게시판 카테고리 동적 렌더링 -->
+<div class="board-categories" th:if="${categories}">
+  <ul>
+    <li th:each="cat : ${categories}">
+      <a th:href="@{'/community?category=' + ${cat.name()}}"
+         th:text="${cat.displayName}"
+         style="text-decoration:none; font-weight:bold; color:#d81b60;"></a>
+    </li>
+  </ul>
+</div>
+
+<!-- 검색 폼 -->
+<form class="search-form" th:action="@{/community}" method="get">
+  <select name="category">
+    <option th:each="cat : ${categories}"
+            th:value="${cat.name()}"
+            th:selected="${cat} == ${selectedCategory}"
+            th:text="${cat.displayName}">카테고리</option>
+  </select>
+  <input type="text" name="keyword" th:value="${keyword}" placeholder="검색어 입력" />
+  <button type="submit">검색</button>
+</form>
+
+<div class="container">
+  <div style="margin-bottom:20px; text-align: right;">
+    <a href="/write" style="color:#d81b60; font-weight:bold; text-decoration:none;">+ 새 글 작성</a>
+  </div>
+
+  <div class="post" th:each="post : ${posts}"
+       th:onclick="|location.href='/community/${post.id}'|">
+    <h3 class="post-title" th:text="${post.title}">게시글 제목</h3>
+    <div class="post-meta">
+      작성자 <span th:text="${post.nickname}">작성자</span> |
+      작성일 <span th:text="${post.createdAt}">2025-06-19</span>
+    </div>
+    <div class="post-content" th:text="${post.content}">
+      게시글 내용 미리보기입니다...
+    </div>
+  </div>
+
+  <!-- 페이징 -->
+  <div class="pagination">
+    <a th:if="${posts.hasPrevious()}"
+       th:href="@{/community(category=${selectedCategory}, keyword=${keyword}, page=${posts.number - 1}, size=${posts.size})}">이전</a>
+    <span>페이지 <span th:text="${posts.number + 1}">1</span> / <span th:text="${posts.totalPages}">1</span></span>
+    <a th:if="${posts.hasNext()}"
+       th:href="@{/community(category=${selectedCategory}, keyword=${keyword}, page=${posts.number + 1}, size=${posts.size})}">다음</a>
+  </div>
+</div>
+<script>
+  // 쿠키에 accessToken 저장 (DOMContentLoaded 바깥)
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    document.cookie = `accessToken=${token}; path=/`;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "/oauth2/authorization/google";
+      return;
+    }
+
+    function parseJwt(token) {
+      try {
+        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("JWT 디코딩 오류", e);
+        return null;
+      }
+    }
+
+    const payload = parseJwt(token);
+    if (payload?.nickname) {
+      topIcons.querySelector(".join-link")?.remove();
+      topIcons.querySelector(".fa-user")?.remove();
+
+      const nickname = document.createElement("span");
+      nickname.style.fontWeight = "bold";
+      nickname.style.color = "#d81b60";
+      nickname.textContent = payload.nickname;
+
+      const logout = document.createElement("a");
+      logout.textContent = "로그아웃";
+      logout.style.marginLeft = "10px";
+      logout.style.color = "#d81b60";
+      logout.style.fontWeight = "bold";
+      logout.href = "#";
+      logout.addEventListener("click", () => {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        document.cookie = "accessToken=; Max-Age=0; path=/";
+        window.location.href = "/join";
+      });
+
+      topIcons.insertBefore(nickname, topIcons.firstChild);
+      topIcons.insertBefore(logout, topIcons.children[1]);
+    }
+
+
+    fetch("/api/cart/count", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+            .then(res => res.json())
+            .then(data => {
+              document.querySelector(".badge").textContent = data.count || 0;
+            })
+            .catch(() => {
+              document.querySelector(".badge").textContent = "0";
+            });
+  });
+</script>
+</body>
+</html>

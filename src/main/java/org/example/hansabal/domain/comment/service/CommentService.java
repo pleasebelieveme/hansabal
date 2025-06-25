@@ -13,6 +13,7 @@ import org.example.hansabal.domain.comment.exception.CommentErrorCode;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -61,7 +62,12 @@ public class CommentService {
 
 		return CommentResponse.from(comment);
 	}
-  
+
+	@Cacheable(
+		value = "commentsFromBoardCache",
+		key = "#boardId + ':' + #page + ':' + #size",
+		unless = "#result == null || #result.empty()"
+	)
 	@Transactional(readOnly = true)
 	public Page<CommentPageResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);

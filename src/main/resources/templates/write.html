@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 작성 - 한사발 커뮤니티</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff0f5;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 40px 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      width: 600px;
+    }
+    h2 {
+      color: #d81b60;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ddd;
+      resize: vertical;
+    }
+    button {
+      background-color: #d81b60;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 14px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #b01547;
+    }
+    .back-link {
+      margin-top: 15px;
+      display: block;
+      text-align: center;
+      color: #777;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      color: #d81b60;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>게시글 작성</h2>
+  <form th:action="@{/write}" method="post" th:object="${boardRequest}">
+    <label for="category">카테고리</label>
+    <select id="category" th:field="*{category}" required>
+      <option value="" disabled selected>카테고리를 선택하세요</option>
+      <option value="DAILY">일상</option>
+      <option value="QUESTION">질문</option>
+      <option value="INFO">정보</option>
+      <option value="REVIEW">후기</option>
+      <option value="ETC">기타</option>
+    </select>
+
+    <label for="title">제목</label>
+    <input type="text" id="title" th:field="*{title}" required placeholder="제목을 입력하세요" />
+
+    <label for="content">내용</label>
+    <textarea id="content" th:field="*{content}" rows="8" required placeholder="내용을 입력하세요"></textarea>
+
+    <button type="submit">작성 완료</button>
+  </form>
+  <a href="/community" class="back-link">목록으로 돌아가기</a>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("accessToken");
+
+    if (!token) {
+      alert("로그인이 필요합니다.");
+      window.location.href = "/oauth2/authorization/google";
+      return;
+    }
+
+    // JWT에서 사용자 정보 추출 (옵션)
+    function parseJwt(token) {
+      try {
+        const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        ).join(''));
+        return JSON.parse(jsonPayload);
+      } catch (e) {
+        console.error("JWT 디코딩 오류", e);
+        return null;
+      }
+    }
+
+    // 장바구니 수량 불러오기 (선택 사항)
+    fetch("/api/cart/count", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+            .then(res => res.json())
+            .then(data => {
+              const badge = document.querySelector(".badge");
+              if (badge) {
+                badge.textContent = data.count || 0;
+              }
+            })
+            .catch(() => {
+              const badge = document.querySelector(".badge");
+              if (badge) {
+                badge.textContent = "0";
+              }
+            });
+  });
+</script>
+</body>
+</html>

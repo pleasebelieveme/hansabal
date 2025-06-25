@@ -1,15 +1,17 @@
-SET FOREIGN_KEY_CHECKS = 0;
+SET
+FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS comment;
 
 
-CREATE TABLE comment (
-    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    contents VARCHAR(255) NOT NULL ,
-    dib_count int NOT NULL DEFAULT 0,
-    user_id BIGINT NOT NULL ,
-    board_id BIGINT NOT NULL ,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (board_id) REFERENCES boards(id),
+CREATE TABLE comment
+(
+    id         BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    contents   VARCHAR(255) NOT NULL,
+    dib_count  int          NOT NULL DEFAULT 0,
+    user_id    BIGINT       NOT NULL,
+    board_id   BIGINT       NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (board_id) REFERENCES boards (id),
     created_at DATETIME(6),
     updated_at DATETIME(6),
     deleted_at DATETIME(6)
@@ -216,6 +218,7 @@ VALUES (1, 'test comment', 0, 1, 1, NOW(), NULL, NULL),
        (198, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (199, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
        (200, 'test comment', 0, 1, 1, NOW(), NOW(), NULL),
-       (201,'test comment', 0, 1, 1, NOW(), NOW(), NULL);
+       (201, 'test comment', 0, 1, 1, NOW(), NOW(), NULL);
 
-SET FOREIGN_KEY_CHECKS = 1;
+SET
+FOREIGN_KEY_CHECKS = 1;

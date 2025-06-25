@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>한사발 결제 진행</title>
@@ -7,34 +7,87 @@
     <script src="https://cdn.iamport.kr/js/iamport.payment-1.2.0.js"></script>
     <style>
         body {
-            background: linear-gradient(to bottom right, #e1f5fe, #b3e5fc);
+            margin: 0; padding: 0;
             font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background-color: #fff0f5;
             height: 100vh;
-            margin: 0;
+            display: flex; align-items: center; justify-content: center;
         }
-
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            background: white;
+            border-bottom: 2px solid #f48fb1;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: #d81b60;
+            margin-right: 30px;
+        }
+        .category-bar {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex: 1;
+            min-width: 200px;
+        }
+        .category-bar a {
+            text-decoration: none;
+            font-weight: bold;
+            color: #3c3c3c;
+            font-size: 15px;
+        }
+        .category-bar a:hover {
+            color: #d81b60;
+        }
+        .top-icons {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            justify-content: flex-end;
+            min-width: 150px;
+        }
+        .icon {
+            color: #444;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .join-link {
+            text-decoration: none;
+            color: #444;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .join-link:hover {
+            color: #d81b60;
+        }
         .container {
-            background-color: white;
-            padding: 40px;
+            background: white;
+            padding: 40px 30px;
             border-radius: 12px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
             width: 400px;
-            text-align: center;
         }
-
+        h2 {
+            text-align: center;
+            color: #d81b60;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
         .readonly-display {
             font-size: 18px;
             color: #333;
             margin-bottom: 24px;
+            text-align: center;
         }
-
-        #pay-button {
+        button {
             width: 100%;
             padding: 14px;
-            background-color: #03a9f4;
+            background-color: #d81b60;
             border: none;
             color: white;
             font-size: 16px;
@@ -42,72 +95,169 @@
             border-radius: 6px;
             cursor: pointer;
         }
-
-        #pay-button:hover {
-            background-color: #0288d1;
+        button:hover {
+            background-color: #b0003a;
         }
     </style>
 </head>
 <body>
+<div class="top-bar">
+    <div class="logo">
+        <a href="/home" style="text-decoration:none; color:#d81b60;">한사발 막걸리</a>
+    </div>
+    <nav class="category-bar">
+        <a href="/wallet">지갑</a>
+        <a href="/shop">쇼핑</a>
+        <a href="/community">커뮤니티</a>
+        <a href="/event">이벤트</a>
+    </nav>
+    <div class="top-icons">
+        <i class="fas fa-user icon" title="로그인"></i>
+        <div class="icon" title="장바구니">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="badge">0</span>
+        </div>
+        <a href="/join" class="join-link">JOIN</a>
+    </div>
+</div>
 <div class="container">
     <!-- 숨겨진 입력값들 -->
-    <input type="hidden" id="orderUid" value="[[${requestDto.uuid}]]">
-    <input type="hidden" id="itemName" value="[[${requestDto.itemName}]]">
-    <input type="hidden" id="buyerName" value="[[${requestDto.buyerName}]]">
-    <input type="hidden" id="buyerEmail" value="[[${requestDto.buyerEmail}]]">
-    <input type="hidden" id="buyerAddress" value="[[${requestDto.buyerAddress}]]">
-    <input type="hidden" id="paymentPrice" value="[[${requestDto.paymentPrice}]]">
+    <input type="hidden" id="orderUid" th:value="${requestDto.uuid}" />
+    <input type="hidden" id="itemName" value="한사발캐시" />
+    <input type="hidden" id="buyerName" th:value="${requestDto.buyerName}" />
+    <input type="hidden" id="buyerEmail" th:value="${requestDto.buyerEmail}" />
 
     <!-- 사용자에게 보여줄 결제 금액 -->
-    <div class="readonly-display">
-        ₩ [[${requestDto.paymentPrice}]] 결제 예정
+    <div class="readonly-display" th:text="'₩ ' + (${requestDto.paymentPrice} ?: 0) + ' 결제 예정'">
+        ₩ 0 결제 예정
     </div>
 
     <button id="pay-button">결제하기</button>
+    <a href="/home" style="
+        display: block;
+        margin-top: 20px;
+        text-align: center;
+        color: #777;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+    "
+       onmouseover="this.style.color='#d81b60';"
+       onmouseout="this.style.color='#777';"
+    >홈으로 가기</a>
 </div>
 <script>
-    const IMP = window.IMP;
-    IMP.init("imp17705270");
+    document.addEventListener("DOMContentLoaded", () => {
+        const token = localStorage.getItem("accessToken");
+        const topIcons = document.querySelector(".top-icons");
 
-    document.getElementById("pay-button").addEventListener("click", function () {
-        const orderUid = document.getElementById("orderUid").value;
-        const itemName = document.getElementById("itemName").value;
-        const paymentPrice = parseInt(document.getElementById("paymentPrice").value);
-        const buyerName = document.getElementById("buyerName").value;
-        const buyerEmail = document.getElementById("buyerEmail").value;
-        const buyerAddress = document.getElementById("buyerAddress").value;
+        if (!token) {
+            alert("로그인이 필요합니다.");
+            window.location.href = "/oauth2/authorization/google";
+            return;
+        }
 
-        IMP.request_pay({
-            pg: 'html5_inicis.INIpayTest',
-            pay_method: 'card',
-            merchant_uid: orderUid,
-            name: itemName,
-            amount: paymentPrice,
-            buyer_email: buyerEmail,
-            buyer_name: buyerName,
-            buyer_addr: buyerAddress
-        }, function (rsp) {
-            if (rsp.success) {
-                $.ajax({
-                    url: "/api/payment",
-                    method: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify({
-                        payment_uid: rsp.imp_uid,
-                        order_uid: rsp.merchant_uid
-                    }),
-                    success: function () {
-                        window.location.href = "/success-payment";
-                    },
-                    error: function () {
-                        alert("결제 검증 실패");
-                        window.location.href = "/fail-payment";
-                    }
-                });
-            } else {
-                alert("결제 실패");
-                window.location.href = "/fail-payment";
+        function parseJwt(token) {
+            try {
+                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
+                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join(''));
+                return JSON.parse(jsonPayload);
+            } catch (e) {
+                console.error("JWT 디코딩 실패:", e);
+                return null;
             }
+        }
+
+        const payload = parseJwt(token);
+        if (payload && payload.nickname) {
+            const joinLink = topIcons.querySelector(".join-link");
+            if (joinLink) joinLink.remove();
+            const userIcon = topIcons.querySelector(".fa-user");
+            if (userIcon) userIcon.remove();
+
+            const nicknameSpan = document.createElement("span");
+            nicknameSpan.style.fontWeight = "bold";
+            nicknameSpan.style.color = "#d81b60";
+            nicknameSpan.textContent = payload.nickname;
+
+            const logoutLink = document.createElement("a");
+            logoutLink.href = "/logout";
+            logoutLink.textContent = "로그아웃";
+            logoutLink.style.marginLeft = "10px";
+            logoutLink.style.color = "#d81b60";
+            logoutLink.style.fontWeight = "bold";
+
+            topIcons.insertBefore(nicknameSpan, topIcons.firstChild);
+            topIcons.insertBefore(logoutLink, topIcons.children[1]);
+        }
+
+        fetch("/api/cart/count", {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(res => res.json())
+            .then(data => {
+                const badge = document.querySelector(".badge");
+                if (badge) badge.textContent = data.count || 0;
+            })
+            .catch(() => {
+                const badge = document.querySelector(".badge");
+                if (badge) badge.textContent = 0;
+            });
+
+        // 결제 버튼 이벤트
+        document.getElementById("pay-button").addEventListener("click", function () {
+            if (!token) {
+                alert("로그인이 필요합니다.");
+                window.location.href = "/oauth2/authorization/google";
+                return;
+            }
+
+            const orderUid = document.getElementById("orderUid").value;
+            const itemName = document.getElementById("itemName").value;
+            const paymentPrice = parseInt(document.querySelector(".readonly-display").textContent.replace(/\\D/g, '')) || 0;
+            const buyerName = document.getElementById("buyerName").value;
+            const buyerEmail = document.getElementById("buyerEmail").value;
+
+            const IMP = window.IMP;
+            IMP.init("imp17705270");
+
+            IMP.request_pay({
+                pg: 'html5_inicis.INIpayTest',
+                pay_method: 'card',
+                merchant_uid: orderUid,
+                name: itemName,
+                amount: paymentPrice,
+                buyer_email: buyerEmail,
+                buyer_name: buyerName,
+            }, function (rsp) {
+                if (rsp.success) {
+                    $.ajax({
+                        url: "/api/payment",
+                        method: "POST",
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                            payment_uid: rsp.imp_uid,
+                            order_uid: rsp.merchant_uid
+                        }),
+                        headers: {
+                            Authorization: `Bearer ${token}`
+                        },
+                        success: function () {
+                            window.location.href = "/success-payment";
+                        },
+                        error: function () {
+                            alert("결제 검증 실패");
+                            window.location.href = "/fail-payment";
+                        }
+                    });
+                } else {
+                    alert("결제 실패");
+                    window.location.href = "/fail-payment";
+                }
+            });
         });
     });
 </script>
