@@ -46,7 +46,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry registry) {
 		// 서버 → 클라이언트 응답 시 사용할 경로 prefix
-		registry.enableSimpleBroker("/user");
+		registry.enableSimpleBroker("/topic", "/queue");
 
 		// 클라이언트 → 서버 전송 시 prefix
 		registry.setApplicationDestinationPrefixes("/app");
