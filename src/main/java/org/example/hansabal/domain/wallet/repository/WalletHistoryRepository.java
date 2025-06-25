@@ -15,7 +15,7 @@ public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Lo
 	@EntityGraph(attributePaths={"wallet", "payment"})
 	@Query(value="SELECT h FROM WalletHistory h WHERE h.deletedAt IS null AND h.wallet=:walletId order BY h.createdAt desc",
 		countQuery ="SELECT COUNT(h) FROM WalletHistory h WHERE h.wallet=:walletId")
-	Page<WalletHistory> findByWalletIdTradeByCreatedAtDesc(Pageable pageable,@Param("walletId") Wallet wallet);
+	Page<WalletHistory> findByWalletIdOrderByCreatedAtDesc(Pageable pageable,@Param("walletId") Wallet wallet);
 
 	@Query("Select h From WalletHistory h join fetch h.wallet join fetch h.payment Where h.deletedAt IS null AND h.tradeId=:tradeId")
 	WalletHistory findByTradeId(@Param("tradeId")Long tradeId);
