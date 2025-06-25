@@ -9,6 +9,7 @@ build/
 
 # infra 전체 무시하되 prometheus 설정만 추적
 infra/**
+!infra/docker-compose.yml
 !infra/prometheus/
 !infra/prometheus/config/
 !infra/prometheus/config/prometheus.yml
