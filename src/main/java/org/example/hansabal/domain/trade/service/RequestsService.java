@@ -44,7 +44,7 @@ public class RequestsService {
 	public Page<RequestsResponse> getRequestList(Long tradeId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		return requestsRepository.findByTradeIdTradeByRequestsIdAsc(tradeId, pageable);
+		return requestsRepository.findByTradeIdOrderByRequestsIdAsc(tradeId, pageable);
 
 	}
 
