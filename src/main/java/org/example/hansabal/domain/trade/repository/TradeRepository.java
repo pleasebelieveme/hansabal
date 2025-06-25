@@ -21,12 +21,12 @@ public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepos
 	// @EntityGraph(attributePaths="trader")
 	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null AND t.title like concat('%',:title,'%') Trade BY t.id Desc",
 	// 	countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.title like concat('%',:title,'%') AND t.deletedAt IS null")
-	// Page<Trade> findByTitleContainingAndDeletedAtIsNullTradeByIdDesc(@Param("title") String title, Pageable pageable);
+	// Page<Trade> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(@Param("title") String title, Pageable pageable);
 	//
 	// @EntityGraph(attributePaths="trader")
 	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null And t.trader.id=:traderId Trade BY t.id desc",
 	// 	countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null")
-	// Page<Trade> findByTraderTradeByTradeIdDesc(@Param("traderId")Long traderId, Pageable pageable);
+	// Page<Trade> findByTraderOrderByTradeIdDesc(@Param("traderId")Long traderId, Pageable pageable);
 
      List<Trade> findByUser(User user);
 
