@@ -27,10 +27,12 @@ import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentService   {
 
 	private final IamportClient iamportClient;
@@ -54,14 +56,24 @@ public class PaymentService   {
 		try {
 			// 결제 단건 조회(아임포트)
 			IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.getPaymentUid());
+			log.info("🧾 아임포트 응답 imp_uid={}, amount={}, status={}",
+				iamportResponse.getResponse().getImpUid(),
+				iamportResponse.getResponse().getAmount(),
+				iamportResponse.getResponse().getStatus());
 			// 주문내역 조회
 			WalletHistory history = historyRepository.findByUuid(request.getUuid());
-			if(history==null)
+			if (history==null){
+				log.warn("❗️UUID에 해당하는 WalletHistory 없음: {}", request.getUuid());
 				throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
+			}
+
+			String status = iamportResponse.getResponse().getStatus();
+			log.warn("⚠️ 결제 상태 검증: status={}", status);
 
 			// 결제 완료가 아니면
-			if(!iamportResponse.getResponse().getStatus().equals("paid")) {
-				history.softDelete();// 기록 삭제
+			if (!"paid".equals(status)) {
+				log.warn("❌ 결제 실패 상태로 응답됨: impUid={}, status={}", iamportResponse.getResponse().getImpUid(), status);
+				history.softDelete();
 				throw new BizException(PaymentErrorCode.LOAD_FAILED);
 			}
 
@@ -69,6 +81,8 @@ public class PaymentService   {
 			Long price = history.getPrice();
 			// 실 결제 금액
 			int iamportPrice = iamportResponse.getResponse().getAmount().intValue();
+
+			log.info("💰 기대 금액={}, 실 결제 금액={}", price, iamportPrice);
 
 			// 결제 금액 검증
 			if(iamportPrice != price) {
@@ -89,8 +103,10 @@ public class PaymentService   {
 			return iamportResponse;
 
 		} catch (IamportResponseException e) {
+			log.error("❌ 아임포트 응답 실패", e);
 			throw new BizException(PaymentErrorCode.LOAD_FAILED);
 		} catch (IOException e) {
+			log.error("❌ IO 예외 발생", e);
 			throw new BizException(PaymentErrorCode.IOEXCEPTION_FOUND);
 		}
 	}
