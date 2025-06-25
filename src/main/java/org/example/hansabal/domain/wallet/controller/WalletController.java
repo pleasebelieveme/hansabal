@@ -1,5 +1,8 @@
 package org.example.hansabal.domain.wallet.controller;
 
+import java.io.IOException;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
@@ -48,6 +51,7 @@ public class WalletController {
 	public String walletPage() {
 		return "wallet";  // resources/templates/wallet.html 로 렌더링됨
 	}
+
 	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
 	public ResponseEntity<?> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		if (userAuth == null) {
@@ -66,6 +70,41 @@ public class WalletController {
 				"redirectUrl", "/payment?uuid=" + uuid + "&cash=" + request.cash()
 		);
 		return ResponseEntity.ok(result); // ✅ JSON으로 응답
+
+	}
+
+	@PostMapping("/load2")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
+	public ResponseEntity<?> loadWalletC2(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		if (userAuth == null) {
+			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
+		}
+
+		log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
+
+		WalletResponse response = walletService.getWallet(userAuth);
+		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Payment payment = walletService.loadWallet(request);
+		String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location","/api/payment?uuid="+uuid);
+		return new ResponseEntity<Void>(headers,HttpStatus.FOUND);
+	}
+
+	@PostMapping("/load3")//프론트로 전송 data 전송 및 리디렉션, servletRespone로 바로이동
+	public void loadWalletC3(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth, HttpServletResponse response) {
+		if (userAuth == null) {
+			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
+		}
+
+		log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
+
+		WalletResponse Wresponse = walletService.getWallet(userAuth);
+		Wallet wallet = walletRepository.findById(Wresponse.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Payment payment = walletService.loadWallet(request);
+		String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
+		try{response.sendRedirect("/api/payment?uuid=" + uuid);
+		}catch(IOException e){
+			throw new BizException(WalletErrorCode.IOEXCEPTION_FOUND);}
 	}
 
 	@GetMapping()
