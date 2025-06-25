@@ -41,7 +41,7 @@ public class WalletService {
 		if(walletRepository.existsByUserId(user))
 			throw new BizException(WalletErrorCode.DUPLICATE_WALLET_NOT_ALLOWED);
 		Wallet wallet =  Wallet.builder()
-			.userId(user)
+			.user(user)
 			.cash(0L)
 			.build();
 		walletRepository.save(wallet);
