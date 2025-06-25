@@ -16,5 +16,4 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
 	boolean existsByUserId(User userId);
 
-	User userId(User userId);
 }

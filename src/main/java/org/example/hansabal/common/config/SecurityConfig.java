@@ -34,8 +34,8 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 		http
-			.csrf(AbstractHttpConfigurer::disable)
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.csrf(AbstractHttpConfigurer::disable)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authorizeHttpRequests(auth -> auth
 						.requestMatchers(
 								"/login", "/logout", "/oauth2/**", // 로그인 관련
@@ -43,28 +43,16 @@ public class SecurityConfig {
 								"/js/**", "/css/**", "/img/**",   // 리소스
 								"/api/auth/login", "/api/auth/refresh" // 인증 API
 						).permitAll()
-				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
-				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
-				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
-					.requestMatchers("/ws/**", "/connection/**", "/info", "/sockjs/**").permitAll()
-					.requestMatchers("/api/users/me").authenticated()
-				.requestMatchers("/write").authenticated()
+						.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
+						.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
+						.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
+						.requestMatchers("/ws/**", "/connection/**", "/info", "/sockjs/**").permitAll()
+						.requestMatchers("/api/users/me").authenticated()
+						.requestMatchers("/write").authenticated()
 						.requestMatchers("/payment", "/payment.html").permitAll()
-				.anyRequest().authenticated()
+						.anyRequest().permitAll()
 
-			)
-//				.exceptionHandling(exception -> exception
-//						.authenticationEntryPoint((request, response, authException) -> {
-//							response.setStatus(401);
-//							response.setContentType("application/json;charset=UTF-8");
-//							response.getWriter().write("{\"error\": \"UNAUTHORIZED\"}");
-//						})
-//						.accessDeniedHandler((request, response, accessDeniedException) -> {
-//							response.setStatus(403);
-//							response.setContentType("application/json;charset=UTF-8");
-//							response.getWriter().write("{\"error\": \"FORBIDDEN\"}");
-//						})
-//				)
+				)
 
 				.oauth2Login(oauth -> oauth
 						.loginPage("/login")
@@ -77,7 +65,7 @@ public class SecurityConfig {
 						.invalidateHttpSession(true)                  // 세션 무효화
 						.deleteCookies("accessToken")                 // accessToken 쿠키 삭제
 				)
-			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+				.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();
 	}

@@ -70,26 +70,27 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // :흰색_확인_표시: 쿠키에서 accessToken 추출
         function getCookie(name) {
             const value = `; ${document.cookie}`;
             const parts = value.split(`; ${name}=`);
             if (parts.length === 2) return parts.pop().split(';').shift();
             return null;
         }
+
         const token = getCookie("accessToken");
         if (!token) {
             alert("로그인이 필요합니다.");
             location.href = "/login";
             return;
         }
-        // :흰색_확인_표시: API 요청 시 Authorization 헤더로 토큰 추가
+
         document.getElementById("submitBtn").addEventListener("click", async () => {
             const cash = document.getElementById("cash").value;
             if (!cash || cash <= 0) {
                 alert("충전 금액을 올바르게 입력해주세요.");
                 return;
             }
+
             try {
                 const res = await fetch("/api/wallet/load", {
                     method: "POST",
@@ -99,15 +100,23 @@
                     },
                     body: JSON.stringify({ id: 0, cash: Number(cash) })
                 });
+
+                const contentType = res.headers.get("content-type") || "";
+
                 if (!res.ok) {
-                    if (res.status === 401) {
-                        alert("세션이 만료되었습니다. 다시 로그인해주세요.");
+                    if (res.status === 401 || contentType.includes("text/html")) {
+                        alert("세션이 만료되었거나 인증되지 않았습니다.");
                         document.cookie = "accessToken=; path=/; max-age=0";
                         location.href = "/login";
                         return;
                     }
-                    throw new Error("요청 실패");
+                    throw new Error("요청 실패: " + res.status);
                 }
+
+                if (!contentType.includes("application/json")) {
+                    throw new Error("서버 응답이 JSON이 아닙니다.");
+                }
+
                 const data = await res.json();
                 if (data.redirectUrl) {
                     location.href = data.redirectUrl;
@@ -122,9 +131,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-
-

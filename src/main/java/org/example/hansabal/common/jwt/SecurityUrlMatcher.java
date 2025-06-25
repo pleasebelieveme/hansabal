@@ -4,15 +4,15 @@ import java.util.Arrays;
 
 public class SecurityUrlMatcher {
 	public static final String[] PUBLIC_URLS = {
-		"/api-docs",
-		"/swagger-ui.html",
-		"/swagger-ui/**",
-		"/api/users",
-		"/api/auth/login",
-		"/oauth2/**",
-		"/login/oauth2/code/**",
-		"/crawl",
-		"/home",
+			"/api-docs",
+			"/swagger-ui.html",
+			"/swagger-ui/**",
+			"/api/users",
+			"/api/auth/login",
+			"/oauth2/**",
+			"/login/oauth2/code/**",
+			"/crawl",
+			"/home",
 			"/community",
 			"/img/**",
 			"/",
@@ -21,12 +21,12 @@ public class SecurityUrlMatcher {
 			"/api/payment/success",
 			"/success-payment",
 			"/fail-payment",
-
-		"/api/shop/search/**"
+			"/css/**", "/js/**", "/images/**",
+			"/api/shop/search/**"
 	};
 
 	public static final String[] ADMIN_URLS = {
-		"/api/admin/**"
+			"/api/admin/**"
 	};
 
 	public static final String REFRESH_URL = "/api/auth/reissue";

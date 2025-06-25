@@ -28,26 +28,26 @@ public class JwtUtil {
 
 	public String createToken(Long id, UserRole userRole, String nickname){
 		return Jwts.builder()
-			.setSubject(String.valueOf(id))
-			.claim("userRole", userRole.name())
-			.claim("nickname",nickname)
-			.setIssuedAt(new Date())
+				.setSubject(String.valueOf(id))
+				.claim("userRole", userRole.name())
+				.claim("nickname",nickname)
+				.setIssuedAt(new Date())
 
-			.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
+				.setExpiration(new Date(System.currentTimeMillis()+EXPIRATION))
 
-			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
-			.compact();
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+				.compact();
 	}
 
 	public UserAuth extractUserAuth(String token){
 		Claims claims = Jwts.parserBuilder()
-			.setSigningKey(secretKey.getBytes())
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
+				.setSigningKey(secretKey.getBytes())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 
 		return new UserAuth(Long.parseLong(claims.getSubject()), UserRole.valueOf(claims.get("userRole",String.class)),claims.get("nickname",
-			String.class));
+				String.class));
 	}
 
 	public boolean validateToken(String token){
@@ -70,32 +70,32 @@ public class JwtUtil {
 
 	public long getExpiration(String token){
 		Claims claims = Jwts.parserBuilder()
-			.setSigningKey(secretKey.getBytes())
-			.build()
-			.parseClaimsJws(token)
-			.getBody();
+				.setSigningKey(secretKey.getBytes())
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
 
 		return claims.getExpiration().getTime() - System.currentTimeMillis();
 	}
 
 	public String createRefreshToken(Long id, UserRole role,String nickname) {
 		return Jwts.builder()
-			.setSubject(String.valueOf(id))
-			.claim("userRole", role.name())
-			.claim("nickname",nickname)
-			.claim("jti", UUID.randomUUID().toString())
-			.setIssuedAt(new Date())
-			.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
-			.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
-			.compact();
+				.setSubject(String.valueOf(id))
+				.claim("userRole", role.name())
+				.claim("nickname",nickname)
+				.claim("jti", UUID.randomUUID().toString())
+				.setIssuedAt(new Date())
+				.setExpiration(new Date(System.currentTimeMillis() + REFRESH_EXPIRATION))
+				.signWith(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8)))
+				.compact();
 	}
 
 	public long getRefreshExpiration(String refreshToken) {
 		Claims claims = Jwts.parserBuilder()
-			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
-			.build()
-			.parseClaimsJws(refreshToken)
-			.getBody();
+				.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
+				.build()
+				.parseClaimsJws(refreshToken)
+				.getBody();
 
 		return claims.getExpiration().getTime() - System.currentTimeMillis();
 	}

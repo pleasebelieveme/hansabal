@@ -19,6 +19,9 @@ import com.siot.IamportRestClient.response.Payment;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Slf4j
 @Controller
@@ -38,12 +41,15 @@ public class PaymentController {
 
 	@ResponseBody
 	@PostMapping("/api/payment")
-	public ResponseEntity<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallbackRequest request) {
+	public ResponseEntity<Map<String, String>> validationPayment(@RequestBody PaymentCallbackRequest request) {
 		IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
 
 		log.info("결제 응답={}", iamportResponse.getResponse().toString());
+		Map<String, String> response = new HashMap<>();
+		response.put("status", "SUCCESS");
+		response.put("message", "결제 및 저장 완료");
 
-		return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@GetMapping("/api/success-payment")
