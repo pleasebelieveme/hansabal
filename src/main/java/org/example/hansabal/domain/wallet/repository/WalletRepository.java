@@ -12,8 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 	@Query("SELECT w FROM Wallet w join fetch w.user WHERE w.user=:user")
-	Optional<Wallet> findByUserId(@Param("user") User user);
+	Optional<Wallet> findByUser(@Param("user") User user);
 
-	boolean existsByUserId(User userId);
-
+	boolean existsByUser(User user);
 }
