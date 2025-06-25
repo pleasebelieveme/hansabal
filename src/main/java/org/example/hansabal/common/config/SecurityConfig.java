@@ -49,9 +49,23 @@ public class SecurityConfig {
 					.requestMatchers("/ws/**", "/connection/**", "/info", "/sockjs/**").permitAll()
 					.requestMatchers("/api/users/me").authenticated()
 				.requestMatchers("/write").authenticated()
+						.requestMatchers("/payment", "/payment.html").permitAll()
 				.anyRequest().authenticated()
 
 			)
+//				.exceptionHandling(exception -> exception
+//						.authenticationEntryPoint((request, response, authException) -> {
+//							response.setStatus(401);
+//							response.setContentType("application/json;charset=UTF-8");
+//							response.getWriter().write("{\"error\": \"UNAUTHORIZED\"}");
+//						})
+//						.accessDeniedHandler((request, response, accessDeniedException) -> {
+//							response.setStatus(403);
+//							response.setContentType("application/json;charset=UTF-8");
+//							response.getWriter().write("{\"error\": \"FORBIDDEN\"}");
+//						})
+//				)
+
 				.oauth2Login(oauth -> oauth
 						.loginPage("/login")
 						.userInfoEndpoint(user -> user.userService(customOAuth2UserService))
