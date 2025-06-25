@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.email.service.MailService;
 import org.example.hansabal.domain.payment.dto.request.RequestPay;
@@ -28,6 +29,7 @@ import com.siot.IamportRestClient.response.Payment;
 
 import lombok.RequiredArgsConstructor;
 
+@Slf4j
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class PaymentService   {
 	}
 
 	public IamportResponse<Payment> paymentByCallback(PaymentCallbackRequest request) {
-
+	log.info("paymentByCallback");
 		try {
 			// 결제 단건 조회(아임포트)
 			IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.getPaymentUid());

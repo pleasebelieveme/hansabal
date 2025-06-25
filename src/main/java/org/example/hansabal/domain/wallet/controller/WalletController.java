@@ -66,6 +66,7 @@ public class WalletController {
 				"redirectUrl", "/payment?uuid=" + uuid + "&cash=" + request.cash()
 		);
 		return ResponseEntity.ok(result); // ✅ JSON으로 응답
+
 	}
 
 	@GetMapping()

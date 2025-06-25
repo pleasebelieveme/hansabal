@@ -21,7 +21,7 @@ public class SecurityUrlMatcher {
 			"/api/payment/success",
 			"/success-payment",
 			"/fail-payment",
-
+			"/css/**", "/js/**", "/images/**",
 		"/api/shop/search/**"
 	};
 

@@ -122,11 +122,11 @@
 </div>
 <div class="container">
     <!-- 숨겨진 입력값들 -->
-    <input type="hidden" id="orderUid" />
     <input type="hidden" id="itemName" value="한사발캐시" />
+    <input type="hidden" id="cash" />
+    <input type="hidden" id="orderUid" />
     <input type="hidden" id="buyerName" />
     <input type="hidden" id="buyerEmail" />
-    <input type="hidden" id="cash" />
 
     <!-- 사용자에게 보여줄 결제 금액 -->
     <div class="readonly-display" th:text="'₩ ' + (${requestDto.cash} ?: 0) + ' 결제 예정'">
@@ -151,87 +151,54 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         const token = localStorage.getItem("accessToken");
-        const topIcons = document.querySelector(".top-icons");
-
-        // ✅ 여기에 uuid 추출 로직 추가
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        const orderUid = getQueryParam("uuid");
-        const cash = getQueryParam("cash");
-
-// ✅ 값이 들어갈 input 요소가 반드시 있어야 해요
-        document.getElementById("orderUid").value = orderUid;
-        document.getElementById("cash").value = cash;  // 이 부분 추가
-        document.querySelector(".readonly-display").textContent = `₩ ${cash} 결제 예정`;
-
         if (!token) {
             alert("로그인이 필요합니다.");
             window.location.href = "/oauth2/authorization/google";
             return;
         }
 
-        function parseJwt(token) {
+        const getParam = (key) => new URLSearchParams(location.search).get(key);
+        const orderUid = getParam("uuid");
+        const cash = getParam("cash");
+
+        document.getElementById("orderUid").value = orderUid;
+        document.getElementById("cash").value = cash;
+        document.querySelector(".readonly-display").textContent = `₩ ${cash} 결제 예정`;
+
+        // JWT 파싱하여 닉네임과 이메일 추출
+        const parseJwt = (token) => {
             try {
-                const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(atob(base64).split('').map(c =>
-                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-                ).join(''));
-                return JSON.parse(jsonPayload);
-            } catch (e) {
-                console.error("JWT 디코딩 실패:", e);
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                return payload;
+            } catch {
                 return null;
             }
-        }
-
+        };
         const payload = parseJwt(token);
-        if (payload && payload.nickname) {
-            const joinLink = topIcons.querySelector(".join-link");
-            if (joinLink) joinLink.remove();
-            const userIcon = topIcons.querySelector(".fa-user");
-            if (userIcon) userIcon.remove();
+        if (payload) {
+            const { nickname, sub: email } = payload;
+            document.getElementById("buyerName").value = nickname;
+            document.getElementById("buyerEmail").value = email;
 
-            const nicknameSpan = document.createElement("span");
-            nicknameSpan.style.fontWeight = "bold";
-            nicknameSpan.style.color = "#d81b60";
-            nicknameSpan.textContent = payload.nickname;
-
-            const logoutLink = document.createElement("a");
-            logoutLink.href = "/logout";
-            logoutLink.textContent = "로그아웃";
-            logoutLink.style.marginLeft = "10px";
-            logoutLink.style.color = "#d81b60";
-            logoutLink.style.fontWeight = "bold";
-
-            topIcons.insertBefore(nicknameSpan, topIcons.firstChild);
-            topIcons.insertBefore(logoutLink, topIcons.children[1]);
+            // 사용자 표시
+            const topIcons = document.querySelector(".top-icons");
+            topIcons.innerHTML = `
+            <span style="font-weight:bold; color:#d81b60;">${nickname}</span>
+            <a href="/logout" style="color:#d81b60; font-weight:bold; margin-left:10px;">로그아웃</a>
+        `;
         }
 
+        // 장바구니 표시
         fetch("/api/cart/count", {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-            }
-        })
-            .then(res => res.json())
+            headers: { Authorization: `Bearer ${token}` }
+        }).then(res => res.json())
             .then(data => {
                 const badge = document.querySelector(".badge");
                 if (badge) badge.textContent = data.count || 0;
-            })
-            .catch(() => {
-                const badge = document.querySelector(".badge");
-                if (badge) badge.textContent = 0;
             });
 
-        // 결제 버튼 이벤트
-        document.getElementById("pay-button").addEventListener("click", function () {
-            if (!token) {
-                alert("로그인이 필요합니다.");
-                window.location.href = "/oauth2/authorization/google";
-                return;
-            }
-
+        // 결제 버튼 클릭 이벤트
+        document.getElementById("pay-button").addEventListener("click", () => {
             const orderUid = document.getElementById("orderUid").value;
             const itemName = document.getElementById("itemName").value;
             const paymentPrice = parseInt(document.getElementById("cash").value) || 0;
@@ -240,7 +207,6 @@
 
             const IMP = window.IMP;
             IMP.init("imp17705270");
-
             IMP.request_pay({
                 pg: 'html5_inicis.INIpayTest',
                 pay_method: 'card',
@@ -255,21 +221,28 @@
                         url: "/api/payment",
                         method: "POST",
                         contentType: "application/json",
+                        dataType: "json", // 👈 추가: 응답 JSON이 아닐 경우 에러 방지
                         data: JSON.stringify({
                             payment_uid: rsp.imp_uid,
                             order_uid: rsp.merchant_uid
                         }),
-                        headers: {
-                            Authorization: `Bearer ${token}`
+                        headers: { Authorization: `Bearer ${token}` },
+                        success: (res) => {
+                            // 👇 success-payment 이동 조건을 좀 더 유연하게
+                            if (res && res.status === 'SUCCESS') {
+                                window.location.href = "/success-payment";
+                            } else {
+                                alert("서버 응답이 이상합니다.");
+                                window.location.href = "/fail-payment";
+                            }
                         },
-                        success: function () {
-                            window.location.href = "/success-payment";
-                        },
-                        error: function () {
+                        error: (xhr, status, err) => {
+                            console.error("결제 검증 에러:", xhr.responseText || err);
                             alert("결제 검증 실패");
                             window.location.href = "/fail-payment";
                         }
                     });
+
                 } else {
                     alert("결제 실패");
                     window.location.href = "/fail-payment";
@@ -277,6 +250,7 @@
             });
         });
     });
+
 </script>
 </body>
 </html>
