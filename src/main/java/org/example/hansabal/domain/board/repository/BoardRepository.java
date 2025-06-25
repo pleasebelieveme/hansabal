@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface BoardRepository extends JpaRepository<Board, Long> {
+public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
 
     // 카테고리별 조회
     Page<Board> findByCategory(BoardCategory category, Pageable pageable);
@@ -21,8 +21,9 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findByTitleContainingOrContentContaining(String title, String content, Pageable pageable);
 
     // 카테고리 + 키워드 동시 검색
-    @Query("SELECT b FROM Board b WHERE b.category = :category AND (b.title LIKE %:keyword% OR b.content LIKE %:keyword%)")
-    Page<Board> searchByCategoryAndKeyword(@Param("category") BoardCategory category,
-                                           @Param("keyword") String keyword,
-                                           Pageable pageable);
+//    @Query("SELECT b FROM Board b WHERE b.category = :category AND (b.title LIKE :keyword OR b.content LIKE :keyword)")
+//    Page<Board> searchByCategoryAndKeyword(@Param("category") BoardCategory category,
+//                                           @Param("keyword") String keyword,
+//                                           Pageable pageable);
+
 }

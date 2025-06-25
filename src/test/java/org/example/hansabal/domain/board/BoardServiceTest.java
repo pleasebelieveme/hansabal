@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.*;
 import java.util.Optional;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
@@ -14,18 +13,11 @@ import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.board.service.BoardService;
-import org.example.hansabal.domain.comment.repository.CommentRepository;
-import org.example.hansabal.domain.comment.service.CommentService;
-import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
-import org.example.hansabal.domain.users.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -70,7 +62,7 @@ public class BoardServiceTest {
         BoardRequest request = new BoardRequest(BoardCategory.DAILY, "제목", "내용");
         UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
-        BoardResponse response = boardService.createPost(userAuth, request);
+        BoardResponse response = boardService.createBoard(userAuth, request);
 
         assertThat(response).isNotNull();
         assertThat(response.getTitle()).isEqualTo("제목");

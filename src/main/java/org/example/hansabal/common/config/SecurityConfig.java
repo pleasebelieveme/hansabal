@@ -36,16 +36,47 @@ public class SecurityConfig {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			.authorizeHttpRequests(auth -> auth
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(
+								"/login", "/logout", "/oauth2/**", // 로그인 관련
+								"/wallet.html",                   // 정적 페이지
+								"/js/**", "/css/**", "/img/**",   // 리소스
+								"/api/auth/login", "/api/auth/refresh" // 인증 API
+						).permitAll()
 				.requestMatchers(SecurityUrlMatcher.PUBLIC_URLS).permitAll()
 				.requestMatchers(SecurityUrlMatcher.REFRESH_URL).authenticated()
 				.requestMatchers(SecurityUrlMatcher.ADMIN_URLS).hasRole("ADMIN")
-				.anyRequest().permitAll()
+					.requestMatchers("/ws/**", "/connection/**", "/info", "/sockjs/**").permitAll()
+					.requestMatchers("/api/users/me").authenticated()
+				.requestMatchers("/write").authenticated()
+						.requestMatchers("/payment", "/payment.html").permitAll()
+				.anyRequest().authenticated()
+
 			)
-			.oauth2Login(oauth -> oauth
-				.userInfoEndpoint(user -> user.userService(customOAuth2UserService))
-				.successHandler(oAuth2LoginSuccessHandler)
-			)
+//				.exceptionHandling(exception -> exception
+//						.authenticationEntryPoint((request, response, authException) -> {
+//							response.setStatus(401);
+//							response.setContentType("application/json;charset=UTF-8");
+//							response.getWriter().write("{\"error\": \"UNAUTHORIZED\"}");
+//						})
+//						.accessDeniedHandler((request, response, accessDeniedException) -> {
+//							response.setStatus(403);
+//							response.setContentType("application/json;charset=UTF-8");
+//							response.getWriter().write("{\"error\": \"FORBIDDEN\"}");
+//						})
+//				)
+
+				.oauth2Login(oauth -> oauth
+						.loginPage("/login")
+						.userInfoEndpoint(user -> user.userService(customOAuth2UserService))
+						.successHandler(oAuth2LoginSuccessHandler)
+				)
+				.logout(logout -> logout
+						.logoutUrl("/logout")                         // 로그아웃 URL
+						.logoutSuccessUrl("/home")                    // 로그아웃 성공 후 이동할 경로
+						.invalidateHttpSession(true)                  // 세션 무효화
+						.deleteCookies("accessToken")                 // accessToken 쿠키 삭제
+				)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

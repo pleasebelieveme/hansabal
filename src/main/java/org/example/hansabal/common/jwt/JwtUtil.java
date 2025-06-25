@@ -1,5 +1,6 @@
 package org.example.hansabal.common.jwt;
 
+import jakarta.servlet.http.Cookie;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,6 +64,7 @@ public class JwtUtil {
 		if(bearer != null && bearer.startsWith("Bearer ")){
 			return bearer.substring(7);
 		}
+
 		return null;
 	}
 
@@ -97,4 +99,5 @@ public class JwtUtil {
 
 		return claims.getExpiration().getTime() - System.currentTimeMillis();
 	}
+
 }

@@ -22,12 +22,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Table(name = "wallet")
 public class Wallet extends BaseEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@OneToOne
 	@JoinColumn(name="users_id", unique=true)
-	private User userId;
+	private User user;
+
 	private Long cash;
 
 	public void updateWallet(Long cash){

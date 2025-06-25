@@ -1,7 +1,5 @@
 package org.example.hansabal.domain.wallet.repository;
 
-import java.util.Optional;
-
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
 import org.springframework.data.domain.Page;
@@ -19,9 +17,9 @@ public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Lo
 		countQuery ="SELECT COUNT(h) FROM WalletHistory h WHERE h.wallet=:walletId")
 	Page<WalletHistory> findByWalletIdTradeByCreatedAtDesc(Pageable pageable,@Param("walletId") Wallet wallet);
 
-	@Query("Select h From WalletHistory h join fetch Wallet w join fetch Payment p Where h.deletedAt IS null AND h.tradeId=:tradeId")
+	@Query("Select h From WalletHistory h join fetch h.wallet join fetch h.payment Where h.deletedAt IS null AND h.tradeId=:tradeId")
 	WalletHistory findByTradeId(@Param("tradeId")Long tradeId);
 
-	@Query("Select h From WalletHistory h join fetch Wallet w join fetch Payment p Where h.deletedAt IS null AND h.uuid=:uuid")
+	@Query("Select h From WalletHistory h join fetch h.wallet join fetch h.payment Where h.deletedAt IS null AND h.uuid=:uuid")
 	WalletHistory findByUuid(@Param("uuid")String uuid);
 }
