@@ -109,8 +109,8 @@
                     throw new Error("요청 실패");
                 }
                 const data = await res.json();
-                if (data.uuid) {
-                    location.href = `/payment?uuid=${data.uuid}`;
+                if (data.redirectUrl) {
+                    location.href = data.redirectUrl;
                 } else {
                     alert("결제 페이지 이동 실패");
                 }

@@ -122,13 +122,14 @@
 </div>
 <div class="container">
     <!-- 숨겨진 입력값들 -->
-    <input type="hidden" id="orderUid" th:value="${requestDto.uuid}" />
+    <input type="hidden" id="orderUid" />
     <input type="hidden" id="itemName" value="한사발캐시" />
-    <input type="hidden" id="buyerName" th:value="${requestDto.buyerName}" />
-    <input type="hidden" id="buyerEmail" th:value="${requestDto.buyerEmail}" />
+    <input type="hidden" id="buyerName" />
+    <input type="hidden" id="buyerEmail" />
+    <input type="hidden" id="cash" />
 
     <!-- 사용자에게 보여줄 결제 금액 -->
-    <div class="readonly-display" th:text="'₩ ' + (${requestDto.paymentPrice} ?: 0) + ' 결제 예정'">
+    <div class="readonly-display" th:text="'₩ ' + (${requestDto.cash} ?: 0) + ' 결제 예정'">
         ₩ 0 결제 예정
     </div>
 
@@ -151,6 +152,20 @@
     document.addEventListener("DOMContentLoaded", () => {
         const token = localStorage.getItem("accessToken");
         const topIcons = document.querySelector(".top-icons");
+
+        // ✅ 여기에 uuid 추출 로직 추가
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const orderUid = getQueryParam("uuid");
+        const cash = getQueryParam("cash");
+
+// ✅ 값이 들어갈 input 요소가 반드시 있어야 해요
+        document.getElementById("orderUid").value = orderUid;
+        document.getElementById("cash").value = cash;  // 이 부분 추가
+        document.querySelector(".readonly-display").textContent = `₩ ${cash} 결제 예정`;
 
         if (!token) {
             alert("로그인이 필요합니다.");
@@ -195,7 +210,9 @@
         }
 
         fetch("/api/cart/count", {
-            headers: { Authorization: `Bearer ${token}` }
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+            }
         })
             .then(res => res.json())
             .then(data => {
@@ -217,7 +234,7 @@
 
             const orderUid = document.getElementById("orderUid").value;
             const itemName = document.getElementById("itemName").value;
-            const paymentPrice = parseInt(document.querySelector(".readonly-display").textContent.replace(/\\D/g, '')) || 0;
+            const paymentPrice = parseInt(document.getElementById("cash").value) || 0;
             const buyerName = document.getElementById("buyerName").value;
             const buyerEmail = document.getElementById("buyerEmail").value;
 

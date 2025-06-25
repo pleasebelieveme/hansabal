@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -50,19 +52,25 @@ public class WalletController {
 		return "wallet";  // resources/templates/wallet.html 로 렌더링됨
 	}
 
-	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션정보 프론트에 String으로 전송
-	public ResponseEntity<String> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
+	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
+	public ResponseEntity<?> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		if (userAuth == null) {
-			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
+			throw new BizException(WalletErrorCode.NO_WALLET_FOUND);
 		}
 
 		log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
 
 		WalletResponse response = walletService.getWallet(userAuth);
-		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Wallet wallet = walletRepository.findById(response.id())
+				.orElseThrow(() -> new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		Payment payment = walletService.loadWallet(request);
 		String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
-		return ResponseEntity.status(HttpStatus.OK).body("redirect:/api/payment?uuid="+uuid);
+
+		Map<String, String> result = Map.of(
+				"redirectUrl", "/payment?uuid=" + uuid + "&cash=" + request.cash()
+		);
+		return ResponseEntity.ok(result); // ✅ JSON으로 응답
+
 	}
 
 	@PostMapping("/load2")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
