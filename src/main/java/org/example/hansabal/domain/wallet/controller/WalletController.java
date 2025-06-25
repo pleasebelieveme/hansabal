@@ -1,5 +1,8 @@
 package org.example.hansabal.domain.wallet.controller;
 
+import java.io.IOException;
+
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
@@ -13,6 +16,7 @@ import org.example.hansabal.domain.wallet.repository.WalletRepository;
 import org.example.hansabal.domain.wallet.service.WalletHistoryService;
 import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,7 +49,8 @@ public class WalletController {
 	public String walletPage() {
 		return "wallet";  // resources/templates/wallet.html 로 렌더링됨
 	}
-	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
+
+	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션정보 프론트에 String으로 전송
 	public ResponseEntity<String> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		if (userAuth == null) {
 			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
@@ -57,7 +62,41 @@ public class WalletController {
 		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		Payment payment = walletService.loadWallet(request);
 		String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
-		return "redirect:/api/payment?uuid="+uuid;
+		return ResponseEntity.status(HttpStatus.OK).body("redirect:/api/payment?uuid="+uuid);
+	}
+
+	@PostMapping("/load2")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
+	public ResponseEntity<?> loadWalletC2(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
+		if (userAuth == null) {
+			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
+		}
+
+		log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
+
+		WalletResponse response = walletService.getWallet(userAuth);
+		Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Payment payment = walletService.loadWallet(request);
+		String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Location","/api/payment?uuid="+uuid);
+		return new ResponseEntity<Void>(headers,HttpStatus.FOUND);
+	}
+
+	@PostMapping("/load3")//프론트로 전송 data 전송 및 리디렉션, servletRespone로 바로이동
+	public void loadWalletC3(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth, HttpServletResponse response) {
+		if (userAuth == null) {
+			throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
+		}
+
+		log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
+
+		WalletResponse Wresponse = walletService.getWallet(userAuth);
+		Wallet wallet = walletRepository.findById(Wresponse.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Payment payment = walletService.loadWallet(request);
+		String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
+		try{response.sendRedirect("/api/payment?uuid=" + uuid);
+		}catch(IOException e){
+			throw new BizException(WalletErrorCode.IOEXCEPTION_FOUND);}
 	}
 
 	@GetMapping()
