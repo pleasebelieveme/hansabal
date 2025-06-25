@@ -8,8 +8,8 @@ services:
       - '3306:3306'
     environment:
       MYSQL_DATABASE: 'hansabal'
-      MYSQL_USER: 'hansabal_user'
-      MYSQL_PASSWORD: 'hansabal_pass'
+      MYSQL_USER: 'testuser'
+      MYSQL_PASSWORD: 'testpass'
       MYSQL_ROOT_PASSWORD: 'root'
     volumes:
       - ./mysql/data:/var/lib/mysql
