@@ -80,7 +80,7 @@ public class WalletHistoryService {
 
 		Wallet wallet = history.getWallet();
 
-		if (!wallet.getUserId().getId().equals(userAuth.getId())) {
+		if (!wallet.getUser().getId().equals(userAuth.getId())) {
 			throw new BizException(WalletErrorCode.INVALID_ACCESS);
 		}
 

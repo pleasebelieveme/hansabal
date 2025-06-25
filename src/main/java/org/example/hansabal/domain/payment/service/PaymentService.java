@@ -44,8 +44,8 @@ public class PaymentService   {
 		return RequestPay.builder()
 			.paymentPrice(history.getPrice())
 			.uuid(history.getUuid())
-			.buyerName(history.getWallet().getUserId().getName())
-			.buyerEmail(history.getWallet().getUserId().getEmail())
+			.buyerName(history.getWallet().getUser().getName())
+			.buyerEmail(history.getWallet().getUser().getEmail())
 			.build();
 	}
 
@@ -85,7 +85,7 @@ public class PaymentService   {
 			//결제 완료점
 			Wallet wallet = history.getWallet();
 			wallet.updateWallet(wallet.getCash()+price);
-			mailService.purchaseCompletedEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
+			mailService.purchaseCompletedEmail(wallet.getUser().getName(),wallet.getUser().getEmail());
 			return iamportResponse;
 
 		} catch (IamportResponseException e) {
@@ -107,9 +107,9 @@ public class PaymentService   {
 			.build();
 		Wallet wallet = Wallet.builder()
 			.id(1L)
-			.userId(user)
+			.user(user)
 			.cash(5000L)
 			.build();
-		mailService.purchaseCompletedEmail(wallet.getUserId().getName(),wallet.getUserId().getEmail());
+		mailService.purchaseCompletedEmail(wallet.getUser().getName(),wallet.getUser().getEmail());
 	}
 }
