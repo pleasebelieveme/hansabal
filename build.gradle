@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    // 환경변수 ..env
+    // 환경변수 .env
     implementation("me.paulschwarz:spring-dotenv:4.0.0")
 
     //이메일 발송에 대한 의존성

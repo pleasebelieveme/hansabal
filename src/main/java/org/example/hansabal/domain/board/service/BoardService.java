@@ -18,7 +18,6 @@ import org.example.hansabal.domain.comment.service.CommentService;
 import org.example.hansabal.domain.comment.service.DibService;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.repository.UserRepository;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -114,11 +113,6 @@ public class BoardService {
     }
 
     // === 게시글 목록 조회 (카테고리 + 키워드 포함) ===
-    @Cacheable(
-           value = "BoardPostsCache",
-            key = "#category + ':' + #keyword + ':' + #page + ':' + #size",
-            unless = "#result == null || #result.empty()"
-    )
     @Transactional(readOnly = true)
     public Page<BoardSimpleResponse> getPosts(BoardCategory category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
