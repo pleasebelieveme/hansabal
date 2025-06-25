@@ -19,12 +19,12 @@ import java.util.List;
 public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepositoryCustom{
 	//
 	// @EntityGraph(attributePaths="trader")
-	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null AND t.title like concat('%',:title,'%') Trade BY t.id Desc",
+	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null AND t.title like concat('%',:title,'%') ORDER BY t.id Desc",
 	// 	countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.title like concat('%',:title,'%') AND t.deletedAt IS null")
 	// Page<Trade> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(@Param("title") String title, Pageable pageable);
 	//
 	// @EntityGraph(attributePaths="trader")
-	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null And t.trader.id=:traderId Trade BY t.id desc",
+	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null And t.trader.id=:traderId ORDER BY t.id desc",
 	// 	countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null")
 	// Page<Trade> findByTraderOrderByTradeIdDesc(@Param("traderId")Long traderId, Pageable pageable);
 
