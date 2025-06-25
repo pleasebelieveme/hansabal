@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PaymentCallbackRequest {
 	private String paymentUid; // 결제 고유 번호, imp_uid
-	private String Uuid; // 주문 고유 번호, imp_merchant
+	private String uuid; // 주문 고유 번호, imp_merchant
 }

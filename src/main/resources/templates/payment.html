@@ -150,28 +150,35 @@
 </div>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const token = localStorage.getItem("accessToken");
-        const topIcons = document.querySelector(".top-icons");
-
-        // ✅ 여기에 uuid 추출 로직 추가
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
         }
 
-        const orderUid = getQueryParam("uuid");
-        const cash = getQueryParam("cash");
-
-// ✅ 값이 들어갈 input 요소가 반드시 있어야 해요
-        document.getElementById("orderUid").value = orderUid;
-        document.getElementById("cash").value = cash;  // 이 부분 추가
-        document.querySelector(".readonly-display").textContent = `₩ ${cash} 결제 예정`;
+        const token = getCookie("accessToken");
+        const topIcons = document.querySelector(".top-icons");
 
         if (!token) {
             alert("로그인이 필요합니다.");
             window.location.href = "/oauth2/authorization/google";
             return;
         }
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const uuid = getQueryParam("uuid");
+        const cash = getQueryParam("cash");
+
+        console.log("✅ [초기화] uuid 쿼리 파라미터 확인:", uuid);
+
+        document.getElementById("orderUid").value = uuid;
+        document.getElementById("cash").value = cash;
+        document.querySelector(".readonly-display").textContent = `₩ ${cash} 결제 예정`;
 
         function parseJwt(token) {
             try {
@@ -190,6 +197,7 @@
         if (payload && payload.nickname) {
             const joinLink = topIcons.querySelector(".join-link");
             if (joinLink) joinLink.remove();
+
             const userIcon = topIcons.querySelector(".fa-user");
             if (userIcon) userIcon.remove();
 
@@ -211,7 +219,7 @@
 
         fetch("/api/cart/count", {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                Authorization: `Bearer ${token}`
             }
         })
             .then(res => res.json())
@@ -224,15 +232,8 @@
                 if (badge) badge.textContent = 0;
             });
 
-        // 결제 버튼 이벤트
         document.getElementById("pay-button").addEventListener("click", function () {
-            if (!token) {
-                alert("로그인이 필요합니다.");
-                window.location.href = "/oauth2/authorization/google";
-                return;
-            }
-
-            const orderUid = document.getElementById("orderUid").value;
+            const uuid = document.getElementById("orderUid").value;
             const itemName = document.getElementById("itemName").value;
             const paymentPrice = parseInt(document.getElementById("cash").value) || 0;
             const buyerName = document.getElementById("buyerName").value;
@@ -241,24 +242,32 @@
             const IMP = window.IMP;
             IMP.init("imp17705270");
 
+            console.log("🟡 결제 요청 준비: uuid =", uuid);
+
             IMP.request_pay({
                 pg: 'html5_inicis.INIpayTest',
                 pay_method: 'card',
-                merchant_uid: orderUid,
+                merchant_uid: uuid,
                 name: itemName,
                 amount: paymentPrice,
                 buyer_email: buyerEmail,
                 buyer_name: buyerName,
             }, function (rsp) {
                 if (rsp.success) {
+                    console.log("✅ 결제 성공: imp_uid =", rsp.imp_uid, ", merchant_uid =", rsp.merchant_uid);
+
+                    const payload = {
+                        payment_uid: rsp.imp_uid,
+                        uuid: rsp.merchant_uid
+                    };
+
+                    console.log("📤 결제 검증 요청 payload:", payload);
+
                     $.ajax({
                         url: "/api/payment",
                         method: "POST",
                         contentType: "application/json",
-                        data: JSON.stringify({
-                            payment_uid: rsp.imp_uid,
-                            order_uid: rsp.merchant_uid
-                        }),
+                        data: JSON.stringify(payload),
                         headers: {
                             Authorization: `Bearer ${token}`
                         },
