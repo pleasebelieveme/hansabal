@@ -54,7 +54,7 @@ public class RequestsService {
 		if(requests.getStatus()==RequestStatus.DONE)//완료된 거래 요청을 업데이트 하는것을 금지.
 			throw new BizException(TradeErrorCode.CLOSED_CASE);
 		Trade trade = tradeRepository.findById(requests.getTrade().getId()).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
-		if(!trade.getWriter().getId().equals(userAuth.getId()))//거래 개시자만 사용 가능한 메서드기능입니다.
+		if(!trade.getTrader().getId().equals(userAuth.getId()))//거래 개시자만 사용 가능한 메서드기능입니다.
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(trade.getIsOccupied()&&requests.getStatus()==RequestStatus.AVAILABLE)//이미 거래 요청을 받아들인 상태에서 다른 거래 요청을 추가로 받아들이는 것을 금지.
 			throw new BizException(TradeErrorCode.ALREADY_OCCUPIED);
