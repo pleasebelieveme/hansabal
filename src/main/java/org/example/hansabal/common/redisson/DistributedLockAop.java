@@ -11,7 +11,7 @@ import org.example.hansabal.common.exception.CommonErrorCode;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
-
+import org.springframework.core.annotation.Order;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+@Order(1)
 public class DistributedLockAop {
 	private static final String REDISSON_LOCK_PREFIX = "LOCK:";
 
