@@ -39,11 +39,13 @@ public class TradeService {
 
 	@Transactional(readOnly=true)
 	public Page<TradeResponse> getTradeListByTitle(int page, int size, String title) {
-		if(title==null)
-			title="";
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<TradeResponse> trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
+		Page<TradeResponse> trades;
+		if(title==null)
+			trades = tradeRepository.findByDeletedAtIsNullOrderByIdDesc(pageable);
+		else
+			trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(title,pageable);
 		return trades;
 	}
 
@@ -59,8 +61,7 @@ public class TradeService {
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
 		Long traderId=user.getId();
-		Page<TradeResponse> trades = tradeRepository.findByTraderOrderByTradeIdDesc(traderId,pageable);
-		return trades;
+		return tradeRepository.findByTraderOrderByTradeIdDesc(traderId,pageable);
 	}
 
 	@Transactional
