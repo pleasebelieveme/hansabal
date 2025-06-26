@@ -9,21 +9,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+
 @Aspect
 @Component
 public class TradeLoggingAspect {
 
 	private static final Logger logger = LoggerFactory.getLogger(TradeLoggingAspect.class);
-
+	//수정예정 dto수정해야함
 	@AfterReturning(value = "@annotation(LogTradeCreation)", returning = "result")
 	public void logTradeCreation(JoinPoint joinPoint, Object result) {
 		if (result instanceof TradeResponseDto tradeResponseDto) {
 			logger.info("주문 성공! 주문 ID: {}, 사용자 ID: {}, 상품 ID: {}, 총 결제 금액: {}",
 					tradeResponseDto.tradeId(),
-					tradeResponseDto.trader(),
-					tradeResponseDto.title(),
-					tradeResponseDto.traderNickname()
-			);
+					tradeResponseDto.userId(),
+					tradeResponseDto.productId(),
+					tradeResponseDto.totalPrice());
 		}
 	}
 }

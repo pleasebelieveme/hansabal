@@ -12,5 +12,5 @@ public interface TradeItemRepository extends JpaRepository<TradeItem, Long> {
 	@Query("SELECT oi.id FROM TradeItem oi WHERE oi.trade.id = :TradeId")
 	List<Long> findIdsByTradeId(@Param("TradeId") Long TradeId);
 
-	List<TradeItem> findByTradeId(Long TradeId);
+	List<TradeItem> findByTradeId(Long tradeId);
 }
