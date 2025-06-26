@@ -1,12 +1,18 @@
 package org.example.hansabal.domain.trade.service;
 
 
+import org.example.hansabal.domain.product.repository.ProductRepository;
+import org.example.hansabal.domain.trade.dto.response.TradeDetailResponseDto;
+import org.example.hansabal.domain.trade.dto.response.TradeItemDetailResponseDto;
+import org.example.hansabal.domain.trade.dto.response.TradeResponse;
+import org.example.hansabal.domain.trade.entity.TradeItem;
+import org.example.hansabal.domain.trade.repository.TradeItemRepository;
+import org.example.hansabal.domain.users.entity.UserRole;
 import org.springframework.transaction.annotation.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.trade.dto.request.TradeRequestDto;
+import org.example.hansabal.domain.trade.dto.request.TradeRequest;
 import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
@@ -17,15 +23,21 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.example.hansabal.domain.users.exception.UserErrorCode;
+import org.example.hansabal.domain.trade.service.TradeItemService;
 
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TradeService {
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
+	private final ProductRepository productRepository;
+	private final TradeItemRepository tradeItemRepository;
+	private final TradeItemService tradeItemService;
 
 	@Transactional
 	public TradeResponse createTrade(TradeRequest request, UserAuth userAuth) {
@@ -33,8 +45,8 @@ public class TradeService {
 		Trade trade= Trade.builder()
 			.title(request.title())
 			.contents(request.contents())
-			.trader(user)
-			.price(request.price())
+			.writer(user)
+				.price(request.price())
 			.isOccupied(false)
 			.build();
 		tradeRepository.save(trade);
@@ -58,7 +70,7 @@ public class TradeService {
 	}
 
 	@Transactional(readOnly=true)
-	public Page<TradeResponse> getMyTrade(UserAuth userAuth, int page, int size) {
+	public Page<TradeResponse> getMyTrade(int page, int size,UserAuth userAuth) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
 		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
@@ -89,7 +101,7 @@ public class TradeService {
 	 * - 일반 사용자: 자신이 주문한 주문
 	 * - 사장님: 자신이 등록한 가게의 주문
 	 */
-	public List<org.example.hansabal.domain.trade.response.TradeResponseDto> findAllTrades(Long userId) {
+	public List<TradeResponseDto> findAllTrades(Long userId) {
 		User user = validateUser(userId);
 		List<Trade> trades = new ArrayList<>();
 
@@ -101,7 +113,7 @@ public class TradeService {
 		}
 
 		return trades.stream()
-				.map(trade -> new org.example.hansabal.domain.trade.response.TradeResponseDto(
+				.map(trade -> new TradeResponseDto(
 						trade.getId(),
 						trade.getUser().getId(),
 						trade.getProduct().getId(),
@@ -110,6 +122,14 @@ public class TradeService {
 						trade.getStatus()
 				))
 				.collect(Collectors.toList());
+	}
+
+	private User validateUser(Long userId) {
+
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new BizException(UserErrorCode.NOT_FOUND_USER));
+
+		return user;
 	}
 
 	/**
@@ -128,8 +148,7 @@ public class TradeService {
 				.map(tradeItem -> new TradeItemDetailResponseDto(
 						tradeItem.getProduct().getId(),
 						tradeItem.getProduct().getName(),
-						tradeItem.getProduct() != null ?
-								List.of() : List.of(),
+						List.of(),
 						tradeItem.getQuantity()
 				))
 				.toList();
@@ -160,25 +179,6 @@ public class TradeService {
 		throw new BizException(TradeErrorCode.NOT_ALLOWED);
 	}
 
-	@Transactional(readOnly = true)
-	public Page<TradeResponseDto> getTradeListByTitle(int page, int size, String title) {
-		Pageable pageable = PageRequest.of(Math.max(0, page - 1), size);
-		Page<Trade> trades = tradeRepository.findByTitleContainingIgnoreCase(title, pageable);
-		return trades.map(TradeResponseDto::from);
-	}
-	@Transactional(readOnly = true)
-	public TradeResponseDto getTrade(Long tradeId) {
-		Trade trade = tradeRepository.findById(tradeId)
-				.orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
-		return TradeResponseDto.from(trade);
-	}
 
-	@Transactional(readOnly = true)
-	public Page<TradeResponseDto> getMyTrade(UserAuth userAuth, int page, int size) {
-		User user = userRepository.findByIdOrElseThrow(userAuth.getId());
-		Pageable pageable = PageRequest.of(Math.max(0, page - 1), size);
-		Page<Trade> trades = tradeRepository.findByWriter(user, pageable);
-		return trades.map(TradeResponseDto::from);
-	}
 
 }

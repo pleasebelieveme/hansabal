@@ -28,7 +28,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 					TradeResponse.class,
 					trade.title,
 					trade.contents,
-					trade.trader.nickname
+					trade.writer.nickname
 				))
 				.from(trade)
 				.where(trade.deletedAt.isNull())
@@ -43,7 +43,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				TradeResponse.class,
 				trade.title,
 				trade.contents,
-				trade.trader.nickname
+				trade.writer.nickname
 			))
 			.from(trade)
 			.where(trade.title.like(title).and(trade.deletedAt.isNull()))//이후 커스텀함수로 containing도입 예정
@@ -73,7 +73,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				TradeResponse.class,
 				trade.title,
 				trade.contents,
-				trade.trader.nickname
+				trade.writer.nickname
 			))
 			.from(trade)
 			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
