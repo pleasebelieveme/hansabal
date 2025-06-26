@@ -51,8 +51,10 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
 		);
 
 		Authentication authentication = new UsernamePasswordAuthenticationToken(
-			userAuth,null,authorities
+			userAuth.getName(),null,authorities
 		);
+
+		log.info("WebSocket 인증 완료: principal = {}, getName = {}", authentication.getPrincipal(), authentication.getName());
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 

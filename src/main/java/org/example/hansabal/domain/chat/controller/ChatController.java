@@ -28,12 +28,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+@RestController
+@RequestMapping("/api/chat")
 @RequiredArgsConstructor
 @Slf4j
 public class ChatController {
@@ -52,38 +55,27 @@ public class ChatController {
 	 */
 	@MessageMapping("/dm")
 	public void directMessage(@Payload ChatMessageRequest message, Principal principal) {
-
-		// principal이 UsernamePasswordAuthenticationToken 타입이고,
-		// 그 안에 실제 인증 객체가 우리가 만든 UserAuth 타입일 경우만 처리
-		if(principal instanceof UsernamePasswordAuthenticationToken token &&
-		token.getPrincipal() instanceof UserAuth userAuth) {
-
-			// 인증된 사용자의 닉네임 로그로 출력 (보낸 사람)
-			log.info("✅ [WebSocket] 인증된 사용자 닉네임: {}", userAuth.getNickname());
-
-			// 보낸 사람 = 현재 인증된 사용자의 닉네임
-			String senderId = userAuth.getNickname();
-
-			// 수신자 닉네임 (프론트에서 보냄)
-			String receiverId = message.receiverNickname();
-
-			// 클라이언트에게 전달할 메시지 DTO 구성
-			ChatMessageResponse payload = new ChatMessageResponse(senderId, receiverId, message.content());
-
-			// 메시지 저장
-			chatService.saveDirectMessage(message, userAuth);
-
-			// 특정 유저의 개인 큐로 메시지 전송
-			// → "/user/{receiverId}/queue/messages"로 전송됨
-			messagingTemplate.convertAndSendToUser(
-				receiverId, "/queue/messages", payload
-			);
-		} else {
-			// principal이 null이거나 인증 객체가 우리가 기대한 형식이 아닐 경우
-			// 보안 상 이유로 메시지 처리를 중단하고 예외 발생시킴
-			log.warn("❌ WebSocket 인증 실패: principal 정보가 유효하지 않음");
+		if (principal == null) {
+			log.warn("❌ WebSocket 인증 실패: principal 이 null임");
 			throw new BizException(ChatErrorCode.UNAUTHORIZED);
 		}
+
+		String senderId = principal.getName(); // 이제 그냥 nickname
+
+		log.info("✅ [WebSocket] 인증된 사용자 닉네임: {}", senderId);
+		log.info("수신자 [{}]에게 보냄 / 현재 Principal.getName() = {}", message.receiverNickname(), principal.getName());
+
+		ChatMessageResponse payload = new ChatMessageResponse(
+			senderId,
+			message.receiverNickname(),
+			message.content()
+		);
+
+		// 메시지 저장 시 senderId 기준으로 User 조회하도록 ChatService 수정 필요할 수 있음
+		chatService.saveDirectMessage(message, senderId);
+
+		messagingTemplate.convertAndSendToUser(message.receiverNickname(), "/queue/messages", payload);
+		// messagingTemplate.convertAndSend("/topic/messages/" + message.receiverNickname(), payload);
 	}
 
 	// STOMP 에서 전송 중 예외 발생 시 클라이언트에게 전달되게 하는 메서드
