@@ -28,12 +28,12 @@ public class ChatService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public void saveDirectMessage(ChatMessageRequest request, UserAuth userAuth){
+	public void saveDirectMessage(ChatMessageRequest request, String senderId){
 
 		User receiver = userRepository.findByNickname(request.receiverNickname()).orElseThrow(
 			() -> new BizException(ChatErrorCode.INVALID_NICKNAME));
 
-		User sender = userRepository.findByNickname(userAuth.getNickname()).orElseThrow(
+		User sender = userRepository.findByNickname(senderId).orElseThrow(
 			() -> new BizException(ChatErrorCode.INVALID_NICKNAME));
 
 		Chat chat = new Chat(sender,receiver,request.content());

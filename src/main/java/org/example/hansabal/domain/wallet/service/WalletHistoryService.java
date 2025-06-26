@@ -65,12 +65,12 @@ public class WalletHistoryService {
 	@Transactional(readOnly=true)
 	public Page<HistoryResponse> getHistory(int page, int size, UserAuth userAuth) {
 		User user = userRepository.findById(userAuth.getId()).orElseThrow(()->new BizException(UserErrorCode.NOT_FOUND_USER));
-		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Wallet wallet = walletRepository.findByUser(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<WalletHistory> walletHistory = walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet);
-		return walletHistory.map(HistoryResponse::from);
+		return walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet.getId());
 	}
+
 	@Transactional(readOnly = true)
 	public LoadRequest getLoadRequestDto(String uuid, UserAuth userAuth) {
 		WalletHistory history = walletHistoryRepository.findByUuid(uuid);
@@ -80,7 +80,7 @@ public class WalletHistoryService {
 
 		Wallet wallet = history.getWallet();
 
-		if (!wallet.getUserId().getId().equals(userAuth.getId())) {
+		if (!wallet.getUser().getId().equals(userAuth.getId())) {
 			throw new BizException(WalletErrorCode.INVALID_ACCESS);
 		}
 

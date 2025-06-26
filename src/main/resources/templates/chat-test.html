@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>WebSocket 채팅 테스트</title>
+</head>
+<body>
+<h2>✅ WebSocket 채팅 테스트</h2>
+
+<div>
+  <label>접속 닉네임 (토큰 기반)</label><br/>
+  <input type="text" id="token" placeholder="JWT accessToken 입력" size="80" />
+  <button onclick="connect()">Connect</button>
+</div>
+
+<hr/>
+
+<div>
+  <label>받는 사람 닉네임</label><br/>
+  <input type="text" id="receiver" />
+</div>
+
+<div>
+  <label>보낼 메시지</label><br/>
+  <input type="text" id="content" />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<hr/>
+
+<div>
+  <h3>📥 수신된 메시지</h3>
+  <ul id="messages"></ul>
+</div>
+
+<!-- SockJS + STOMP CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+
+<script>
+  let stompClient = null;
+  let myNickname = null;
+
+  function parseJwt(token) {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = decodeURIComponent(atob(base64Url).split('').map((c) => {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+      }).join(''));
+      return JSON.parse(base64);
+    } catch (e) {
+      console.error("❌ JWT 파싱 실패", e);
+      return {};
+    }
+  }
+
+  function connect() {
+    const token = document.getElementById("token").value.trim();
+    const decoded = parseJwt(token);
+    myNickname = decoded.nickname;
+
+    if (!myNickname) {
+      alert("유효한 JWT 토큰이 필요합니다.");
+      return;
+    }
+
+    const socket = new SockJS("http://localhost:8080/ws?token=" + token);
+    stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, (frame) => {
+      console.log("🔌 연결됨:", frame);
+
+      // 닉네임 기반 구독
+      // const topic = "/topic/messages/" + myNickname;
+
+      stompClient.subscribe("/user/queue/messages", (message) => {
+        const msg = JSON.parse(message.body);
+        console.log("📥 받은 DM:", msg);
+        const li = document.createElement("li");
+        li.textContent = `[${msg.senderId} → ${msg.receiverId}] ${msg.content}`;
+        document.getElementById("messages").appendChild(li);
+      });
+
+      console.log("✅ 구독 완료:", topic);
+    }, (error) => {
+      console.error("❌ 연결 실패:", error);
+    });
+  }
+
+  function sendMessage() {
+    const receiver = document.getElementById("receiver").value.trim();
+    const content = document.getElementById("content").value.trim();
+
+    if (!stompClient || !stompClient.connected) {
+      alert("먼저 연결부터 하세요");
+      return;
+    }
+
+    console.log("🔔 메시지 전송: receiver =", receiver, "content =", content);
+
+    stompClient.send("/app/dm", {}, JSON.stringify({
+      receiverNickname: receiver,
+      content: content
+    }));
+  }
+</script>
+</body>
+</html>

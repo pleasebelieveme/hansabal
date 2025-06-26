@@ -3,24 +3,16 @@ package org.example.hansabal.domain.users.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.comment.entity.Dib;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.domain.product.entity.Product;
+import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -85,6 +77,9 @@ public class User extends BaseEntity {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<Dib> dibs;
+
+	@OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Wallet wallet;
 
 	public void updateUser(String nickname, String password) {
 		if (nickname != null) {

@@ -1,9 +1,11 @@
 package org.example.hansabal.domain.users.repository;
 
+import java.time.Duration;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.domain.email.exception.EmailErrorCode;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -61,6 +63,38 @@ public class RedisRepository {
 
 	public void deleteRefreshToken(Long userId) {
 		String key = REFRESH_TOKEN_PREFIX + userId;
+		redisTemplate.delete(key);
+	}
+
+	public void saveEmailAuthCode(String email, String code, Duration ttl) {
+		redisTemplate.opsForValue().set("EMAIL_CODE:" + email, code, ttl);
+	}
+
+	public String getEmailAuthCode(String email) {
+		String code = redisTemplate.opsForValue().get("EMAIL_CODE:" + email);
+		if (code == null) {
+			throw new BizException(EmailErrorCode.EMAIL_CODE_NOT_FOUND);
+		}
+		return code;
+	}
+
+	public void deleteEmailAuthCode(String email) {
+		redisTemplate.delete("EMAIL_CODE:" + email);
+	}
+
+	public void save(String key, String value, Duration ttl) {
+		try {
+			redisTemplate.opsForValue().set(key, value, ttl);
+		} catch (Exception e) {
+			throw new BizException(EmailErrorCode.SEND_FAILED);
+		}
+	}
+
+	public boolean hasKey(String key) {
+		return Boolean.TRUE.equals(redisTemplate.hasKey(key));
+	}
+
+	public void delete(String key) {
 		redisTemplate.delete(key);
 	}
 }
