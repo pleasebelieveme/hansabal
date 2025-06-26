@@ -87,6 +87,10 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-websocket'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-messaging'
+
+    // 모니터링
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '3.1.6'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 }
 
 
