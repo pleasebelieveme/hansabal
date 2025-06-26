@@ -69,40 +69,6 @@ public class WalletController {
 
 	}
 
-	// @PostMapping("/load2")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
-	// public ResponseEntity<?> loadWalletC2(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
-	// 	if (userAuth == null) {
-	// 		throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
-	// 	}
-	//
-	// 	log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
-	//
-	// 	WalletResponse response = walletService.getWallet(userAuth);
-	// 	Wallet wallet = walletRepository.findById(response.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-	// 	Payment payment = walletService.loadWallet(request);
-	// 	String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
-	// 	HttpHeaders headers = new HttpHeaders();
-	// 	headers.add("Location","/api/payment?uuid="+uuid);
-	// 	return new ResponseEntity<Void>(headers,HttpStatus.FOUND);
-	// }
-	//
-	// @PostMapping("/load3")//프론트로 전송 data 전송 및 리디렉션, servletRespone로 바로이동
-	// public void loadWalletC3(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth, HttpServletResponse response) {
-	// 	if (userAuth == null) {
-	// 		throw new BizException(WalletErrorCode.NO_WALLET_FOUND); // or custom AuthErrorCode
-	// 	}
-	//
-	// 	log.info("💳 LoadWallet 요청: userId={}, amount={}", userAuth.getId(), request.cash());
-	//
-	// 	WalletResponse Wresponse = walletService.getWallet(userAuth);
-	// 	Wallet wallet = walletRepository.findById(Wresponse.id()).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-	// 	Payment payment = walletService.loadWallet(request);
-	// 	String uuid = walletHistoryService.historyLoadSaver(wallet, request.cash(), payment);
-	// 	try{response.sendRedirect("/api/payment?uuid=" + uuid);
-	// 	}catch(IOException e){
-	// 		throw new BizException(WalletErrorCode.IOEXCEPTION_FOUND);}
-	// }
-
 	@GetMapping()
 	public ResponseEntity<WalletResponse> getWallet(@AuthenticationPrincipal UserAuth userAuth) {
 		WalletResponse response = walletService.getWallet(userAuth);
