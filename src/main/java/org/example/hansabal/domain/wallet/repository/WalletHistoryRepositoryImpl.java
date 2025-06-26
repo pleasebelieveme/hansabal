@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.wallet.repository;
 import java.util.List;
+import java.util.Optional;
 
 import org.example.hansabal.domain.wallet.dto.response.HistoryResponse;
 import org.example.hansabal.domain.wallet.entity.QWalletHistory;
@@ -33,12 +34,12 @@ public class WalletHistoryRepositoryImpl implements WalletHistoryRepositoryCusto
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
-		long total = queryFactory
+		Long total = Optional.ofNullable(queryFactory
 			.select(walletHistory.id)
 			.from(walletHistory)
 			.where(walletHistory.wallet.id.eq(walletId))
-			.fetch()
-			.size();
+			.fetchOne()
+		).orElse(0L);
 
 		return new PageImpl<>(content,pageable,total);
 	}
