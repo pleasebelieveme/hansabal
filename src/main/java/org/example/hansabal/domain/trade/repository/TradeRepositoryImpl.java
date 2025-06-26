@@ -84,7 +84,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		Long total = Optional.ofNullable(queryFactory
 			.select(trade.id)
 			.from(trade)
-			.where(trade.title.like(title))//이후 커스텀함수로 containing도입 예정
+			.where(nameContaining(title))
 			.fetchOne()
 		).orElse(0L);
 
