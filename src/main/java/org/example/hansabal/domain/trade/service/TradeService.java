@@ -24,7 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
-import org.example.hansabal.domain.trade.service.TradeItemService;
+
 
 import java.util.ArrayList;
 import java.util.List;

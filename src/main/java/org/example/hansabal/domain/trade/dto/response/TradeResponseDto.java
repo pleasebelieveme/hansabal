@@ -1,9 +1,6 @@
 package org.example.hansabal.domain.trade.dto.response;
 
-import com.siot.IamportRestClient.response.payco.OrderStatus;
-import org.example.hansabal.domain.trade.entity.Trade;
 
-import lombok.Builder;
 import org.example.hansabal.domain.trade.entity.TradeStatus;
 
 import java.util.List;
