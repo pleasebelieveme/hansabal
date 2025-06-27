@@ -90,7 +90,6 @@ public class CartItemService {
             RLock lock = redissonClient.getLock(lockKey); // 분산 락 객체
 
             boolean isLocked = false;
-
             try {
                 isLocked = lock.tryLock(3,5, TimeUnit.SECONDS); // 최대 3초 기다리고 획득 후 5초뒤 자동 만료
                 if(!isLocked){
