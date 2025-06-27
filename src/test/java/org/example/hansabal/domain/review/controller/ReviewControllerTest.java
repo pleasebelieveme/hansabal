@@ -68,7 +68,7 @@ class ReviewControllerTest {
     ReviewService reviewService;
 
     @Test
-    @DisplayName("댓글 생성 성공 테스트")
+    @DisplayName("리뷰 생성 성공 테스트")
     void createReviewTest() throws Exception {
         //given
         Long productId = 1L;
@@ -97,10 +97,6 @@ class ReviewControllerTest {
         //given
         Long productId = 1L;
         CreateReviewRequest request = new CreateReviewRequest("", 5);
-        CreateReviewResponse response = new CreateReviewResponse(1L, "testnickname1", "", 5);
-
-        //when
-        Mockito.when(reviewService.createReview(eq(productId), any(), any())).thenReturn(response);
 
         //then
         mockMvc.perform(post("/api/reviews/products/{productId}", productId)
@@ -116,13 +112,13 @@ class ReviewControllerTest {
     @DisplayName("리뷰 수정 성공 테스트")
     void updateReviewTest() throws Exception {
         //given
-        Long reivewId = 1L;
+        Long reviewId = 1L;
         UpdateReviewResponse response = new UpdateReviewResponse(1L, "testnickname2", "testreview2", LocalDateTime.now(), 5);
         UpdateReviewRequest request = new UpdateReviewRequest("testreview2", 5);
         //when
-        Mockito.when(reviewService.updateReview(eq(reivewId), any(), any())).thenReturn(response);
+        Mockito.when(reviewService.updateReview(eq(reviewId), any(), any())).thenReturn(response);
         //then
-        mockMvc.perform(put("/api/reviews/{reivewId}", reivewId)
+        mockMvc.perform(put("/api/reviews/{reviewId}", reviewId)
                         .with(user("1").roles("USER"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -134,14 +130,12 @@ class ReviewControllerTest {
     @DisplayName("리뷰 삭제 성공 테스트")
     void deleteReviewTest() throws Exception {
         //given
-        Long reivewId = 1L;
-        CreateReviewResponse response = new CreateReviewResponse(1L, "testnickname1", "testreview", 5);
-        CreateReviewRequest request = new CreateReviewRequest("testreview", 5);
+        Long reviewId = 1L;
 
-        //when then
-        mockMvc.perform(delete("/api/reviews/{reivewId}", reivewId)
+        //when, then
+        mockMvc.perform(delete("/api/reviews/{reviewId}", reviewId)
                         .with(user("1").roles("USER")))
                 .andExpect(status().isOk());
-        verify(reviewService).deleteReview(reivewId); //reviewService라는 Mock 객체가 특정 메서드를 호출한 적이 있는지 확인합니다.
+        verify(reviewService).deleteReview(reviewId); //reviewService라는 Mock 객체가 특정 메서드를 호출한 적이 있는지 확인합니다.
     }
 }
