@@ -27,8 +27,8 @@ public class ReviewController {
     @PostMapping("/products/{productId}") //리뷰생성
     public ResponseEntity<CreateReviewResponse> createReview(
             @AuthenticationPrincipal UserAuth userAuth,
-            @Valid @PathVariable Long productId,
-            @RequestBody CreateReviewRequest request) {
+            @PathVariable Long productId,
+            @Valid @RequestBody CreateReviewRequest request) {
         CreateReviewResponse reviewDto = reviewService.createReview(productId, userAuth, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(reviewDto);
     }
