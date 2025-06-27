@@ -1,10 +1,12 @@
 package org.example.hansabal.domain.review.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
+import org.example.hansabal.domain.review.exception.ReviewErrorCode;
 import org.example.hansabal.domain.review.service.ReviewService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -127,8 +129,28 @@ class ReviewControllerTest {
     }
 
     @Test
+    @DisplayName("리뷰 수정 예외 테스트")
+    void updateReviewExceptionTest() throws Exception {
+        //given
+        Long reviewId = 1L;
+        UpdateReviewRequest request = new UpdateReviewRequest("testreview2", 5);
+        //when
+        Mockito.when(reviewService.updateReview(eq(reviewId), any(), any())).thenThrow(new BizException(ReviewErrorCode.REVIEW_FORBIDDEN));
+
+        //then
+        mockMvc.perform(put("/api/reviews/{reviewId}", reviewId)
+                        .with(user("1").roles("USER"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(jsonPath("$.status").value("FORBIDDEN"))
+                .andExpect(jsonPath("$.code").value("R003"))
+                .andExpect(jsonPath("$.message").value("권한이 없습니다."));
+    }
+
+    @Test
     @DisplayName("리뷰 삭제 성공 테스트")
     void deleteReviewTest() throws Exception {
+
         //given
         Long reviewId = 1L;
 
