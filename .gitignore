@@ -14,6 +14,8 @@ infra/**
 !infra/prometheus/config/
 !infra/prometheus/config/prometheus.yml
 !infra/prometheus/config/rule.yml
+!infra/config/
+!infra/config/init-exporter.sql
 
 ### 환경 변수 및 설정 파일 ###
 .env

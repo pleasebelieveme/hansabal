@@ -13,9 +13,9 @@ services:
       MYSQL_ROOT_PASSWORD: 'testpass'
     volumes:
       - ./mysql/data:/var/lib/mysql
+      - ./config/init-exporter.sql:/docker-entrypoint-initdb.d/init-exporter.sql
     networks:
       - promnet
-
   redis:
     image: redis:latest
     container_name: hansabal_redis
@@ -60,6 +60,7 @@ services:
     networks:
       - promnet
 
+  # 그라파나 대쉬보드 ID 1860
   node-exporter:
     image: prom/node-exporter
     container_name: hansabal_node_exporter
@@ -69,6 +70,35 @@ services:
     networks:
       - promnet
 
+  # 그라파나 대쉬보드 ID 7362
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    container_name: hansabal_mysql_exporter
+    ports:
+      - 9104:9104
+    command:
+      - "--mysqld.username=exporter:testpass"
+      - "--mysqld.address=hansabal_mysql:3306"
+    networks:
+      - promnet
+    depends_on:
+      - mysql
+
+  # 그라파나 대쉬보드 11835
+  redis-exporter:
+    image: oliver006/redis_exporter
+    container_name: hansabal_redis_exporter
+    restart: always
+    ports:
+      - 9121:9121
+    networks:
+      - promnet
+    depends_on:
+      - redis
+    command:
+      - '--redis.addr=redis://hansabal_redis:6379'
+
 networks:
   promnet:
     driver: bridge
+
