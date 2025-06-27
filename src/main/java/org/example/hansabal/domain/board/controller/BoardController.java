@@ -36,10 +36,8 @@ public class BoardController {
         log.info("📨 writePost 진입!");
         log.info("title = {}, content = {}, category = {}", request.getTitle(), request.getContent(), request.getCategory());
 
-        System.out.println("✅ createPost 도착함");
-        System.out.println("📦 서비스 호출 직전: " + request);
         BoardResponse response = boardService.createBoard(userAuth, request);
-        System.out.println("📦 응답 객체: " + response);
+
         return ResponseEntity.status(201).body(response);
     }
 
