@@ -68,9 +68,9 @@ public class WalletHistoryService {
 		Wallet wallet = walletRepository.findByUser(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<WalletHistory> walletHistory = walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet);
-		return walletHistory.map(HistoryResponse::from);
+		return walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet.getId());
 	}
+
 	@Transactional(readOnly = true)
 	public LoadRequest getLoadRequestDto(String uuid, UserAuth userAuth) {
 		WalletHistory history = walletHistoryRepository.findByUuid(uuid);

@@ -54,7 +54,6 @@ public class WalletService {
 			.status(PaymentStatus.READY)
 			.build();
 		paymentRepository.save(payment);
-		// wallet.updateWallet(wallet.getCash()+request.cash()); 확인 후 충전으로 이동 예정
 		return payment;
 	}
 
