@@ -9,7 +9,6 @@ CREATE TABLE history
     type       varchar(6) NOT NULL,
     trade      BIGINT     NOT NULL,
     payment    BIGINT NULL,
-    uuid       varchar()  Not Null,
     price      BIGINT     NOT NULL,
     remain     BIGINT     NOT NULL,
     FOREIGN KEY (wallet) REFERENCES wallet (id),
