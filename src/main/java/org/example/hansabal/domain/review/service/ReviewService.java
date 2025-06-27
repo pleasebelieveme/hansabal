@@ -37,18 +37,20 @@ public class ReviewService {
     public CreateReviewResponse createReview(Long productId, UserAuth userAuth, CreateReviewRequest dto) {
         User user = userRepository.findByIdOrElseThrow(userAuth.getId());
         Product findProduct = productRepository.findByIdOrElseThrow(productId);
-        Optional<Review> existingReview  = reviewRepository.findByUserAndProductId(user, findProduct.getId());
+        Optional<Review> existingReview = reviewRepository.findByUserAndProductId(user, findProduct.getId());
         if (existingReview.isPresent()) {
             throw new BizException(ReviewErrorCode.REVIEW_ALREADY_EXISTS);
         }
-        Review review = new Review(dto.getContent(),dto.getRating(), user, findProduct);
+        Review review = new Review(dto.getContent(), dto.getRating(), user, findProduct);
         Review savedReview = reviewRepository.save(review);
         return CreateReviewResponse.from(savedReview);
     }
-
-
-
-
+    
+    @Cacheable(
+            value = "reviewsCache",
+            key = "#productId + ':' + #page + ':' + #size",
+            unless = "#result == null || #result.empty()"
+    )
     @Transactional(readOnly = true) //페이징
     public Page<ReviewSimpleResponse> getReviews(Long productId, int page, int size) {
         int pageIndex = Math.max(page - 1, 0);
@@ -64,7 +66,7 @@ public class ReviewService {
         if (!review.getUser().getId().equals(user.getId())) {
             throw new BizException(ReviewErrorCode.REVIEW_FORBIDDEN);
         }
-        review.updateReview(request.getContent(),request.getRating());
+        review.updateReview(request.getContent(), request.getRating());
         return UpdateReviewResponse.from(review);
     }
 
