@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardPageResponse;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
@@ -36,7 +37,9 @@ public class BoardController {
         log.info("title = {}, content = {}, category = {}", request.getTitle(), request.getContent(), request.getCategory());
 
         System.out.println("✅ createPost 도착함");
+        System.out.println("📦 서비스 호출 직전: " + request);
         BoardResponse response = boardService.createBoard(userAuth, request);
+        System.out.println("📦 응답 객체: " + response);
         return ResponseEntity.status(201).body(response);
     }
 
@@ -72,14 +75,14 @@ public class BoardController {
 
     // 게시글 목록 조회 (페이징)
     @GetMapping
-    public ResponseEntity<Page<BoardSimpleResponse>> getPosts(
+    public ResponseEntity<BoardPageResponse<BoardSimpleResponse>> getPosts(
             @RequestParam(defaultValue = "ALL") BoardCategory category,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
         Page<BoardSimpleResponse> list = boardService.getPosts(category, keyword, page, size);
-        return ResponseEntity.ok(list);
+        return ResponseEntity.ok(BoardPageResponse.from(list));
     }
 
 }
