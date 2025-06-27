@@ -16,6 +16,6 @@ CREATE TABLE reviews (
 ) ENGINE=InnoDB;
 
 INSERT INTO reviews (id, content, rating, user_id, product_id, created_at, updated_at, deleted_at)
-VALUES (1,'test review',5,1,1,NOW(),NOW(),NULL);
+VALUES (1,'testreview',5,1,1,NOW(),NOW(),NULL);
 
     SET FOREIGN_KEY_CHECKS = 0;
