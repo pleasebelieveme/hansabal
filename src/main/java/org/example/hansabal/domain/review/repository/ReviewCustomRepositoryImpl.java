@@ -54,7 +54,8 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         return new PageImpl<>(results, pageable, total);
     }
 
-    // 풀스캔을 풀텍스인덱스로 돌리는 메서드입니다.(그렇지만 저는 해당사항이 아니므로 그냥 만들어 놓고 주석처리 하겠습니다.)
+    // 풀스캔을 풀텍스인덱스로 돌리는 메서드입니다.(그렇지만 저는 해당사항(contain이 없음)이 아니므로 그냥 만들어 놓고 주석처리 하겠습니다.)
+    // 공부차원으로 남겨 두겠습니다.
     private BooleanExpression nameContaining(String query) {
         QReview review = QReview.review;
         if (query == null) {
