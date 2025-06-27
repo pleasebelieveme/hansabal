@@ -47,7 +47,8 @@ public class ReviewService {
     }
 
 
-    //todo 슬라이스 참고
+
+
     @Transactional(readOnly = true) //페이징
     public Page<ReviewSimpleResponse> getReviews(Long productId, int page, int size) {
         int pageIndex = Math.max(page - 1, 0);
