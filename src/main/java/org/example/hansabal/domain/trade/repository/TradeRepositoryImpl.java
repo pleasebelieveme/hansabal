@@ -63,7 +63,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		return new PageImpl<>(content, pageable, total);
 	}
 
-	@Override//.containing은 커스텀 함수 처리 예정
+	@Override
 	public Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable) {
 		QTrade trade = QTrade.trade;
 		List<TradeResponse> content;
@@ -84,7 +84,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		Long total = Optional.ofNullable(queryFactory
 			.select(trade.id)
 			.from(trade)
-			.where(nameContaining(title))
+			.where(nameContaining(title).and(trade.deletedAt.isNull()))
 			.fetchOne()
 		).orElse(0L);
 
@@ -112,7 +112,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		Long total = Optional.ofNullable(queryFactory
 			.select(trade.id)
 			.from(trade)
-			.where(trade.id.eq(tradeId))
+			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
 			.fetchOne()
 		).orElse(0L);
 

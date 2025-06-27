@@ -41,7 +41,7 @@ public class RequestsRepositoryImpl implements RequestsRepositoryCustom{
 		Long total = Optional.ofNullable(queryFactory
 			.select(requests.id)
 			.from(requests)
-			.where(requests.trade.id.eq(tradeId))
+			.where(requests.trade.id.eq(tradeId).and(requests.deletedAt.isNull()))
 			.fetchOne()
 		).orElse(0L);
 
