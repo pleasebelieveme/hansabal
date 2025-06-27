@@ -45,11 +45,11 @@ public class ReviewService {
         Review savedReview = reviewRepository.save(review);
         return CreateReviewResponse.from(savedReview);
     }
-    
+
     @Cacheable(
             value = "reviewsCache",
-            key = "#productId + ':' + #page + ':' + #size",
-            unless = "#result == null || #result.empty()"
+            key = "#productId + ':' + #page + ':' + #size",//이 속성은 캐싱 동작을 제어하기 위한 조건
+            unless = "#result == null || #result.empty()" //unless를 사용하면 지정된 조건이 참일 경우 해당 결과를 캐시에 저장하지 않는다.
     )
     @Transactional(readOnly = true) //페이징
     public Page<ReviewSimpleResponse> getReviews(Long productId, int page, int size) {
