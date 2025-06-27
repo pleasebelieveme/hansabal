@@ -142,7 +142,6 @@ class ReviewControllerTest {
         mockMvc.perform(delete("/api/reviews/{reivewId}", reivewId)
                         .with(user("1").roles("USER")))
                 .andExpect(status().isOk());
-
         verify(reviewService).deleteReview(reivewId); //reviewService라는 Mock 객체가 특정 메서드를 호출한 적이 있는지 확인합니다.
     }
 }
