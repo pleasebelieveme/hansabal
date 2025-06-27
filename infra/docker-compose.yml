@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: 'hansabal'
       MYSQL_USER: 'testuser'
       MYSQL_PASSWORD: 'testpass'
-      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_ROOT_PASSWORD: 'testpass'
     volumes:
       - ./mysql/data:/var/lib/mysql
     networks:
