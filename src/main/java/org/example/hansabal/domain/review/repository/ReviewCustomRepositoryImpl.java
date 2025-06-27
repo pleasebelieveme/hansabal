@@ -3,6 +3,7 @@ package org.example.hansabal.domain.review.repository;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,12 +54,13 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
         return new PageImpl<>(results, pageable, total);
     }
 
+    // 풀스캔을 풀텍스인덱스로 돌리는 메서드입니다.(그렇지만 저는 해당사항이 아니므로 그냥 만들어 놓고 주석처리 하겠습니다.)
     private BooleanExpression nameContaining(String query) {
         QReview review = QReview.review;
         if (query == null) {
             log.error(ReviewErrorCode.REVIEW_NO_SEARCH_QUERY.getMessage());
             throw new BizException(ReviewErrorCode.REVIEW_NO_SEARCH_QUERY);
         }
-
+        return Expressions.booleanTemplate("fulltext_match({0}, {1})", review.content, query);
     }
 }
