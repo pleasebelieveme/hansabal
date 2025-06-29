@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   mysql:
     image: mysql:latest
@@ -10,12 +8,13 @@ services:
       MYSQL_DATABASE: 'hansabal'
       MYSQL_USER: 'testuser'
       MYSQL_PASSWORD: 'testpass'
-      MYSQL_ROOT_PASSWORD: 'testpass'
+      MYSQL_ROOT_PASSWORD: 'root'
     volumes:
       - ./mysql/data:/var/lib/mysql
       - ./config/init-exporter.sql:/docker-entrypoint-initdb.d/init-exporter.sql
     networks:
       - promnet
+
   redis:
     image: redis:latest
     container_name: hansabal_redis
@@ -97,6 +96,22 @@ services:
       - redis
     command:
       - '--redis.addr=redis://hansabal_redis:6379'
+
+  # 그라파나 대쉬보드 4701(스프링), 11378(JVM)
+  spring:
+    build:
+      context: ..
+      dockerfile: ./infra/Dockerfile
+    container_name: hansabal-spring
+    env_file:
+      - ../.env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - promnet
 
 networks:
   promnet:
