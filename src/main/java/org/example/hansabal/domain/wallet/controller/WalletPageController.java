@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.wallet.dto.request.LoadRequest;
 import org.example.hansabal.domain.wallet.service.WalletHistoryService;
-import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class WalletPageController {
 
-    private final WalletService walletService;
     private final WalletHistoryService walletHistoryService;
 
     @GetMapping("/wallet")
