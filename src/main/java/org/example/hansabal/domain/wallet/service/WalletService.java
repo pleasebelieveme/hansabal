@@ -91,12 +91,12 @@ public class WalletService {
 
 			log.info("💳 walletgetId : {}, userName : {}, walletcash : {}", wallet.getId(), user.getName(), wallet.getCash());
 			log.info("🔎 userId 확인: {}", user.getId());
-			log.info("🔎 지갑 존재 여부: {}", walletRepository.existsByUser(user));
+			log.info("🔎 지갑 존재 여부: {}", true);
 
 			return new WalletResponse(wallet.getId(), user.getName(), wallet.getCash());
 		} catch (Exception e) {
 			log.error("❌ getWallet 내부에서 예외 발생", e);
-			throw e;
+			throw new BizException(WalletErrorCode.INTERNAL_SERVICE_ERROR);
 		}
 
 	}

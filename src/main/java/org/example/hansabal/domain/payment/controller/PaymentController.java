@@ -46,19 +46,6 @@ public class PaymentController {
 		return new ResponseEntity<>(iamportResponse, HttpStatus.OK);
 	}
 
-	// @ResponseBody
-	// @PostMapping("/api/payment")//확인용
-	// public ResponseEntity<Map<String, String>> validationPaymentV2(@RequestBody PaymentCallbackRequest request) {
-	// 	IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
-	//
-	// 	log.info("결제 응답={}", iamportResponse.getResponse().toString());
-	// 	Map<String, String> response = new HashMap<>();
-	// 	response.put("status", "success");
-	// 	response.put("message", "결제 완료");
-	//
-	// 	return new ResponseEntity<>(response, HttpStatus.OK);
-	// }
-
 	@GetMapping("/api/success-payment")
 	public String successPaymentPage() {
 		return "success-payment";
@@ -67,10 +54,5 @@ public class PaymentController {
 	@GetMapping("/api/fail-payment")
 	public String failPaymentPage() {
 		return "fail-payment";
-	}
-
-	@PostMapping("/api/mailtest")
-	public void mailtest(){//메일서비스 연결 테스트용
-		paymentService.mailsender();
 	}
 }
