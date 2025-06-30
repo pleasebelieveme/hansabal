@@ -23,7 +23,6 @@ public class Trade extends BaseEntity {
 
 	private String contents;
 
-	@Column(nullable = false)
 	private Long price;
 
 	@Column(nullable = false)
@@ -34,8 +33,8 @@ public class Trade extends BaseEntity {
 	private boolean isOccupied = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "writer_id")
-	private User writer; // 게시글 작성자
+	@JoinColumn(name = "user_id")
+	private User trader;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -49,18 +48,10 @@ public class Trade extends BaseEntity {
 	@JoinColumn(name = "product_id")
 	private Product product;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	private User user; // 주문자(필요시)
-
 	public void updateTrade(String title, String contents, Long price) {
 		this.title = title;
 		this.contents = contents;
 		this.price = price;
-	}
-
-	public void setOccupied(boolean isOccupied) {
-		this.isOccupied = isOccupied;
 	}
 
 	public boolean getIsOccupied() {
@@ -69,10 +60,6 @@ public class Trade extends BaseEntity {
 
 	public void occupiedCheck(boolean b) {
 		this.isOccupied = b;
-	}
-
-	public User getTrader() {
-		return this.writer;
 	}
 
 

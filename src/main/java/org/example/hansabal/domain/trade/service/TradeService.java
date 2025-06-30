@@ -45,7 +45,7 @@ public class TradeService {
 		Trade trade= Trade.builder()
 			.title(request.title())
 			.contents(request.contents())
-			.writer(user)
+			.trader(user)
 				.price(request.price())
 			.isOccupied(false)
 			.build();
@@ -116,7 +116,7 @@ public class TradeService {
 		return trades.stream()
 				.map(trade -> new TradeResponseDto(
 						trade.getId(),
-						trade.getUser().getId(),
+						trade.getTrader().getId(),
 						trade.getProduct().getId(),
 						tradeItemService.getTradeItemIds(trade.getId()),
 						trade.getTotalPrice(),
@@ -156,7 +156,7 @@ public class TradeService {
 
 		return new TradeDetailResponseDto(
 				trade.getId(),
-				trade.getUser().getId(),
+				trade.getTrader().getId(),
 				trade.getProduct().getId(),
 				tradeItemDtos,
 				trade.getTotalPrice(),
@@ -172,7 +172,7 @@ public class TradeService {
 		Trade trade = tradeRepository.findById(TradeId)
 				.orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 
-		if (trade.getUser().getId().equals(user.getId()) ||
+		if (trade.getTrader().getId().equals(user.getId()) ||
 				trade.getProduct().getUser().getId().equals(user.getId())) {
 			return trade;
 		}
