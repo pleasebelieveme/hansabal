@@ -54,7 +54,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 			.fetch();
 
 		Long total = Optional.ofNullable(queryFactory
-			.select(trade.id)
+			.select(trade.count())
 			.from(trade)
 			.where(trade.deletedAt.isNull())
 			.fetchOne()
@@ -82,7 +82,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 			.fetch();
 
 		Long total = Optional.ofNullable(queryFactory
-			.select(trade.id)
+			.select(trade.count())
 			.from(trade)
 			.where(nameContaining(title).and(trade.deletedAt.isNull()))
 			.fetchOne()
@@ -110,7 +110,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 			.fetch();
 
 		Long total = Optional.ofNullable(queryFactory
-			.select(trade.id)
+			.select(trade.count())
 			.from(trade)
 			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
 			.fetchOne()
