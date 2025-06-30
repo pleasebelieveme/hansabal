@@ -7,11 +7,10 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-# infra 전체 무시하되 prometheus 설정만 추적
+# infra 올라가는 파일만 예외처리(!)
 infra/**
 !infra/docker-compose.yml
-!infra/prometheus/
-!infra/prometheus/config/
+!infra/Dockerfile
 !infra/prometheus/config/prometheus.yml
 !infra/prometheus/config/rule.yml
 !infra/config/
