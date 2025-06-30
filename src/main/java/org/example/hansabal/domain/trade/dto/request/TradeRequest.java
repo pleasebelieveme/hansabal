@@ -5,6 +5,5 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record TradeRequest(@NotBlank String title, String contents, @NotNull Long price
-){
+public record TradeRequest(@NotBlank String title, String contents, @NotNull Long price){
 }

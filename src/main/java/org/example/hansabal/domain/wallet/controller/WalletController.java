@@ -38,11 +38,6 @@ public class WalletController {
 	private final WalletHistoryService walletHistoryService;
 	private final WalletRepository walletRepository;
 
-	// @PostMapping("/new")
-	// public ResponseEntity<Void> createWallet(@AuthenticationPrincipal UserAuth userAuth){
-	// 	walletService.createWallet(userAuth);
-	// 	return ResponseEntity.status(HttpStatus.CREATED).build();
-	// }
 	@GetMapping("/wallet")
 	public String walletPage() {
 		return "wallet";  // resources/templates/wallet.html 로 렌더링됨

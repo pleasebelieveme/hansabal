@@ -29,7 +29,7 @@ public class WalletHistoryRepositoryImpl implements WalletHistoryRepositoryCusto
 				walletHistory.remain
 			))
 			.from(walletHistory)
-			.where(walletHistory.wallet.id.eq(walletId))
+			.where(walletHistory.wallet.id.eq(walletId).and(walletHistory.wallet.deletedAt.isNull()))
 			.orderBy(walletHistory.createdAt.desc())
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
@@ -37,7 +37,7 @@ public class WalletHistoryRepositoryImpl implements WalletHistoryRepositoryCusto
 		Long total = Optional.ofNullable(queryFactory
 			.select(walletHistory.id)
 			.from(walletHistory)
-			.where(walletHistory.wallet.id.eq(walletId))
+			.where(walletHistory.wallet.id.eq(walletId).and(walletHistory.wallet.deletedAt.isNull()))
 			.fetchOne()
 		).orElse(0L);
 

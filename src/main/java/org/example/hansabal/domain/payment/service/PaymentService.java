@@ -106,17 +106,4 @@ public class PaymentService   {
 			throw new BizException(PaymentErrorCode.IOEXCEPTION_FOUND);
 		}
 	}
-	// public void mailSender(){//메일서비스 연결 테스트용
-	// 	User user = User.builder()
-	// 		.id(1L)
-	// 		.email("이메일")
-	// 		.password("testpass")
-	// 		.name("이름(실명)")
-	// 		.nickname("별명")
-	// 		.lastLoginAt(LocalDateTime.now())
-	// 		.userRole(UserRole.USER)
-	// 		.userStatus(UserStatus.ACTIVE)
-	// 		.build();
-	// 	mailService.purchaseCompletedEmail(user().getName(),user().getEmail());
-	// }
 }

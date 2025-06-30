@@ -33,8 +33,6 @@ public class WalletPageController {
         LoadRequest requestDto = walletHistoryService.getLoadRequestDto(uuid, userAuth, cash);  // uuid와 userAuth로 LoadRequestDto 생성
         // cash 값을 받아서 requestDto에 설정된 값을 사용
         // requestDto는 사용자 지갑 정보와 결제 정보를 담고 있음
-        // requestDto = new LoadRequest(requestDto.id(), cash);  // 추가적인 값 설정을 위한 처리 (필요시)
-
         // requestDto를 모델에 추가하여 뷰로 전달
         model.addAttribute("requestDto", requestDto);
 
