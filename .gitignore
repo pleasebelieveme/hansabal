@@ -6,7 +6,15 @@ build/
 ### Java 클래스 빌드 디렉토리 예외 (src 내부는 제외) ###
 !**/src/main/**/build/
 !**/src/test/**/build/
+
+# infra 올라가는 파일만 예외처리(!)
 infra/**
+!infra/docker-compose.yml
+!infra/Dockerfile
+!infra/prometheus/config/prometheus.yml
+!infra/prometheus/config/rule.yml
+!infra/config/
+!infra/config/init-exporter.sql
 
 ### 환경 변수 및 설정 파일 ###
 .env

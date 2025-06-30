@@ -1,0 +1,43 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 15s
+  evaluation_interval: 2m
+  external_labels:
+    monitor: 'hansabal-monitor'
+  query_log_file: query_log_file.log
+
+rule_files:
+  - "rule.yml"
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['hansabal_prometheus:9090']
+        labels:
+          service: 'hansabal-prometheus'
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['hansabal_node_exporter:9100']
+        labels:
+          service: 'hansabal-node'
+
+
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['hansabal_mysql_exporter:9104']
+        labels:
+          service: 'hansabal-mysql'
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['hansabal_redis_exporter:9121']
+        labels:
+          service: 'hansabal-redis'
+
+  - job_name: 'spring-actuator'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: [ 'hansabal-spring:8080' ]
+        labels:
+          service: 'hansabal-spring'

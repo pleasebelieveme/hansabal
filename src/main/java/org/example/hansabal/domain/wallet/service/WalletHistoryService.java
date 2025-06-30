@@ -2,11 +2,13 @@ package org.example.hansabal.domain.wallet.service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.payment.entity.Payment;
+import org.example.hansabal.domain.payment.exception.PaymentErrorCode;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
@@ -65,14 +67,14 @@ public class WalletHistoryService {
 	@Transactional(readOnly=true)
 	public Page<HistoryResponse> getHistory(int page, int size, UserAuth userAuth) {
 		User user = userRepository.findById(userAuth.getId()).orElseThrow(()->new BizException(UserErrorCode.NOT_FOUND_USER));
-		Wallet wallet = walletRepository.findByUserId(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		Wallet wallet = walletRepository.findByUser(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
-		Page<WalletHistory> walletHistory = walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet);
-		return walletHistory.map(HistoryResponse::from);
+		return walletHistoryRepository.findByWalletIdOrderByCreatedAtDesc(pageable, wallet.getId());
 	}
+
 	@Transactional(readOnly = true)
-	public LoadRequest getLoadRequestDto(String uuid, UserAuth userAuth) {
+	public LoadRequest getLoadRequestDto(String uuid, UserAuth userAuth, Long cash) {
 		WalletHistory history = walletHistoryRepository.findByUuid(uuid);
 		if (history == null) {
 			throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
@@ -83,6 +85,11 @@ public class WalletHistoryService {
 		if (!wallet.getUser().getId().equals(userAuth.getId())) {
 			throw new BizException(WalletErrorCode.INVALID_ACCESS);
 		}
+
+		if(Objects.isNull(cash)||Objects.isNull(history.getPrice()))
+			throw new BizException(WalletErrorCode.INCORRECT_VALUE_FOUND);
+		if(!history.getPrice().equals(cash))
+			throw new BizException(PaymentErrorCode.SUSPICIOUS_VALUE_FOUND);
 
 		return new LoadRequest(wallet.getId(), history.getPrice());
 	}
