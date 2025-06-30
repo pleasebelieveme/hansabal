@@ -34,8 +34,9 @@ public class Trade extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User trader;
 	private Long price;
+	@Builder.Default
 	@Column(columnDefinition = "tinyint(1) default 0")
-	private boolean isOccupied;
+	private boolean isOccupied = false;
 
 
 	public void updateTrade(String title, String contents, Long price){
