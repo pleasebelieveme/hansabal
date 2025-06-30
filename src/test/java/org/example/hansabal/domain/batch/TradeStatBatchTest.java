@@ -117,7 +117,6 @@ class TradeStatBatchTest {
                 .price(1000L)
                 .totalPrice(1000)
                 .isOccupied(false)
-                .writer(writer)
                 .status(TradeStatus.FINISHED)
                 .restatus(RequestStatus.DONE)
                 .product(product)

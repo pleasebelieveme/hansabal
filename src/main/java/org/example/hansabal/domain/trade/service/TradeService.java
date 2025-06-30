@@ -107,7 +107,7 @@ public class TradeService {
 		List<Trade> trades = new ArrayList<>();
 
 		if (user.getUserRole().equals(UserRole.USER)) {
-			trades = tradeRepository.findByUser(user);
+			trades = tradeRepository.findByTrader(user);
 		} else if (user.getUserRole().equals(UserRole.ADMIN)) {
 			List<Long> productIds = productRepository.findIdByUser(user);
 			trades = tradeRepository.findByProductIds(productIds);

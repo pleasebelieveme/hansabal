@@ -29,7 +29,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepos
 	// 	countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null")
 	// Page<Trade> findByTraderOrderByTradeIdDesc(@Param("traderId")Long traderId, Pageable pageable);
 
-     List<Trade> findByUser(User user);
+     List<Trade> findByTrader(User trader);
 
     @Query("SELECT o FROM Trade o WHERE o.product.id IN :ProductIds")
      List<Trade> findByProductIds(@Param("ProductIds") List<Long> ProductIds);
@@ -49,14 +49,11 @@ public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepos
 
     @Query("SELECT SUM(o.totalPrice) "
             + "FROM Trade o "
-            + "WHERE o.user.id = :userId")
+            + "WHERE o.trader.id = :userId")
     Long findTotalPriceByUserId(@Param("userId") Long userId);
 
     @Modifying(clearAutomatically = true)
-    @Query("UPDATE Trade o SET o.deletedAt = CURRENT_TIMESTAMP WHERE o.user.id = :userId")
+    @Query("UPDATE Trade o SET o.deletedAt = CURRENT_TIMESTAMP WHERE o.trader.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
 
-    Page<Trade> findByWriter(User writer, Pageable attr0);
-
-    Page<Trade> findByTitleContainingIgnoreCase(String title, Pageable pageable);
 }
