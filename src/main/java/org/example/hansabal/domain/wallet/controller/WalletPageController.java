@@ -1,14 +1,9 @@
 package org.example.hansabal.domain.wallet.controller;
 
-import java.util.Objects;
-
 import lombok.RequiredArgsConstructor;
 
-import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
-import org.example.hansabal.domain.payment.exception.PaymentErrorCode;
 import org.example.hansabal.domain.wallet.dto.request.LoadRequest;
-import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
 import org.example.hansabal.domain.wallet.service.WalletHistoryService;
 import org.example.hansabal.domain.wallet.service.WalletService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

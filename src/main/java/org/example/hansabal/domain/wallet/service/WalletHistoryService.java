@@ -88,7 +88,7 @@ public class WalletHistoryService {
 
 		if(Objects.isNull(cash)||Objects.isNull(history.getPrice()))
 			throw new BizException(WalletErrorCode.INCORRECT_VALUE_FOUND);
-		if(!Objects.equals(history.getPrice(), cash))
+		if(!history.getPrice().equals(cash))
 			throw new BizException(PaymentErrorCode.SUSPICIOUS_VALUE_FOUND);
 
 		return new LoadRequest(wallet.getId(), history.getPrice());
