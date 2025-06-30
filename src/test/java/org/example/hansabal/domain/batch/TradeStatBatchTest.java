@@ -13,6 +13,7 @@ import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.entity.UserStatus;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.*;
@@ -20,12 +21,19 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.test.context.TestPropertySource;
+import javax.sql.DataSource;
+import java.time.LocalDateTime;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(properties = "spring.batch.job.names=ProductTradeStatJob")
+@TestPropertySource(locations = {
+        "classpath:application-test.yml",
+        "classpath:application-test-batch.yml"
+})
 @SpringBatchTest
 class TradeStatBatchTest {
 
@@ -50,6 +58,22 @@ class TradeStatBatchTest {
 
     @Autowired
     private ProductTradeStatDailyRepository productTradeStatDailyRepository;
+
+    @Autowired
+    private DataSource dataSource;
+
+    @BeforeEach
+    void initSchemaManually() throws Exception {
+        Resource resource = new ClassPathResource("org/springframework/batch/core/schema-mysql.sql");
+    }
+    @AfterEach
+    void printSavedTradeCreatedAt() {
+        List<Trade> trades = tradeRepository.findAll();
+        System.out.println("🧪 저장된 Trade 목록");
+        for (Trade t : trades) {
+            System.out.printf("✅ id: %d, createdAt: %s%n", t.getId(), t.getCreatedAt());
+        }
+    }
 
     @BeforeEach
     void setup() {
@@ -87,20 +111,19 @@ class TradeStatBatchTest {
                         .user(user)
                         .build()
         );
-
-        tradeRepository.save(
-                Trade.builder()
-                        .title("테스트 거래")
-                        .contents("테스트 내용")
-                        .price(1000L)
-                        .totalPrice(1000)
-                        .isOccupied(false)
-                        .writer(writer)
-                        .status(TradeStatus.FINISHED)
-                        .restatus(RequestStatus.DONE)
-                        .product(product)
-                        .build()
-        );
+        Trade trade= Trade.builder()
+                .title("테스트 거래")
+                .contents("테스트 내용")
+                .price(1000L)
+                .totalPrice(1000)
+                .isOccupied(false)
+                .writer(writer)
+                .status(TradeStatus.FINISHED)
+                .restatus(RequestStatus.DONE)
+                .product(product)
+                .build();
+        trade.setCreatedAt(LocalDateTime.of(2025, 6, 29, 12, 0));
+        tradeRepository.save(trade);
     }
 
     @Test
@@ -110,4 +133,6 @@ class TradeStatBatchTest {
         List<ProductTradeStatDaily> stats = productTradeStatDailyRepository.findAll();
         assertThat(stats).hasSize(1);
     }
+    //BaseEnitiy @CreatedDate 지우고
+    //updatable = false 지워야 작동됨
 }

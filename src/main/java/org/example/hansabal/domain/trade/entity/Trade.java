@@ -5,12 +5,13 @@ import lombok.*;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
+
 @Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "trades")
+@Table(name = "trade")
 public class Trade extends BaseEntity {
 
 	@Id
@@ -72,4 +73,6 @@ public class Trade extends BaseEntity {
 	public User getTrader() {
 		return this.writer;
 	}
+
+
 }
