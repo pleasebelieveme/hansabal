@@ -39,9 +39,9 @@ public class Trade extends BaseEntity {
 	@Column(nullable = false)
 	private TradeStatus status;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "buyer_id")
-	private User buyer; // 구매자
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	private RequestStatus restatus;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_id")
@@ -59,19 +59,6 @@ public class Trade extends BaseEntity {
 
 	public void setOccupied(boolean isOccupied) {
 		this.isOccupied = isOccupied;
-	}
-
-	// 상태 업데이트 (RequestStatus → TradeStatus 변환)
-	public void updateStatus(RequestStatus requestStatus) {
-		this.status = TradeStatus.valueOf(requestStatus.name());
-	}
-
-	public void updateStatus(TradeStatus tradeStatus) {
-		this.status = tradeStatus;
-	}
-
-	public void setBuyer(User buyer) {
-		this.buyer = buyer;
 	}
 
 	public boolean getIsOccupied() {

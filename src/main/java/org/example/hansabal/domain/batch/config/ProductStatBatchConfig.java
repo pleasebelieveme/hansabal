@@ -38,7 +38,7 @@ public class ProductStatBatchConfig {
 	 * 3. 월 첫날 여부 판단 (firstDayOfMonthDecider)
 	 * 4. 월 첫날이면 월별 통계 생성, 아니면 종료
 	 */
-	@Bean
+	@Bean(name = "productTradeStatJob")
 	public Job ProductTradeStatJob(
 			JobRepository jobRepository,
 			Step productStatDailyStep,

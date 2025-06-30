@@ -16,7 +16,7 @@ public class ProductTradeStatMonthlyProcessor implements ItemProcessor<ProductTr
 	@Override
 	public ProductTradeStatMonthly process(ProductTradeStatDaily item) {
 		// ✅ 1. 일 단위 통계로부터 ProductId 및 날짜 추출
-		Long ProductId = item.getId().getProdcutId();
+		Long ProductId = item.getId().getProductId();
 
 		// ✅ 2. 날짜를 월 단위로 변환 (해당 월의 1일로 통일)
 		LocalDate date = item.getId().getDate().withDayOfMonth(1);

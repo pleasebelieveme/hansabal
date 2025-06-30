@@ -15,7 +15,7 @@ public interface ProductTradeStatDailyRepository extends JpaRepository<ProductTr
         @Query("""
 			SELECT s
 			FROM ProductTradeStatDaily s
-			WHERE s.id.ProdcutId = :productId
+			WHERE s.id.productId = :productId
 			  AND s.id.date >= :from AND s.id.date < :to
 		""")
         List<ProductTradeStatDaily> findAllByProductIdAndDateRange(

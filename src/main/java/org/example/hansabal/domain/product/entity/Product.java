@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.users.entity.User;
 
-import java.time.LocalTime;
-
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -49,14 +47,14 @@ public class Product extends BaseEntity {
     }
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "users_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder
-    public Product(String name,
-                 User user) {
+    public Product(String name, int quantity, ProductStatus productStatus, User user) {
         this.name = name;
-
+        this.quantity = quantity;
+        this.productStatus = productStatus != null ? productStatus : ProductStatus.FOR_SALE; // 기본값 설정
         this.user = user;
     }
 
