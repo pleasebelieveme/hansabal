@@ -69,8 +69,8 @@ public class PaymentController {
 		return "fail-payment";
 	}
 
-	@PostMapping("/api/mailtest")
-	public void mailtest(){//메일서비스 연결 테스트용
-		paymentService.mailsender();
-	}
+	// @PostMapping("/api/mailtest")
+	// public void mailtest(){//메일서비스 연결 테스트용
+	// 	paymentService.mailsender();
+	// }
 }

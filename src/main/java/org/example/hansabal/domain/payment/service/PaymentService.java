@@ -2,7 +2,6 @@ package org.example.hansabal.domain.payment.service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.email.service.MailService;
@@ -10,9 +9,6 @@ import org.example.hansabal.domain.payment.dto.request.RequestPay;
 import org.example.hansabal.domain.payment.dto.request.PaymentCallbackRequest;
 import org.example.hansabal.domain.payment.entity.PaymentStatus;
 import org.example.hansabal.domain.payment.exception.PaymentErrorCode;
-import org.example.hansabal.domain.users.entity.User;
-import org.example.hansabal.domain.users.entity.UserRole;
-import org.example.hansabal.domain.users.entity.UserStatus;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
 import org.example.hansabal.domain.wallet.exception.WalletErrorCode;
@@ -110,22 +106,17 @@ public class PaymentService   {
 			throw new BizException(PaymentErrorCode.IOEXCEPTION_FOUND);
 		}
 	}
-	public void mailsender(){//메일서비스 연결 테스트용
-		User user = User.builder()
-			.id(1L)
-			.email("이메일")
-			.password("testpass")
-			.name("이름(실명)")
-			.nickname("별명")
-			.lastLoginAt(LocalDateTime.now())
-			.userRole(UserRole.USER)
-			.userStatus(UserStatus.ACTIVE)
-			.build();
-		Wallet wallet = Wallet.builder()
-			.id(1L)
-			.user(user)
-			.cash(5000L)
-			.build();
-		mailService.purchaseCompletedEmail(wallet.getUser().getName(),wallet.getUser().getEmail());
-	}
+	// public void mailSender(){//메일서비스 연결 테스트용
+	// 	User user = User.builder()
+	// 		.id(1L)
+	// 		.email("이메일")
+	// 		.password("testpass")
+	// 		.name("이름(실명)")
+	// 		.nickname("별명")
+	// 		.lastLoginAt(LocalDateTime.now())
+	// 		.userRole(UserRole.USER)
+	// 		.userStatus(UserStatus.ACTIVE)
+	// 		.build();
+	// 	mailService.purchaseCompletedEmail(user().getName(),user().getEmail());
+	// }
 }
