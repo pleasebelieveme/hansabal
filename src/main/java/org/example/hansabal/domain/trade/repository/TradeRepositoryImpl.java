@@ -27,6 +27,17 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 
 	private BooleanExpression nameContaining(String query) {//nameContaining 정의
 		QTrade trade = QTrade.trade;
+		if (query == null) {
+			log.error(TradeErrorCode.NO_SEARCH_QUERY.getMessage());
+			throw new BizException(TradeErrorCode.NO_SEARCH_QUERY);
+		}
+
+		return Expressions.booleanTemplate("fulltext_match({0}, {1})", trade.title, query);
+	}
+
+	@Override
+	public Page<TradeResponse> findByDeletedAtIsNullOrderByIdDesc(Pageable pageable){
+		QTrade trade = QTrade.trade;
 		List<TradeResponse> content;
 		if(title.isEmpty()){
 			content = queryFactory
@@ -43,6 +54,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				.limit(pageable.getPageSize())
 				.fetch();
 		}
+		else{
 
 		return Expressions.booleanTemplate("fulltext_match({0}, {1})", trade.title, query);
 	}
