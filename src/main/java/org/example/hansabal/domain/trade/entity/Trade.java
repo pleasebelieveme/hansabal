@@ -29,8 +29,9 @@ public class Trade extends BaseEntity {
 	@Column(nullable = false)
 	private Integer totalPrice;
 
+	@Builder.Default
 	@Column(columnDefinition = "tinyint(1) default 0")
-	private boolean isOccupied;
+	private boolean isOccupied = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "writer_id")

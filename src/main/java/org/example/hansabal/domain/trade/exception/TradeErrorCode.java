@@ -24,7 +24,8 @@ public enum TradeErrorCode implements ErrorCode {
 	PRODUCT_OWNER_MISMATCH(HttpStatus.BAD_REQUEST, "T013","주인이 맞지않습니다."),
 	Trade_ALREADY_FINISHED(HttpStatus.BAD_REQUEST,"T014","거래가 이미 완료 됬습니다."),
 	ALREADY_COMPLETED(HttpStatus.BAD_REQUEST,"T015","이미 완료 됬습니다."),
-	Trade_NOT_FOUND(HttpStatus.NOT_FOUND,"T016","해당하는 거래요청을 찾을 수 없습니다.");
+	Trade_NOT_FOUND(HttpStatus.NOT_FOUND,"T016","해당하는 거래요청을 찾을 수 없습니다."),
+	NO_SEARCH_QUERY(HttpStatus.BAD_REQUEST,"T017","검색어가 정상적인 형태를 갖추지 못했습니다.");
 
 
 	private final HttpStatus httpStatus;

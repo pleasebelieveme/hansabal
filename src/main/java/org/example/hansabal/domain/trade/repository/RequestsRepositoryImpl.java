@@ -1,6 +1,7 @@
 package org.example.hansabal.domain.trade.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.example.hansabal.domain.trade.dto.response.RequestsResponse;
 import org.example.hansabal.domain.trade.entity.QRequests;
@@ -37,12 +38,12 @@ public class RequestsRepositoryImpl implements RequestsRepositoryCustom{
 			.limit(pageable.getPageSize())
 			.fetch();
 
-		long total = queryFactory
+		Long total = Optional.ofNullable(queryFactory
 			.select(requests.id)
 			.from(requests)
-			.where(requests.trade.id.eq(tradeId))
-			.fetch()
-			.size();
+			.where(requests.trade.id.eq(tradeId).and(requests.deletedAt.isNull()))
+			.fetchOne()
+		).orElse(0L);
 
 		return new PageImpl<>(content,pageable,total);
 	}

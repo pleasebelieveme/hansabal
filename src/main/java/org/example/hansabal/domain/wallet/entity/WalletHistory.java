@@ -3,6 +3,7 @@ package org.example.hansabal.domain.wallet.entity;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.payment.entity.Payment;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -32,6 +33,7 @@ public class WalletHistory extends BaseEntity {
 	private Long tradeId;
 	@OneToOne(fetch=FetchType.LAZY)
 	private Payment payment;
+	@Column(unique = true)
 	private String uuid;
 	private Long price;//변동액(+/-)
 	private Long remain;//잔액

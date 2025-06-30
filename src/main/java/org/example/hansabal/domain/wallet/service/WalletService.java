@@ -62,8 +62,8 @@ public class WalletService {
 		Wallet wallet = walletRepository.findByUser(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
 		if(wallet.getCash()<price)
 			throw new BizException(WalletErrorCode.NOT_ENOUGH_CASH);
-		wallet.updateWallet(wallet.getCash()-price);
 		walletHistoryService.historySaver(wallet,tradeId,price,"구매");
+		wallet.updateWallet(wallet.getCash()-price);
 	}
 
 	@Transactional(propagation= Propagation.REQUIRES_NEW)
@@ -76,8 +76,9 @@ public class WalletService {
 			throw new BizException(WalletErrorCode.HISTORY_NOT_EXIST);
 		if(!walletHistory.getPrice().equals(trade.getPrice()))
 			throw new BizException(WalletErrorCode.DATA_MISMATCH);
+		walletHistoryService.historySaver(wallet,trade.getId(),trade.getPrice()*(-1L),"판매수익");
 		wallet.updateWallet(wallet.getCash()+trade.getPrice());
-		walletHistoryService.historySaver(wallet,trade.getId(),trade.getPrice(),"판매수익");
+
 	}
 
 	@Transactional(readOnly=true)
@@ -90,12 +91,12 @@ public class WalletService {
 
 			log.info("💳 walletgetId : {}, userName : {}, walletcash : {}", wallet.getId(), user.getName(), wallet.getCash());
 			log.info("🔎 userId 확인: {}", user.getId());
-			log.info("🔎 지갑 존재 여부: {}", walletRepository.existsByUser(user));
+			log.info("🔎 지갑 존재 여부: {}", true);
 
 			return new WalletResponse(wallet.getId(), user.getName(), wallet.getCash());
 		} catch (Exception e) {
 			log.error("❌ getWallet 내부에서 예외 발생", e);
-			throw e;
+			throw new BizException(WalletErrorCode.INTERNAL_SERVICE_ERROR);
 		}
 
 	}

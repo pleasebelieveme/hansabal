@@ -18,7 +18,9 @@ public enum WalletErrorCode implements ErrorCode {
 	NOT_ENOUGH_CASH(HttpStatus.BAD_REQUEST,"W007","잔액이 부족하여 거래를 진행할 수 없습니다."),
 	CASH_LOAD_FAIL(HttpStatus.BAD_REQUEST,"W008","전자화폐 충전 결재 실패."),
 	INVALID_ACCESS(HttpStatus.FORBIDDEN, "W009", "유효하지 않은 접근입니다."),
-	IOEXCEPTION_FOUND(HttpStatus.INTERNAL_SERVER_ERROR,"W010","결제 IOE 발견");
+	IOEXCEPTION_FOUND(HttpStatus.INTERNAL_SERVER_ERROR,"W010","결제 IOE 발견"),
+	INTERNAL_SERVICE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR,"W011","기타 서비스오류 발견"),
+	INCORRECT_VALUE_FOUND(HttpStatus.BAD_REQUEST,"W012","필수값 발견 실패");
 
 	private final HttpStatus httpStatus;
 	private final String code;
