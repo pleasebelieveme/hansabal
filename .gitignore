@@ -2,6 +2,7 @@
 .gradle/
 build/
 !gradle/wrapper/gradle-wrapper.jar
+!gradle/wrapper/gradle-wrapper.properties
 
 ### Java 클래스 빌드 디렉토리 예외 (src 내부는 제외) ###
 !**/src/main/**/build/
@@ -19,7 +20,7 @@ infra/**
 ### 환경 변수 및 설정 파일 ###
 .env
 *.properties
-src/main/resources/application.yml
+# src/main/resources/application.yml
 infra/redis/
 infra/mysql/
 

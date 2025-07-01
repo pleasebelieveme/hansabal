@@ -1,4 +1,4 @@
 alter table trade add FULLTEXT(title);
 
-alter table board add FULLTEXT(title);
-alter table board add FULLTEXT(content);
+alter table boards add FULLTEXT(title);
+alter table boards add FULLTEXT(content);
