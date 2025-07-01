@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,7 +22,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "user")
 public class User extends BaseEntity {
 
 	@Id
@@ -63,8 +64,8 @@ public class User extends BaseEntity {
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Board> boards;
 	//
-	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	// private List<Product> products;
+	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+	 private List<Product> products;
 	//
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Review> reviews;

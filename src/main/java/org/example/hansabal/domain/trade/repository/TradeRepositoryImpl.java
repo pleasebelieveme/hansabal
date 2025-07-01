@@ -36,28 +36,28 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 	}
 
 	@Override
-	public Page<TradeResponse> findByDeletedAtIsNullOrderByIdDesc(Pageable pageable){
+	public Page<TradeResponse> findByDeletedAtIsNullOrderByIdDesc(Pageable pageable) {
 		QTrade trade = QTrade.trade;
 		List<TradeResponse> content;
 		content = queryFactory
-			.select(Projections.constructor(
-				TradeResponse.class,
-				trade.title,
-				trade.contents,
-				trade.trader.nickname
-			))
-			.from(trade)
-			.where(trade.deletedAt.isNull())
-			.orderBy(trade.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+				.select(Projections.constructor(
+						TradeResponse.class,
+						trade.title,
+						trade.contents,
+						trade.trader.nickname
+				))
+				.from(trade)
+				.where(trade.deletedAt.isNull())
+				.orderBy(trade.id.desc())
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
 
 		Long total = Optional.ofNullable(queryFactory
-			.select(trade.count())
-			.from(trade)
-			.where(trade.deletedAt.isNull())
-			.fetchOne()
+				.select(trade.count())
+				.from(trade)
+				.where(trade.deletedAt.isNull())
+				.fetchOne()
 		).orElse(0L);
 
 		return new PageImpl<>(content, pageable, total);
@@ -68,24 +68,28 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		QTrade trade = QTrade.trade;
 		List<TradeResponse> content;
 		content = queryFactory
-			.select(Projections.constructor(
-				TradeResponse.class,
-				trade.title,
-				trade.contents,
-				trade.trader.nickname
-			))
-			.from(trade)
-			.where(nameContaining(title).and(trade.deletedAt.isNull()))
-			.orderBy(trade.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+				.select(Projections.constructor(
+						TradeResponse.class,
+						trade.id,
+						trade.title,
+						trade.contents,
+						trade.trader.id,
+						trade.price,
+						trade.trader.nickname
+				))
+				.from(trade)
+				.where(nameContaining(title).and(trade.deletedAt.isNull()))
+				.orderBy(trade.id.desc())
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
 
 		Long total = Optional.ofNullable(queryFactory
-			.select(trade.count())
-			.from(trade)
-			.where(nameContaining(title).and(trade.deletedAt.isNull()))
-			.fetchOne()
+				.select(trade.count())
+				.from(trade)
+				.where(nameContaining(title).and(trade.deletedAt.isNull()))
+				.fetchOne()
+
 		).orElse(0L);
 
 		return new PageImpl<>(content, pageable, total);
@@ -96,20 +100,24 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		QTrade trade = QTrade.trade;
 
 		List<TradeResponse> content = queryFactory
-			.select(Projections.constructor(
-				TradeResponse.class,
-				trade.title,
-				trade.contents,
-				trade.trader.nickname
-			))
-			.from(trade)
-			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
-			.orderBy(trade.id.desc())
-			.offset(pageable.getOffset())
-			.limit(pageable.getPageSize())
-			.fetch();
+				.select(Projections.constructor(
+						TradeResponse.class,
+						trade.title,
+						trade.contents,
+						trade.trader.nickname
+				))
+				.from(trade)
+				.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
+				.orderBy(trade.id.desc())
+				.offset(pageable.getOffset())
+				.limit(pageable.getPageSize())
+				.fetch();
 
 		Long total = Optional.ofNullable(queryFactory
+				.select(trade.count())
+				.from(trade)
+				.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
+				.fetchOne()
 			.select(trade.count())
 			.from(trade)
 			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))

@@ -55,7 +55,7 @@ public class TradeController {
 	@GetMapping("/my")// full-scan 발생 주의보, full-text-index 및 커스텀 함수 처리 후 개선 예정
 	public ResponseEntity<Page<TradeResponse>> getMyTrades(
 		@RequestParam(defaultValue="1") @Positive int page, @RequestParam(defaultValue="10") @Positive int size, @AuthenticationPrincipal UserAuth userAuth){
-		Page<TradeResponse> myTradeList = tradeService.getMyTrade(userAuth, page, size);
+		Page<TradeResponse> myTradeList = tradeService.getMyTrade(page,size,userAuth);
 		return ResponseEntity.status(HttpStatus.OK).body(myTradeList);
 	}
 

@@ -2,6 +2,8 @@ package org.example.hansabal.common.base;
 
 import java.time.LocalDateTime;
 
+import lombok.Builder;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -31,6 +33,10 @@ public abstract class BaseEntity {
 
 	public boolean isDeleted() {
 		return deletedAt !=null;
+	}
+
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
 	}
 }
 

@@ -53,7 +53,7 @@ dependencies {
     // batch
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     testImplementation 'org.springframework.batch:spring-batch-test'
-
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation 'at.favre.lib:bcrypt:0.10.2'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
@@ -74,6 +74,9 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok'
     // O'Auth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    //batch
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
 
     // WebSocket 지원
     implementation 'org.springframework.boot:spring-boot-starter-websocket'

@@ -2,9 +2,11 @@ package org.example.hansabal.domain.product.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.common.base.BaseEntity;
+import org.example.hansabal.domain.users.entity.User;
 
 
 @Getter
@@ -42,6 +44,18 @@ public class Product extends BaseEntity {
 
     public void updateName(String name) {
         this.name = name;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Builder
+    public Product(String name, int quantity, ProductStatus productStatus, User user) {
+        this.name = name;
+        this.quantity = quantity;
+        this.productStatus = productStatus != null ? productStatus : ProductStatus.FOR_SALE; // 기본값 설정
+        this.user = user;
     }
 
 

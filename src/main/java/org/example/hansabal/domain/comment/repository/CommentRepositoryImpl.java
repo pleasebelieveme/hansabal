@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
-import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.entity.QComment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
