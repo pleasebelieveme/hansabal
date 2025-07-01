@@ -35,7 +35,7 @@ public class WalletHistoryRepositoryImpl implements WalletHistoryRepositoryCusto
 			.limit(pageable.getPageSize())
 			.fetch();
 		Long total = Optional.ofNullable(queryFactory
-			.select(walletHistory.id)
+			.select(walletHistory.count())
 			.from(walletHistory)
 			.where(walletHistory.wallet.id.eq(walletId).and(walletHistory.wallet.deletedAt.isNull()))
 			.fetchOne()

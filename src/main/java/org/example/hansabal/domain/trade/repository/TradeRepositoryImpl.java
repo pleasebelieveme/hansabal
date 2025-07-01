@@ -89,6 +89,7 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				.from(trade)
 				.where(nameContaining(title).and(trade.deletedAt.isNull()))
 				.fetchOne()
+
 		).orElse(0L);
 
 		return new PageImpl<>(content, pageable, total);
@@ -117,6 +118,10 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 				.from(trade)
 				.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
 				.fetchOne()
+			.select(trade.count())
+			.from(trade)
+			.where(trade.id.eq(tradeId).and(trade.deletedAt.isNull()))
+			.fetchOne()
 		).orElse(0L);
 
 		return new PageImpl<>(content, pageable, total);
