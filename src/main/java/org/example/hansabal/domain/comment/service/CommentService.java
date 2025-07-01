@@ -7,6 +7,7 @@ import org.example.hansabal.domain.board.entity.Board;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResult;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.exception.CommentErrorCode;
@@ -66,15 +67,21 @@ public class CommentService {
 	@Cacheable(
 		value = "commentsFromBoardCache",
 		key = "#boardId + ':' + #page + ':' + #size",
-		unless = "#result == null || #result.empty()"
+		unless = "#result == null || #result.isEmpty()"
 	)
 	@Transactional(readOnly = true)
-	public Page<CommentPageResponse> findAllCommentsFromBoard(Long boardId, int page, int size) {
+	public CommentPageResult findAllCommentsFromBoard(Long boardId, int page, int size) {
 		int pageIndex = Math.max(page - 1 , 0);
 		Pageable pageable = PageRequest.of(pageIndex,size);
+		Page<CommentPageResponse> pageResult = commentRepository.findByBoardId(boardId, pageable);
 
 		// 쿼리 DSL로 리팩토링 및 고도화 작업 완료
-		return commentRepository.findByBoardId(boardId, pageable);
+		return new CommentPageResult(
+			pageResult.getContent(),
+			pageResult.getNumber() + 1,
+			pageResult.getSize(),
+			pageResult.getTotalElements()
+		);
 	}
 
 	@Transactional
