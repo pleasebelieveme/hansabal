@@ -27,7 +27,6 @@ spring:
     init:
       mode: never
 
-
   security:
     oauth2:
       client:

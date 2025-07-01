@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: 'testpass'
       MYSQL_ROOT_PASSWORD: 'root'
     volumes:
-      - ./mysql/data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql                          # ✅ bind mount 제거
       - ./config/init-exporter.sql:/docker-entrypoint-initdb.d/init-exporter.sql
     networks:
       - promnet
@@ -59,7 +59,6 @@ services:
     networks:
       - promnet
 
-  # 그라파나 대쉬보드 ID 1860
   node-exporter:
     image: prom/node-exporter
     container_name: hansabal_node_exporter
@@ -69,7 +68,6 @@ services:
     networks:
       - promnet
 
-  # 그라파나 대쉬보드 ID 7362
   mysql-exporter:
     image: prom/mysqld-exporter
     container_name: hansabal_mysql_exporter
@@ -83,7 +81,6 @@ services:
     depends_on:
       - mysql
 
-  # 그라파나 대쉬보드 11835
   redis-exporter:
     image: oliver006/redis_exporter
     container_name: hansabal_redis_exporter
@@ -97,7 +94,6 @@ services:
     command:
       - '--redis.addr=redis://hansabal_redis:6379'
 
-  # 그라파나 대쉬보드 4701(스프링), 11378(JVM)
   spring:
     build:
       context: ..
@@ -116,3 +112,6 @@ services:
 networks:
   promnet:
     driver: bridge
+
+volumes:
+  mysql-data:   # ✅ 도커 내부에서 생성되는 안전한 볼륨
