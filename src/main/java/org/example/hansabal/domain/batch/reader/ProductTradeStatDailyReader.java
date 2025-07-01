@@ -35,10 +35,13 @@ public class ProductTradeStatDailyReader implements ItemReader<Trade> {
 			LocalDateTime from = targetDate.atStartOfDay();
 			// 하루 전 날짜의 다음 날 시작 시각 (익일 00:00:00)
 			LocalDateTime to = targetDate.plusDays(1).atStartOfDay();
+			// ✅ 여기에 로그 추가
+			log.info("📌 Reader 범위 from: {}, to: {}", from, to);
 
 			// 완료된 주문 상태(TradeStatus.FINISHED)이며, 생성일자가 from~to 사이인 주문들을 조회
 			List<Trade> trades = tradeRepository.findAllByStatusAndCreatedDateRange(TradeStatus.FINISHED, from, to);
-
+			// ✅ 여기에 로그 추가
+			log.info("📌 Reader 범위 from: {}, to: {}", from, to);
 			// 조회한 주문 목록을 Iterator로 변환
 			tradeIterator = trades.iterator();
 		}

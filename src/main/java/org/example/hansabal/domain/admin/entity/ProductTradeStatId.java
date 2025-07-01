@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class ProductTradeStatId {
 
 	@Column(nullable = false)
-	private Long ProdcutId;
+	private Long productId;
 
 	@Column(nullable = false)
 	private LocalDate date;

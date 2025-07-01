@@ -2,6 +2,7 @@ package org.example.hansabal.domain.batch.writer;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.domain.admin.entity.ProductTradeStatDaily;
 import org.example.hansabal.domain.admin.entity.ProductTradeStatId;
 import org.example.hansabal.domain.admin.entity.ProductStatDaily;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class ProductDailyWriter implements ItemWriter<ProductTradeStatDaily> {
@@ -27,6 +29,8 @@ public class ProductDailyWriter implements ItemWriter<ProductTradeStatDaily> {
 	 */
 	@Override
 	public void write(Chunk<? extends ProductTradeStatDaily> items) {
+		log.info("📝 Writer로 넘어온 아이템 수: {}", items.size());
+
 		// ProductStatId 기준으로 같은 키를 가진 일별 통계 데이터 그룹화
 		Map<ProductTradeStatId, List<ProductTradeStatDaily>> grouped = items.getItems().stream()
 				.collect(Collectors.groupingBy(ProductTradeStatDaily::getId));

@@ -1,22 +1,13 @@
 package org.example.hansabal.domain.wallet.repository;
 
-import org.example.hansabal.domain.wallet.entity.Wallet;
 import org.example.hansabal.domain.wallet.entity.WalletHistory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Long> {
-	@EntityGraph(attributePaths={"wallet", "payment"})
-	@Query(value="SELECT h FROM WalletHistory h WHERE h.deletedAt IS null AND h.wallet=:walletId order BY h.createdAt desc",
-		countQuery ="SELECT COUNT(h) FROM WalletHistory h WHERE h.wallet=:walletId")
-	Page<WalletHistory> findByWalletIdTradeByCreatedAtDesc(Pageable pageable,@Param("walletId") Wallet wallet);
-
+public interface WalletHistoryRepository extends JpaRepository<WalletHistory, Long>, WalletHistoryRepositoryCustom {
 	@Query("Select h From WalletHistory h join fetch h.wallet join fetch h.payment Where h.deletedAt IS null AND h.tradeId=:tradeId")
 	WalletHistory findByTradeId(@Param("tradeId")Long tradeId);
 

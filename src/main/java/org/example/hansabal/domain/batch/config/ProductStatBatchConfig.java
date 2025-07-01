@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.batch.config;
 
+import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.admin.entity.ProductTradeStatDaily;
 import org.example.hansabal.domain.admin.entity.ProductTradeStatMonthly;
@@ -14,6 +15,8 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.database.JpaPagingItemReader;
+import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +41,7 @@ public class ProductStatBatchConfig {
 	 * 3. 월 첫날 여부 판단 (firstDayOfMonthDecider)
 	 * 4. 월 첫날이면 월별 통계 생성, 아니면 종료
 	 */
-	@Bean
+	@Bean(name = "productTradeStatJob")
 	public Job ProductTradeStatJob(
 			JobRepository jobRepository,
 			Step productStatDailyStep,
@@ -195,4 +198,14 @@ public class ProductStatBatchConfig {
 		policy.setMaxInterval(30000L);       // 최대 재시도 간격: 30초
 		return policy;
 	}
+/*	@Bean
+	public JpaPagingItemReader<Trade> productTradeStatDailyReader(EntityManagerFactory emf) {
+		return new JpaPagingItemReaderBuilder<Trade>()
+				.name("productTradeStatDailyReader")
+				.entityManagerFactory(emf)
+				.queryString("SELECT t FROM Trade t WHERE t.status = 'FINISHED' AND t.restatus = 'DONE'")
+				.pageSize(1000)
+				.build();
+	}
+*/
 }

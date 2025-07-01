@@ -1,6 +1,6 @@
 package org.example.hansabal.domain.batch.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.repository.query.Param;
 import org.example.hansabal.domain.admin.entity.ProductTradeStatId;
 import org.example.hansabal.domain.admin.entity.ProductTradeStatMonthly;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,11 +15,11 @@ public interface ProductTradeStatMonthlyRepository
     @Query("""
 			SELECT s
 			FROM ProductTradeStatMonthly s
-			WHERE s.id.ProdcutId = :productId
+			WHERE s.id.productId = :productId
 			  AND s.id.date >= :from AND s.id.date < :to
 		""")
     List<ProductTradeStatMonthly> findByProductIdAndDateRange(
-            @Param("ProductId") Long ProductId,
+            @Param("productId") Long productId,
             @Param("from") LocalDate from,
             @Param("to") LocalDate to
     );

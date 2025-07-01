@@ -43,7 +43,8 @@ public class TradeItemService {
 		return addedIds;
 	}
 
-	public List<Long> getTradeItemIds(Long TradeId) {
-		return tradeItemRepository.findIdsByTradeId(TradeId);
+	public List<Long> getTradeItemIds(Long tradeId) {
+
+		return tradeItemRepository.findIdsByTradeId(tradeId);
 	}
 }
