@@ -25,9 +25,8 @@ spring:
 
   sql:
     init:
-      mode: always
-      encoding: utf-8
-      schema-locations: classpath:index.sql
+      mode: never
+
 
   security:
     oauth2:
