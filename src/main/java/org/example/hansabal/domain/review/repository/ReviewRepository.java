@@ -1,15 +1,10 @@
 package org.example.hansabal.domain.review.repository;
 
-import io.lettuce.core.dynamic.annotation.Param;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.domain.review.entity.Review;
 import org.example.hansabal.domain.review.exception.ReviewErrorCode;
 import org.example.hansabal.domain.users.entity.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
