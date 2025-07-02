@@ -2,15 +2,8 @@ package org.example.hansabal.domain.trade.repository;
 
 
 import org.example.hansabal.domain.trade.entity.Trade;
-import org.example.hansabal.domain.users.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepositoryCustom{
