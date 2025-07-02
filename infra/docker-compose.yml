@@ -101,6 +101,7 @@ services:
     container_name: hansabal-spring
     env_file:
       - ../.env
+      - .env
     ports:
       - "8080:8080"
     depends_on:
