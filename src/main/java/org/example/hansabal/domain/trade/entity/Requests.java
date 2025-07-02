@@ -36,7 +36,7 @@ public class Requests extends BaseEntity {
 	@JoinColumn(name="trade_id")
 	private Trade trade;
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="users_id")
+	@JoinColumn(name="user_id")
 	private User requester;
 
 	public Requests(RequestStatus status, Trade trade, User requester){

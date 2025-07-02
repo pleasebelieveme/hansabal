@@ -32,7 +32,7 @@ public class Trade extends BaseEntity {
 	private boolean isOccupied = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "users_id")
+	@JoinColumn(name = "user_id")
 	private User trader;
 
 	// @Enumerated(EnumType.STRING)
