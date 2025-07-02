@@ -41,7 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @Testcontainers
 @ActiveProfiles("test")
-@Sql(scripts = {"/trade_user_test_db.sql", "/trade_test_db.sql","/requests_test_db.sql"}
+@Sql(scripts = {"/trade_user_test_db.sql", "/trade_test_db.sql", "/requests_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class TradeControllerTest {
 	@Container

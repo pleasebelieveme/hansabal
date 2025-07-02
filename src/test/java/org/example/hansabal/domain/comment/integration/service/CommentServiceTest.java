@@ -8,6 +8,7 @@ import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResult;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
 import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
@@ -16,12 +17,14 @@ import org.example.hansabal.domain.users.entity.UserRole;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -32,9 +35,10 @@ import lombok.extern.slf4j.Slf4j;
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/comment_user_test_db.sql", "/comment_board_test_db.sql","/comment_test_db.sql"}
+@Sql(scripts = {"classpath:comment_user_test_db.sql", "classpath:comment_board_test_db.sql", "classpath:comment_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class CommentServiceTest {
 
 	@Container
@@ -43,17 +47,21 @@ public class CommentServiceTest {
 		.withUsername("testuser")
 		.withPassword("testpass");
 
+	@Container
+	static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
+		.withExposedPorts(6379);
+
+	@BeforeAll
+	public void beforeAll() {
+		System.setProperty("spring.data.redis.host", redis.getHost());
+		System.setProperty("spring.data.redis.port", redis.getMappedPort(6379).toString());
+	}
+
 	@Autowired
 	private CommentRepository commentRepository;
 
 	@Autowired
 	private CommentService commentService;
-
-
-	@BeforeAll
-	public static void beforeAll() {
-
-	}
 
 	@Test
 	void 댓글_생성(){
@@ -133,12 +141,12 @@ public class CommentServiceTest {
 
 	@Test
 	void 댓글_조회(){
-		Page<CommentPageResponse> result = commentService.findAllCommentsFromBoard(1L, 1, 100);
+		CommentPageResult result = commentService.findAllCommentsFromBoard(1L, 1, 100);
 
-		assertThat(result.getContent()).hasSize(100);
-		assertThat(result.getTotalElements()).isEqualTo(201);
-		assertThat(result.getContent().get(0).getComments()).contains("test comment");
-		assertThat(result.getContent().get(99).getDibCount()).isEqualTo(0);
+		assertThat(result.contents()).hasSize(100);
+		assertThat(result.total()).isEqualTo(201);
+		assertThat(result.contents().get(0).getComments()).contains("test comment");
+		assertThat(result.contents().get(99).getDibCount()).isEqualTo(0);
 	}
 
 }

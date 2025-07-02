@@ -10,7 +10,7 @@ CREATE TABLE comment
     dib_count  int          NOT NULL DEFAULT 0,
     user_id    BIGINT       NOT NULL,
     board_id   BIGINT       NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES user (id),
     FOREIGN KEY (board_id) REFERENCES boards (id),
     created_at DATETIME(6),
     updated_at DATETIME(6),

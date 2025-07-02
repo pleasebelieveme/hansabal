@@ -1,4 +1,15 @@
 spring:
+  datasource:
+    url: jdbc:tc:mysql:8.0.29:///testdb
+    username: test
+    password: test
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  data:
+    redis:
+      host: localhost  # 임시값 (실제 테스트에서 override)
+      port: 6379
+
   jpa:
     hibernate:
       ddl-auto: create-drop

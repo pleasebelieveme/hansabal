@@ -32,7 +32,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/trade_user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql", "/wallet_test_db.sql", "/history_test_db.sql"}
+@Sql(scripts = {"/trade_user_test_db.sql", "/trade_test_db.sql", "/requests_test_db.sql", "/wallet_test_db.sql",
+	"/history_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class WalletServiceTest {
 	@Container
