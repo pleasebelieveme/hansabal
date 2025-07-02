@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardPageResult;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
@@ -38,14 +39,14 @@ public class BoardPageController {
             Model model
     ) {
         // 페이지 번호는 0부터 시작하므로 -1 해줌
-        Page<BoardSimpleResponse> postsPage = boardService.getPosts(category, keyword, page -1, size);
+        BoardPageResult postsPage = boardService.getPosts(category, keyword, page -1, size);
 
         model.addAttribute("posts", postsPage);  // getContent() 말고 전체 Page 객체를 넘김
         model.addAttribute("categories", BoardCategory.values());
         model.addAttribute("selectedCategory", category);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", postsPage.getTotalPages());
+        model.addAttribute("currentPage", postsPage.page());
+        model.addAttribute("totalPages", (int) Math.ceil((double) postsPage.totalElements() / postsPage.size()));
 
         return "community"; // community.html 뷰 렌더링
     }

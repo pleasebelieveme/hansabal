@@ -1,21 +1,21 @@
-package org.example.hansabal.domain.comment.dto.response;
+package org.example.hansabal.domain.board.dto.response;
 
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-public record CommentPageResult(
-	List<CommentPageResponse> contents,
+public record BoardPageResult(
+	List<BoardSimpleResponse> contents,
 	int page,
 	int size,
-	long total
+	long totalElements
 ) {
 	public boolean isEmpty(){
 		return contents == null || contents.isEmpty();
 	}
 
-	public static CommentPageResult of(Page<CommentPageResponse> result){
-		return new CommentPageResult(
+	public static  BoardPageResult of(Page<BoardSimpleResponse> result) {
+		return new BoardPageResult(
 			result.getContent(),
 			result.getNumber() + 1,
 			result.getSize(),
@@ -23,3 +23,4 @@ public record CommentPageResult(
 		);
 	}
 }
+

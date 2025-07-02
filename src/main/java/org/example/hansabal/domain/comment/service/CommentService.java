@@ -76,12 +76,7 @@ public class CommentService {
 		Page<CommentPageResponse> pageResult = commentRepository.findByBoardId(boardId, pageable);
 
 		// 쿼리 DSL로 리팩토링 및 고도화 작업 완료
-		return new CommentPageResult(
-			pageResult.getContent(),
-			pageResult.getNumber() + 1,
-			pageResult.getSize(),
-			pageResult.getTotalElements()
-		);
+		return CommentPageResult.of(pageResult);
 	}
 
 	@Transactional
