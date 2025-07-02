@@ -1,9 +1,9 @@
 SET
 FOREIGN_KEY_CHECKS = 0;
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS users;
 
 
-CREATE TABLE user
+CREATE TABLE users
 (
     id            BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email         VARCHAR(50)  NOT NULL,
@@ -18,7 +18,7 @@ CREATE TABLE user
     deleted_at    DATETIME(6)
 ) ENGINE=InnoDB;
 
-INSERT INTO user (id, email, password, name, nickname, user_role, user_status, last_login_at, created_at, updated_at,
+INSERT INTO users (id, email, password, name, nickname, user_role, user_status, last_login_at, created_at, updated_at,
                    deleted_at)
 VALUES (1, 'test@email.com', '!Aa123456', 'testname', 'testnickname1', 'USER', 'ACTIVE', NOW(), NOW(), NOW(), NULL);
 
