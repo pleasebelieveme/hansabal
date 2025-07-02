@@ -26,26 +26,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class WalletHistoryService {
 
 	private final WalletHistoryRepository walletHistoryRepository;
 	private final WalletRepository walletRepository;
 	private final UserRepository userRepository;
 
-	@Transactional(propagation= Propagation.REQUIRES_NEW)
-	public void historySaver(Wallet wallet, Long tradeId, Long price, String type) {//일반 기록 저장
+	@Transactional
+	public void historySaver(Wallet wallet, Long tradeId, Long price, String type, Long remain) {//일반 기록 저장
 		WalletHistory walletHistory = WalletHistory.builder()
 			.wallet(wallet)
 			.type(type)
 			.tradeId(tradeId)
 			.price(price)
-			.remain(wallet.getCash() - price)
+			.remain(remain)
 			.build();
 		walletHistoryRepository.save(walletHistory);
+		log.info("✅ saved new walletHistory: {}, tradeId={}, type={}", walletHistory, tradeId, type);
 	}
 
 	@Transactional//중요 : uuid의 통신시 UTF-8 형식 권장. 아닐경우 uuid 크기를 40Byte로 제한해야할 필요가 있음 -> PG사가 받는 merchant_uid의 크기 제한.

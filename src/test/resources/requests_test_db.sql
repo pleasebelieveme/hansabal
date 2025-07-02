@@ -10,7 +10,7 @@ CREATE TABLE requests
     trade_id   BIGINT      NOT NULL,
     user_id    BIGINT      NOT NULL,
     FOREIGN KEY (trade_id) REFERENCES trade (id),
-    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (user_id) REFERENCES user (id),
     created_at DATETIME(6),
     updated_at DATETIME(6),
     deleted_at DATETIME(6)
