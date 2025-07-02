@@ -8,7 +8,7 @@ CREATE TABLE trade
     id          BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title       VARCHAR(30) NOT NULL,
     contents    TEXT,
-    user_id     BIGINT      NOT NULL,
+    users_id     BIGINT      NOT NULL,
     price       BIGINT      NOT NULL,
     is_occupied tinyint     NOT NULL,
     created_at  DATETIME(6),
@@ -17,7 +17,7 @@ CREATE TABLE trade
     FOREIGN KEY (user_id) REFERENCES user (id)
 ) ENGINE=InnoDB;
 
-INSERT INTO trade (id, title, contents, user_id, price, is_occupied, created_at, updated_at, deleted_at)
+INSERT INTO trade (id, title, contents, users_id, price, is_occupied, created_at, updated_at, deleted_at)
 VALUES (1, 'test1', 'testcontents', 1, 25000, 0, now(), now(), null),
        (2, 'test2', 'testcontents', 1, 15000, 1, now(), now(), null),
        (3, 'test3', 'testcontents', 2, 33000, 1, now(), now(), null),

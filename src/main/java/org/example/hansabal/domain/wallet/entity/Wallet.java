@@ -28,7 +28,7 @@ public class Wallet extends BaseEntity {
 	private Long id;
 
 	@OneToOne
-	@JoinColumn(name="user_id", unique=true)
+	@JoinColumn(name="users_id", unique=true)
 	private User user;
 
 	private Long cash;

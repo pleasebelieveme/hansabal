@@ -3,7 +3,6 @@ package org.example.hansabal.domain.trade.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.hansabal.common.base.BaseEntity;
-import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
 @Getter
@@ -33,7 +32,7 @@ public class Trade extends BaseEntity {
 	private boolean isOccupied = false;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "users_id")
 	private User trader;
 
 	// @Enumerated(EnumType.STRING)
