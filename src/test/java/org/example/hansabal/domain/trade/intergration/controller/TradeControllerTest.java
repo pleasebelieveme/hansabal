@@ -6,6 +6,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.List;
+
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequest;
 import org.example.hansabal.domain.trade.dto.request.RequestsStatusRequest;
@@ -16,6 +18,7 @@ import org.example.hansabal.domain.trade.entity.RequestStatus;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
 import org.example.hansabal.domain.users.entity.UserRole;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,6 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -30,6 +36,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -50,12 +57,19 @@ public class TradeControllerTest {
 		.withUsername("testuser")
 		.withPassword("testpass");
 
+	@Container
+	static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
+		.withExposedPorts(6379);
+
 	@DynamicPropertySource
 	static void overrideProps(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", mysql::getJdbcUrl);
-		registry.add("spring.datasource.username", mysql::getUsername);
-		registry.add("spring.datasource.password", mysql::getPassword);
-		registry.add("spring.datasource.driver-class-name", mysql::getDriverClassName);
+		registry.add("spring.datasource.url", () -> mysql.getJdbcUrl()); // ✅ Supplier로 래핑
+		registry.add("spring.datasource.username", () -> mysql.getUsername());
+		registry.add("spring.datasource.password", () -> mysql.getPassword());
+		registry.add("spring.datasource.driver-class-name", () -> mysql.getDriverClassName());
+
+		registry.add("spring.data.redis.host", () -> redis.getHost());
+		registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
 	}
 
 	// 테스트 클래스에서 DI로 MockMvc를 주입받아 실제 HTTP 요청처럼 시뮬레이션 가능
@@ -73,6 +87,11 @@ public class TradeControllerTest {
 	@MockitoBean
 	RequestsService requestsService;
 
+	@AfterEach
+	void clearSecurityContext() {
+		SecurityContextHolder.clearContext();
+	}
+
 	@Test
 	@DisplayName("거래 생성 테스트")
 	void createTradeTest()throws Exception{
@@ -85,7 +104,7 @@ public class TradeControllerTest {
 			.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated()).andExpect(jsonPath("$.title").value("testTitle"))
 			.andExpect(jsonPath("$.contents").value("testContents"))
-			.andExpect(jsonPath("$.traderNickname").value("testNickname1"));
+			.andExpect(jsonPath("$.traderNickname").value("testnickname1"));
 	}
 
 	@Test
@@ -95,7 +114,7 @@ public class TradeControllerTest {
 		TradeRequest request = new TradeRequest("updatedTitle","updatedContents",25000L);
 		TradeResponse response = new TradeResponse(1L,"updatedTitle","updatedContents",1L, 25000L,"testnickname1");
 
-		Mockito.when(tradeService.updateTrade(eq(1L),request,any())).thenReturn(response);
+		Mockito.when(tradeService.updateTrade(eq(1L),eq(request),any())).thenReturn(response);
 
 		mockMvc.perform(patch("/api/trade/{tradeId}",tradeId)
 				.with(user("1").roles("USER"))
@@ -112,8 +131,15 @@ public class TradeControllerTest {
 		Long tradeId=1L;
 		UserAuth userAuth = new UserAuth(1L, UserRole.USER,"testnickname1");
 
-		mockMvc.perform(delete("/api/trade/{tradeId}",tradeId)
-				.with(user("1").roles("USER")))
+		// ✅ SecurityContext에 직접 주입
+		SecurityContextHolder.getContext().setAuthentication(
+			new UsernamePasswordAuthenticationToken(
+				userAuth, null,
+				List.of(new SimpleGrantedAuthority("ROLE_" + userAuth.getUserRole()))
+			)
+		);
+
+		mockMvc.perform(delete("/api/trade/{tradeId}",tradeId))
 			.andExpect(status().isOk());
 
 		verify(tradeService).cancelTrade(tradeId, userAuth);
@@ -127,38 +153,37 @@ public class TradeControllerTest {
 
 		Mockito.when(requestsService.createRequests(any(),any())).thenReturn(response);
 
-		mockMvc.perform(post("/api/trade/requests/")
+		mockMvc.perform(post("/api/trade/requests")
 			.with(user("3").roles("USER"))
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.requestsId").value("9L"))
+			.andExpect(jsonPath("$.requestsId").value("9"))
 			.andExpect(jsonPath("$.status").value("AVAILABLE"))
-			.andExpect(jsonPath("$.tradeId").value("2L"))
-			.andExpect(jsonPath("$.requesterId").value("3L"));
+			.andExpect(jsonPath("$.tradeId").value("2"))
+			.andExpect(jsonPath("$.requesterId").value("3"));
 	}
 
 	@Test
 	@DisplayName("거래 요청 상태 업데이트 테스트")
 	void updateRequestsTest() throws Exception{
-		UserAuth userAuth = new UserAuth(9L, UserRole.USER,"testnickname9");
 		Long requestsId = 6L;
 		RequestsStatusRequest request = RequestsStatusRequest.builder()
 			.requestStatus(RequestStatus.PENDING)
 			.build();
 		RequestsResponse response = new RequestsResponse(6L, RequestStatus.PENDING, 6L, 9L);
 
-		Mockito.when(requestsService.updateRequestsByTrader(requestsId, request, userAuth)).thenReturn(response);
+		Mockito.when(requestsService.updateRequestsByTrader(eq(requestsId), eq(request), any())).thenReturn(response);
 
 		mockMvc.perform(patch("/api/trade/requests/{requestsId}",requestsId)
 			.with(user("9").roles("USER"))
 			.contentType(MediaType.APPLICATION_JSON)
 			.content(objectMapper.writeValueAsString(request)))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.requestsId").value("6L"))
+			.andExpect(jsonPath("$.requestsId").value("6"))
 			.andExpect(jsonPath("$.status").value("PENDING"))
-			.andExpect(jsonPath("$.tradeId").value("6L"))
-			.andExpect(jsonPath("$.requesterId").value("9L"));
+			.andExpect(jsonPath("$.tradeId").value("6"))
+			.andExpect(jsonPath("$.requesterId").value("9"));
 	}
 
 	@Test
@@ -167,8 +192,15 @@ public class TradeControllerTest {
 		Long requestsId = 7L;
 		UserAuth userAuth = new UserAuth(5L, UserRole.USER,"testnickname5");
 
-		mockMvc.perform(delete("/api/trade/requests/{requestsId}",requestsId)
-			.with(user("5").roles("USER")))
+		// ✅ SecurityContext에 직접 주입
+		SecurityContextHolder.getContext().setAuthentication(
+			new UsernamePasswordAuthenticationToken(
+				userAuth, null,
+				List.of(new SimpleGrantedAuthority("ROLE_" + userAuth.getUserRole()))
+			)
+		);
+
+		mockMvc.perform(delete("/api/trade/requests/{requestsId}",requestsId))
 			.andExpect(status().isOk());
 
 		verify(requestsService).cancelRequests(requestsId,userAuth);
@@ -178,37 +210,35 @@ public class TradeControllerTest {
 	@DisplayName("거래 요청 지불 테스트")
 	void requestsPayTest() throws Exception{
 		Long requestsId = 2L;
-		UserAuth userAuth = new UserAuth(6L, UserRole.USER, "testnickname6");
 		RequestsResponse response = new RequestsResponse(2L, RequestStatus.PAID, 2L, 6L);
 
-		Mockito.when(requestsService.payTradeFee(requestsId, userAuth)).thenReturn(response);
+		Mockito.when(requestsService.payTradeFee(eq(requestsId), any())).thenReturn(response);
 
 		mockMvc.perform(patch("/api/trade/requests/{requestsId}/pay", requestsId)
 			.with(user("6").roles("USER"))
 			.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.requestsId").value("2L"))
+			.andExpect(jsonPath("$.requestsId").value("2"))
 			.andExpect(jsonPath("$.status").value("PAID"))
-			.andExpect(jsonPath("$.tradeId").value("2L"))
-			.andExpect(jsonPath("$.requesterId").value("6L"));
+			.andExpect(jsonPath("$.tradeId").value("2"))
+			.andExpect(jsonPath("$.requesterId").value("6"));
 	}
 
 	@Test
 	@DisplayName("거래 요청 완료 처리 테스트")
 	void requestsCompletionTest() throws Exception{
 		Long requestsId = 4L;
-		UserAuth userAuth = new UserAuth(8L, UserRole.USER, "testnickname8");
 		RequestsResponse response = new RequestsResponse(4L, RequestStatus.DONE, 4L, 8L);
 
-		Mockito.when(requestsService.confirmGoods(requestsId, userAuth)).thenReturn(response);
+		Mockito.when(requestsService.confirmGoods(eq(requestsId), any())).thenReturn(response);
 
 		mockMvc.perform(patch("/api/trade/requests/{requestsId}/confirm", requestsId)
 				.with(user("8").roles("USER"))
 				.contentType(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.requestsId").value("4L"))
+			.andExpect(jsonPath("$.requestsId").value(4))
 			.andExpect(jsonPath("$.status").value("DONE"))
-			.andExpect(jsonPath("$.tradeId").value("4L"))
-			.andExpect(jsonPath("$.requesterId").value("8L"));
+			.andExpect(jsonPath("$.tradeId").value(4))
+			.andExpect(jsonPath("$.requesterId").value(8));
 	}
 }

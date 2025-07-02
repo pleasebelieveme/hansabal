@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -28,10 +29,13 @@ public class WalletHistory extends BaseEntity {
 	@GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
 	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "wallet_id")
 	private Wallet wallet;
 	private String type;
+	@Column(name = "trade_id")
 	private Long tradeId;
 	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "payment")
 	private Payment payment;
 	@Column(unique = true)
 	private String uuid;
