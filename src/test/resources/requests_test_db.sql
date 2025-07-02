@@ -8,15 +8,15 @@ CREATE TABLE requests
     id         BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
     status     VARCHAR(30) NOT NULL,
     trade_id   BIGINT      NOT NULL,
-    users_id    BIGINT      NOT NULL,
+    user_id    BIGINT      NOT NULL,
     FOREIGN KEY (trade_id) REFERENCES trade (id),
-    FOREIGN KEY (users_id) REFERENCES user (id),
+    FOREIGN KEY (user_id) REFERENCES user (id),
     created_at DATETIME(6),
     updated_at DATETIME(6),
     deleted_at DATETIME(6)
 ) ENGINE=InnoDB;
 
-INSERT INTO requests (id, status, trade_id, users_id, created_at, updated_at, deleted_at)
+INSERT INTO requests (id, status, trade_id, user_id, created_at, updated_at, deleted_at)
 VALUES (1, 'AVAILABLE', 1, 5, now(), now(), null),
        (2, 'PENDING', 2, 6, now(), now(), null),
        (3, 'PAID', 3, 7, now(), now(), null),
