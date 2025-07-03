@@ -13,15 +13,18 @@ import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.repository.UserRepository;
 import org.example.hansabal.domain.users.service.UserService;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -41,12 +44,24 @@ public class UserServiceTest {
             .withUsername("testuser")
             .withPassword("testpass");
 
+    @Container
+    static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
+            .withExposedPorts(6379);
+
+    static {
+        mysql.start();
+        redis.start();
+    }
+
     @DynamicPropertySource
     static void overrideProps(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", mysql::getJdbcUrl);
         registry.add("spring.datasource.username", mysql::getUsername);
         registry.add("spring.datasource.password", mysql::getPassword);
         registry.add("spring.datasource.driver-class-name", mysql::getDriverClassName);
+
+        registry.add("spring.data.redis.host", redis::getHost);
+        registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
     }
 
     @Autowired
@@ -58,10 +73,26 @@ public class UserServiceTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @BeforeAll
     public static void beforeAll() {
         // 테스트 전체 실행 전에 필요한 설정이 있다면 여기에 작성
+    }
+
+    @BeforeEach
+    void setUp() {
+        // 모든 테스트 메서드마다 Redis에 이메일 인증 플래그 설정
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:test@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:find@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:wrongpass@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:sameName@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:samePass@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:onlyNick@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:onlyPass@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:change@test.com", "true");
+        redisTemplate.opsForValue().set("EMAIL_VERIFIED:delete@test.com", "true");
     }
 
     // createUser
@@ -102,7 +133,7 @@ public class UserServiceTest {
         //when, then
         assertThatThrownBy(() -> userService.createUser(request))
                 .isInstanceOf(BizException.class)
-                .hasMessageContaining("중복된 이메일입니다.");
+                .hasMessageContaining("이메일 인증이 완료되지 않았습니다.");
 
     }
 

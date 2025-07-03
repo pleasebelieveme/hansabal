@@ -35,6 +35,7 @@ spring:
   batch:
     jdbc:
       initialize-schema: always
+      schema: classpath:org/springframework/batch/core/schema-mysql.sql
 
 jwt:
   secret: ${SPRING_JWT_SECRET}

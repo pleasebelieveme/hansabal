@@ -34,10 +34,10 @@ public class UserService {
 
 	public void createUser(@RequestBody UserCreateRequest request) {
 		// 1) 이메일 인증 완료 여부 확인
-		// boolean isVerified = redisRepository.hasKey("EMAIL_VERIFIED:" + request.email());
-		// if (!isVerified) {
-		// 	throw new BizException(EmailErrorCode.EMAIL_NOT_VERIFIED);
-		// }
+		 boolean isVerified = redisRepository.hasKey("EMAIL_VERIFIED:" + request.email());
+		 if (!isVerified) {
+		 	throw new BizException(EmailErrorCode.EMAIL_NOT_VERIFIED);
+		 }
 
 		// 2) 이메일 중복 검사
 		if (userRepository.existsByEmail(request.email())) {
@@ -56,10 +56,10 @@ public class UserService {
 
 		userRepository.save(user);
 		walletService.createWallet(user);
-		// mailService.signUpCompletedEmail(request.name(), request.email());
+		 mailService.signUpCompletedEmail(request.name(), request.email());
 
 		// 4) 가입 성공 시 Redis에서 인증 완료 플래그 삭제
-		// redisRepository.delete("EMAIL_VERIFIED:" + request.email());
+		 redisRepository.delete("EMAIL_VERIFIED:" + request.email());
 	}
 
 
