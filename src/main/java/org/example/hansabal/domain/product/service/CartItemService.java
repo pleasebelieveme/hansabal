@@ -2,29 +2,39 @@ package org.example.hansabal.domain.product.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
+import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.product.dto.request.CartCreateRequest;
 import org.example.hansabal.domain.product.dto.request.ChangeQuantityRequest;
+import org.example.hansabal.domain.product.dto.response.CartCreateResponse;
 import org.example.hansabal.domain.product.dto.response.ChangeQuantityResponse;
 import org.example.hansabal.domain.product.dto.response.ItemResponse;
 import org.example.hansabal.domain.product.entity.Cart;
 import org.example.hansabal.domain.product.entity.CartItem;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.entity.ProductStatus;
+import org.example.hansabal.domain.product.exception.CartErrorCode;
 import org.example.hansabal.domain.product.exception.ProductErrorCode;
 import org.example.hansabal.domain.product.repository.CartItemRepository;
 import org.example.hansabal.domain.product.repository.CartRepository;
 import org.example.hansabal.domain.product.repository.ProductRepository;
+import org.example.hansabal.domain.users.entity.User;
+import org.example.hansabal.domain.users.exception.UserErrorCode;
+import org.example.hansabal.domain.users.repository.UserRepository;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class CartItemService {
-
+    private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
@@ -32,6 +42,37 @@ public class CartItemService {
     private final RedissonClient redissonClient;
 
     private static final String PRODUCT_LOCK_PREFIX = "LOCK:STOCK:";
+
+
+    @Transactional
+
+    public CartCreateResponse createCart(CartCreateRequest request, UserAuth userAuth) {
+
+        User user = userRepository.findById(userAuth.getId())
+
+                .orElseThrow(() -> new BizException(UserErrorCode.INVALID_REQUEST));
+
+        boolean exists = cartRepository.findByUserId(user.getId()).stream().findAny().isPresent();
+
+        if (exists) {
+
+            throw new BizException(CartErrorCode.CART_ALREADY_EXISTS);
+
+        }
+
+        if (request.quantity() <= 0) {
+
+            throw new BizException(CartErrorCode.INVALID_QUANTITY);
+
+        }
+
+        Cart cart = new Cart(user);
+
+        Cart save = cartRepository.save(cart);
+
+        return CartCreateResponse.from(save);
+    }
+
 
     @Transactional
     public ItemResponse createItems(Long productId, Long cartId, int quantity) {

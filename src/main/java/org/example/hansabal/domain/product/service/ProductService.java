@@ -22,7 +22,7 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto request) {
-        Product product = Product.of(request.name(), 10);
+        Product product = Product.of(request.name(), request.price(),request.quantity());
         Product savedProduct = productRepository.save(product);
         return ProductResponseDto.from(savedProduct);
     }
