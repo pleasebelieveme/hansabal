@@ -25,17 +25,21 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(nullable = false)
+    private int price;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductStatus productStatus;
 
-    public Product(String name, int quantity, ProductStatus productStatus) {
+    public Product(String name, int quantity,int price , ProductStatus productStatus) {
         this.name = name;
         this.quantity = quantity;
+        this.price = price;
         this.productStatus = productStatus;
     }
-    public static Product of(String name, int quantity) {
-        return new Product(name, quantity, ProductStatus.FOR_SALE);
+    public static Product of(String name, int quantity, int price) {
+        return new Product(name, quantity, price, ProductStatus.FOR_SALE);
     }
 
     public void updateQuantity(int quantity) {
@@ -46,17 +50,7 @@ public class Product extends BaseEntity {
         this.name = name;
     }
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Builder
-    public Product(String name, int quantity, ProductStatus productStatus, User user) {
-        this.name = name;
-        this.quantity = quantity;
-        this.productStatus = productStatus != null ? productStatus : ProductStatus.FOR_SALE; // 기본값 설정
-        this.user = user;
+    public void updatePrice(int price) {
+        this.price = price;
     }
-
-
 }

@@ -1,6 +1,5 @@
+// CartItem.java
 package org.example.hansabal.domain.product.entity;
-
-import org.example.hansabal.common.base.BaseEntity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -33,7 +32,11 @@ public class CartItem extends BaseEntity {
         this.product = product;
     }
 
-    public void updateQuantity(int quantity){
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public void updateQuantity(int quantity) {
         this.quantity = quantity;
     }
 }

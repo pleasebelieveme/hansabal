@@ -1,13 +1,14 @@
+// Cart.java
 package org.example.hansabal.domain.product.entity;
-
-import java.awt.*;
-
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.users.entity.User;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cart")
@@ -19,24 +20,26 @@ public class Cart extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Product product;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartItem> cartItems = new ArrayList<>();
 
-    @Column(nullable = false)
-    private int quantity;
 
-    public Cart(User user, Product product, int quantity) {
+
+    public Cart(User user ) {
         this.user = user;
-        this.product =product;
-        this.quantity = quantity;
+
     }
 
-    public void updateCart(int quantity) {
-        this.product =product;
-        this.quantity = quantity;
+    public void addCartItem(CartItem cartItem) {
+        cartItems.add(cartItem);
+        cartItem.setCart(this);
+    }
+
+    public void removeCartItem(CartItem cartItem) {
+        cartItems.remove(cartItem);
+        cartItem.setCart(null);
     }
 }
