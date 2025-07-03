@@ -71,6 +71,16 @@ public class WalletService {
 		wallet.updateWallet(updatedCash);
 	}
 
+	@Transactional(propagation= Propagation.REQUIRES_NEW)//cart에서 wallet 결제 연결할때 이걸 호출해주세요
+	public void walletCartPay(User user, Long cartId, Long price){//cart 에서 비용 지불시 사용
+		Wallet wallet = walletRepository.findByUser(user).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
+		if(wallet.getCash()<price)
+			throw new BizException(WalletErrorCode.NOT_ENOUGH_CASH);
+		Long updatedCash = wallet.getCash() - price;
+		walletHistoryService.historySaver(wallet,cartId,price,"결제",updatedCash);
+		wallet.updateWallet(updatedCash);
+	}
+
 	@Transactional
 	public void walletConfirm(Trade trade, Long requestsId) {
 
