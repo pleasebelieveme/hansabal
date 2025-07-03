@@ -20,6 +20,7 @@ import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.users.entity.User;
 import org.example.hansabal.domain.users.exception.UserErrorCode;
 import org.example.hansabal.domain.users.repository.UserRepository;
+import org.example.hansabal.domain.wallet.service.WalletService;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class CartItemService {
+    private final WalletService walletService;
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
@@ -154,7 +156,9 @@ public class CartItemService {
                 }
             }
         }
+        walletService.walletCartPay(user, cartId, totalPrice);
 
+        // 지갑 결제까지 성공하면 장바구니 아이템 삭제
         cartItemRepository.deleteAllByCartId(cartId);
     }
 
