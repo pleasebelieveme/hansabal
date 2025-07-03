@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardPageResponse;
+import org.example.hansabal.domain.board.dto.response.BoardPageResult;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.Board;
@@ -116,13 +118,16 @@ public class BoardService {
     @Cacheable(
             value = "BoardPostsCache",
             key = "#category + ':' + #keyword + ':' + #page + ':' + #size",
-            unless = "#result == null || #result.empty()"
+            unless = "#result == null || #result.isEmpty()"
     )
     // === 게시글 목록 조회 (카테고리 + 키워드 포함) ===
     @Transactional(readOnly = true)
-    public Page<BoardSimpleResponse> getPosts(BoardCategory category, String keyword, int page, int size) {
+    public BoardPageResult getPosts(BoardCategory category, String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return boardRepository.searchByCategoryAndKeyword(category, keyword, pageable);
+        Page<BoardSimpleResponse> pageResult = boardRepository.searchByCategoryAndKeyword(category, keyword,
+            pageable);
+
+        return BoardPageResult.of(pageResult);
     }
 }
