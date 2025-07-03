@@ -95,6 +95,38 @@ public class TradeRepositoryImpl implements TradeRepositoryCustom {
 		return new PageImpl<>(content, pageable, total);
 	}
 
+	@Override//비교용
+	public Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDescLikeQuery(String title, Pageable pageable) {
+		QTrade trade = QTrade.trade;
+		List<TradeResponse> content;
+		content = queryFactory
+			.select(Projections.constructor(
+				TradeResponse.class,
+				trade.id,
+				trade.title,
+				trade.contents,
+				trade.trader.id,
+				trade.price,
+				trade.trader.nickname
+			))
+			.from(trade)
+			.where(trade.title.contains(title).and(trade.deletedAt.isNull()))
+			.orderBy(trade.id.desc())
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		Long total = Optional.ofNullable(queryFactory
+			.select(trade.count())
+			.from(trade)
+			.where(trade.title.contains(title).and(trade.deletedAt.isNull()))
+			.fetchOne()
+
+		).orElse(0L);
+
+		return new PageImpl<>(content, pageable, total);
+	}
+
 	@Override
 	public Page<TradeResponse> findByTraderOrderByTradeIdDesc(Long tradeId, Pageable pageable) {
 		QTrade trade = QTrade.trade;

@@ -8,4 +8,6 @@ public interface TradeRepositoryCustom {
 	Page<TradeResponse> findByDeletedAtIsNullOrderByIdDesc(Pageable pageable);
 	Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDesc(String title, Pageable pageable);
 		Page<TradeResponse> findByTraderOrderByTradeIdDesc(Long traderId, Pageable pageable);
+
+	Page<TradeResponse> findByTitleContainingAndDeletedAtIsNullOrderByIdDescLikeQuery(String title, Pageable pageable);//비교용
 }

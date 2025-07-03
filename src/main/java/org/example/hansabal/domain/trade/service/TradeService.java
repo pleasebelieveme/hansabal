@@ -65,6 +65,15 @@ public class TradeService {
 		return trades;
 	}
 
+	@Transactional(readOnly=true)//비교용
+	public Page<TradeResponse> getTradeListByTitleWithLikeQuery(int page, int size, String title) {
+		int pageIndex = Math.max(page - 1 , 0);
+		Pageable pageable = PageRequest.of(pageIndex,size);
+		Page<TradeResponse> trades;
+		trades = tradeRepository.findByTitleContainingAndDeletedAtIsNullOrderByIdDescLikeQuery(title,pageable);
+		return trades;
+	}
+
 	@Transactional(readOnly=true)
 	public TradeResponse getTrade(Long tradeId) {
 		Trade trade = tradeRepository.findById(tradeId).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
