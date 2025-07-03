@@ -50,7 +50,7 @@ public class CartItemController {
         return ResponseEntity.status(HttpStatus.OK).body(allItems);
     }
 
-    @DeleteMapping("/{cartItemId}")
+    @DeleteMapping("/cart/{cartItemId}")
     public ResponseEntity<Void> deleteItems(@PathVariable Long cartItemId){
 
         cartItemService.deleteItems(cartItemId);
@@ -59,14 +59,14 @@ public class CartItemController {
     }
 
     @PatchMapping("/{cartId}")
-    public ResponseEntity<Void> productPayment(@PathVariable Long cartId){
+    public ResponseEntity<Void> productPayment(@PathVariable Long cartId,UserAuth userAuth){
 
-        cartItemService.productPayment(cartId);
+        cartItemService.productPayment(cartId, userAuth);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PatchMapping("/{cartItemId}")
+    @PatchMapping("/cart/{cartItemId}")
     public ResponseEntity<ChangeQuantityResponse> changeQuantity(
             @RequestBody ChangeQuantityRequest request,
             @PathVariable Long cartItemId) {
