@@ -68,25 +68,26 @@ public class TradeServiceCompareTest {
 		jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
 		jdbcTemplate.execute("DROP TABLE IF EXISTS trade");
 		jdbcTemplate.execute("""
-    		CREATE TABLE user (
-        	id BIGINT NOT NULL PRIMARY KEY
-    			);
-		""");
+           CREATE TABLE user (
+            id BIGINT NOT NULL PRIMARY KEY
+              );
+       """);
 		jdbcTemplate.execute("INSERT INTO user (id) VALUES (1)");
 
 		jdbcTemplate.execute("""
-            CREATE TABLE trade (
-                id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                title VARCHAR(30) NOT NULL,
-                contents TEXT,
-                user_id BIGINT NOT NULL,
-                price BIGINT NOT NULL,
-                is_occupied TINYINT NOT NULL,
-                created_at DATETIME(6),
-                updated_at DATETIME(6),
-                deleted_at DATETIME(6)
-            ) ENGINE=InnoDB;
-        """);
+			CREATE TABLE trade (
+			    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			    title VARCHAR(30) NOT NULL,
+			    contents TEXT,
+			    user_id BIGINT NOT NULL,
+			    price BIGINT NOT NULL,
+			    is_occupied TINYINT NOT NULL,
+			    created_at DATETIME(6),
+			    updated_at DATETIME(6),
+			    deleted_at DATETIME(6),
+			        FOREIGN KEY (user_id) REFERENCES user (id)
+			) ENGINE=InnoDB;
+			""");
 
 		String sql = "INSERT INTO trade " +
 			"(id, title, contents, user_id, price, is_occupied, created_at, updated_at, deleted_at) " +
