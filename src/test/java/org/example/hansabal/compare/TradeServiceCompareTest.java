@@ -39,7 +39,10 @@ public class TradeServiceCompareTest {
 	@Container
 	static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
 		.withExposedPorts(6379);
-
+	static {
+		mysql.start();
+		redis.start();
+	}
 	@DynamicPropertySource
 	static void overrideProps(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", () -> mysql.getJdbcUrl()); // ✅ Supplier로 래핑
@@ -64,6 +67,12 @@ public class TradeServiceCompareTest {
 
 		jdbcTemplate.execute("SET FOREIGN_KEY_CHECKS = 0");
 		jdbcTemplate.execute("DROP TABLE IF EXISTS trade");
+		jdbcTemplate.execute("""
+    		CREATE TABLE user (
+        	id BIGINT NOT NULL PRIMARY KEY
+    			);
+		""");
+		jdbcTemplate.execute("INSERT INTO user (id) VALUES (1)");
 
 		jdbcTemplate.execute("""
             CREATE TABLE trade (
@@ -75,8 +84,7 @@ public class TradeServiceCompareTest {
                 is_occupied TINYINT NOT NULL,
                 created_at DATETIME(6),
                 updated_at DATETIME(6),
-                deleted_at DATETIME(6),
-                FOREIGN KEY (user_id) REFERENCES user(id)
+                deleted_at DATETIME(6)
             ) ENGINE=InnoDB;
         """);
 
