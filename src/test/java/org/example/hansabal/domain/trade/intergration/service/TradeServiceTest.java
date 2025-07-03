@@ -2,6 +2,8 @@ package org.example.hansabal.domain.trade.intergration.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.RequestsRequest;
@@ -17,25 +19,34 @@ import org.example.hansabal.domain.trade.repository.TradeRepository;
 import org.example.hansabal.domain.trade.service.RequestsService;
 import org.example.hansabal.domain.trade.service.TradeService;
 import org.example.hansabal.domain.users.entity.UserRole;
+import org.example.hansabal.domain.wallet.entity.WalletHistory;
+import org.example.hansabal.domain.wallet.repository.WalletHistoryRepository;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import jakarta.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/trade_user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql", "/wallet_test_db.sql", "/history_test_db.sql"}
+@Sql(scripts = {"classpath:trade_user_test_db.sql","classpath:trade_test_db.sql","classpath:requests_test_db.sql",
+	"classpath:wallet_test_db.sql", "classpath:history_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Slf4j
 public class TradeServiceTest {
@@ -46,6 +57,21 @@ public class TradeServiceTest {
 		.withUsername("testuser")
 		.withPassword("testpass");
 
+	@Container
+	static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
+		.withExposedPorts(6379);
+
+	@DynamicPropertySource
+	static void overrideProps(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", () -> mysql.getJdbcUrl()); // ✅ Supplier로 래핑
+		registry.add("spring.datasource.username", () -> mysql.getUsername());
+		registry.add("spring.datasource.password", () -> mysql.getPassword());
+		registry.add("spring.datasource.driver-class-name", () -> mysql.getDriverClassName());
+
+		registry.add("spring.data.redis.host", () -> redis.getHost());
+		registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+	}
+
 	@Autowired
 	private TradeService tradeService;
 	@Autowired
@@ -54,10 +80,25 @@ public class TradeServiceTest {
 	private RequestsService requestsService;
 	@Autowired
 	private RequestsRepository requestsRepository;
+	@Autowired
+	private WalletHistoryRepository walletHistoryRepository;
+	@Autowired
+	private EntityManager em;
 
-	@BeforeAll
-	public static void beforeAll() {
+	@BeforeEach
+	void printHistoryDebug() {
+		List<WalletHistory> list = walletHistoryRepository.findAll();
+		log.info("✅ Loaded history count: {}", list.size());
+		list.forEach(h -> log.info("✅ history: tradeId={}, walletId={}", h.getTradeId(), h.getWallet().getId()));
+	}
 
+	@Test
+	@Rollback(false)
+	void dumpHistory() {
+		List<Object[]> result = em.createNativeQuery("SELECT id, trade_id FROM history").getResultList();
+		for (Object[] row : result) {
+			log.info("✅ history row: id={}, tradeId={}", row[0], row[1]);
+		}
 	}
 
 	@Test
@@ -112,7 +153,7 @@ public class TradeServiceTest {
 		Long tradeId = 8L;
 
 		tradeService.cancelTrade(tradeId, userAuth);
-		Trade trade = tradeRepository.findById(7L).orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
+		Trade trade = tradeRepository.findById(tradeId).orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
 
 		assertThat(trade.getDeletedAt()).isNotNull();
 	}
@@ -138,7 +179,7 @@ public class TradeServiceTest {
 		RequestsRequest request = RequestsRequest.builder().tradeId(10L).build();
 
 		assertThatThrownBy(() -> {requestsService.createRequests(userAuth,request);
-		}).isInstanceOf(BizException.class).hasMessageContaining("해당하는 거래요청을 찾을 수 없습니다.");
+		}).isInstanceOf(BizException.class).hasMessageContaining("해당하는 거래를 찾을 수 없습니다.");
 	}
 
 	@Test
@@ -205,13 +246,14 @@ public class TradeServiceTest {
 		Long requestsId=2L;
 
 		requestsService.payTradeFee(requestsId,userAuth);
-		Requests requests = requestsRepository.findById(2L).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 
 		assertThat(requests.getStatus()).isEqualTo(RequestStatus.PAID);
 	}
 
 	@Test
 	@DisplayName("거래_요청_완료")
+	@Rollback(value = false)
 	void requestsConfirmTest(){//4번 rq 사용 rt8
 		UserAuth userAuth = new UserAuth(8L,UserRole.USER,"testnickname8");
 		Long requestsId=4L;
@@ -253,7 +295,7 @@ public class TradeServiceTest {
 		Long requestsId=8L;
 
 		requestsService.cancelRequests(requestsId, userAuth);
-		Requests requests = requestsRepository.findById(6L).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
+		Requests requests = requestsRepository.findById(requestsId).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 
 		assertThat(requests.getDeletedAt()).isNotNull();
 	}

@@ -6,6 +6,7 @@ import org.example.hansabal.domain.product.dto.request.ProductRequestDto;
 import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.exception.ProductErrorCode;
 import org.example.hansabal.domain.product.repository.ProductRepository;
+import org.example.hansabal.domain.users.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,8 +22,8 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public ProductResponseDto createProduct(ProductRequestDto request) {
-        Product product = Product.of(request.name(), 10);
+    public ProductResponseDto createProduct(ProductRequestDto request, User user) {
+        Product product = Product.of(request.name(), request.price(),user, request.quantity());
         Product savedProduct = productRepository.save(product);
         return ProductResponseDto.from(savedProduct);
     }

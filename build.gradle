@@ -34,7 +34,7 @@ dependencies {
 
     //이메일 발송에 대한 의존성
     implementation 'org.springframework.boot:spring-boot-starter-mail'
-
+    implementation 'org.hibernate.validator:hibernate-validator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     compileOnly 'org.projectlombok:lombok'

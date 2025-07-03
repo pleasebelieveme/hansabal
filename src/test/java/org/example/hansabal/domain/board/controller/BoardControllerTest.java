@@ -16,6 +16,7 @@ import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.config.JsonConfig;
 import org.example.hansabal.config.TestConfig;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardPageResult;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
@@ -258,7 +259,7 @@ public class BoardControllerTest {
 
         Page<BoardSimpleResponse> page = new PageImpl<>(pageContent, PageRequest.of(1, 10), 11);
 
-        Mockito.when(boardService.getPosts(eq(BoardCategory.ALL), eq(null), eq(1), eq(10))).thenReturn(page);
+        Mockito.when(boardService.getPosts(eq(BoardCategory.ALL), eq(null), eq(1), eq(10))).thenReturn(BoardPageResult.of(page));
 
         mockMvc.perform(get("/api/posts")
                         .param("category", "ALL")
@@ -266,8 +267,8 @@ public class BoardControllerTest {
                         .param("size", "10")
                         .with(user("1").roles("USER")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()").value(1))
-                .andExpect(jsonPath("$.content[0].title").value("제목11"))
-                .andExpect(jsonPath("$.content[0].category").value("QUESTION"));
+                .andExpect(jsonPath("$.contents.length()").value(1))
+                .andExpect(jsonPath("$.contents[0].title").value("제목11"))
+                .andExpect(jsonPath("$.contents[0].category").value("QUESTION"));
     }
 }

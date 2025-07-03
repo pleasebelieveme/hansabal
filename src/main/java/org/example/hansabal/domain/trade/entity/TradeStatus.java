@@ -1,11 +1,8 @@
 package org.example.hansabal.domain.trade.entity;
 
 public enum TradeStatus {
-	CHECKING("확인중"),
-	COOKING("조리중"),
-	DELIVERING("배달중"),
-	FINISHED("배달완료"),
-	REFUSED("거절됨");
+
+	FINISHED("거래 완료됨");
 
 	private final String description;
 

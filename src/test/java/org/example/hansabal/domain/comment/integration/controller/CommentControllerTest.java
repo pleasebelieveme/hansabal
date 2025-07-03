@@ -13,11 +13,13 @@ import java.util.List;
 
 import org.example.hansabal.domain.comment.dto.request.CreateCommentRequest;
 import org.example.hansabal.domain.comment.dto.response.CommentPageResponse;
+import org.example.hansabal.domain.comment.dto.response.CommentPageResult;
 import org.example.hansabal.domain.comment.dto.response.CommentResponse;
-import org.example.hansabal.domain.comment.entity.Comment;
 import org.example.hansabal.domain.comment.service.CommentService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -33,6 +35,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
@@ -44,7 +47,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Transactional
 @Testcontainers
 @ActiveProfiles("test")
-@Sql(scripts = {"/comment_user_test_db.sql", "/comment_board_test_db.sql","/comment_test_db.sql"}
+@Sql(scripts = {"classpath:comment_user_test_db.sql", "classpath:comment_board_test_db.sql", "classpath:comment_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class CommentControllerTest {
 	/* 기존 WebMvcTest에서 SpringBootTest로 변경한 이유는
@@ -57,13 +60,21 @@ public class CommentControllerTest {
 		.withUsername("testuser")
 		.withPassword("testpass");
 
+	@Container
+	static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
+		.withExposedPorts(6379);
+
 	@DynamicPropertySource
 	static void overrideProps(DynamicPropertyRegistry registry) {
-		registry.add("spring.datasource.url", mysql::getJdbcUrl);
-		registry.add("spring.datasource.username", mysql::getUsername);
-		registry.add("spring.datasource.password", mysql::getPassword);
-		registry.add("spring.datasource.driver-class-name", mysql::getDriverClassName);
+		registry.add("spring.datasource.url", () -> mysql.getJdbcUrl()); // ✅ Supplier로 래핑
+		registry.add("spring.datasource.username", () -> mysql.getUsername());
+		registry.add("spring.datasource.password", () -> mysql.getPassword());
+		registry.add("spring.datasource.driver-class-name", () -> mysql.getDriverClassName());
+
+		registry.add("spring.data.redis.host", () -> redis.getHost());
+		registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
 	}
+
 
 	// 테스트 클래스에서 DI로 MockMvc를 주입받아 실제 HTTP 요청처럼 시뮬레이션 가능
 	@Autowired
@@ -170,11 +181,15 @@ public class CommentControllerTest {
 			new CommentPageResponse("댓글2", 5)
 		);
 
-		Page<CommentPageResponse> responsePage = new PageImpl<>(
-			contents,PageRequest.of(0, 100),201);
+		CommentPageResult responseDto = new CommentPageResult(
+			contents,
+			1,    // page
+			100,  // size
+			201L  // total
+		);
 
 		Mockito.when(commentService.findAllCommentsFromBoard(eq(1L), eq(1), eq(100)))
-			.thenReturn(responsePage);
+			.thenReturn(responseDto);
 
 		// when & then
 		mockMvc.perform(get("/api/comments/{boardId}", 1L)
@@ -182,10 +197,10 @@ public class CommentControllerTest {
 				.param("size", "100")
 				.with(user("1").roles("USER")))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.content").isArray())
-			.andExpect(jsonPath("$.content.length()").value(2))
-			.andExpect(jsonPath("$.content[0].comments").value("댓글1"))
-			.andExpect(jsonPath("$.content[1].dibCount").value(5));
+			.andExpect(jsonPath("$.contents").isArray())
+			.andExpect(jsonPath("$.contents.length()").value(2))
+			.andExpect(jsonPath("$.contents[0].comments").value("댓글1"))
+			.andExpect(jsonPath("$.contents[1].dibCount").value(5));
 	}
 
 }

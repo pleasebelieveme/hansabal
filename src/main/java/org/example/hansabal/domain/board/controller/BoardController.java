@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
 import org.example.hansabal.domain.board.dto.response.BoardPageResponse;
+import org.example.hansabal.domain.board.dto.response.BoardPageResult;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
@@ -73,14 +74,14 @@ public class BoardController {
 
     // 게시글 목록 조회 (페이징)
     @GetMapping
-    public ResponseEntity<BoardPageResponse<BoardSimpleResponse>> getPosts(
+    public ResponseEntity<BoardPageResult> getPosts(
             @RequestParam(defaultValue = "ALL") BoardCategory category,
             @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<BoardSimpleResponse> list = boardService.getPosts(category, keyword, page, size);
-        return ResponseEntity.ok(BoardPageResponse.from(list));
+        BoardPageResult list = boardService.getPosts(category, keyword, page, size);
+        return ResponseEntity.ok(list);
     }
 
 }

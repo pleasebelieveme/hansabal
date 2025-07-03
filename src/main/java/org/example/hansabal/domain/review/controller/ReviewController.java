@@ -6,7 +6,6 @@ import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
-import org.example.hansabal.domain.review.dto.response.ReviewResponse;
 import org.example.hansabal.domain.review.dto.response.ReviewSimpleResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;

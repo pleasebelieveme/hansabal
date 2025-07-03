@@ -4,6 +4,7 @@ package org.example.hansabal.domain.board;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.board.dto.request.BoardRequest;
+import org.example.hansabal.domain.board.dto.response.BoardPageResult;
 import org.example.hansabal.domain.board.dto.response.BoardResponse;
 import org.example.hansabal.domain.board.dto.response.BoardSimpleResponse;
 import org.example.hansabal.domain.board.entity.BoardCategory;
@@ -11,9 +12,11 @@ import org.example.hansabal.domain.board.service.BoardService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.service.UserService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -23,6 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BoardServiceReadTest {
 
     @Autowired
@@ -33,7 +37,7 @@ public class BoardServiceReadTest {
 
 
 
-    @BeforeEach
+    @BeforeAll
     @Transactional
     void setup() {
         for (int i = 0; i < 10; i++) {
@@ -72,32 +76,32 @@ public class BoardServiceReadTest {
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getTitle()).isEqualTo("테스트 제목");
         assertThat(response.getContent()).isEqualTo("테스트 내용");
-        assertThat(response.getCategory()).isEqualTo("일상");
+        assertThat(response.getCategory()).isEqualTo(BoardCategory.DAILY);
     }
 
     @Test
     @DisplayName("게시글 목록 조회 - 전체 + 키워드")
     void 게시글_목록조회_전체_키워드() {
-        Page<BoardSimpleResponse> result = boardService.getPosts(BoardCategory.ALL, "테스트", 0, 10);
+        BoardPageResult result = boardService.getPosts(BoardCategory.ALL, "테스트", 0, 10);
 
-        assertThat(result.getContent()).isNotEmpty();
+        assertThat(result.contents()).isNotEmpty();
     }
 
     @Test
     @DisplayName("게시글 목록 조회 - 카테고리만")
     void 게시글_목록조회_카테고리() {
-        Page<BoardSimpleResponse> result = boardService.getPosts(BoardCategory.DAILY, null, 0, 10);
+        BoardPageResult result = boardService.getPosts(BoardCategory.DAILY, null, 0, 10);
 
-        assertThat(result.getContent()).isNotEmpty();
-        assertThat(result.getContent().get(0).getCategory()).isEqualTo(BoardCategory.DAILY);
+        assertThat(result.contents()).isNotEmpty();
+        assertThat(result.contents().get(0).getCategory()).isEqualTo(BoardCategory.DAILY);
     }
 
     @Test
     @DisplayName("게시글 목록 조회 - 카테고리 + 키워드")
     void 게시글_목록조회_카테고리_키워드() {
-        Page<BoardSimpleResponse> result = boardService.getPosts(BoardCategory.DAILY, "내용", 0, 10);
+        BoardPageResult result = boardService.getPosts(BoardCategory.DAILY, "테스트 내용", 0, 10);
 
-        assertThat(result.getContent()).isNotEmpty();
+        assertThat(result.contents()).isNotEmpty();
     }
 
     @Test
@@ -125,7 +129,7 @@ public class BoardServiceReadTest {
     void 게시글_상세조회_예외() {
         assertThatThrownBy(() -> boardService.getPost(9999L))
                 .isInstanceOf(BizException.class)
-                .hasMessageContaining("존재하지");
+                .hasMessageContaining("게시글을 찾을 수 없습니다.");
     }
 
 }

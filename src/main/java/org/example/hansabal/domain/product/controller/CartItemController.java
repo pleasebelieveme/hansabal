@@ -1,12 +1,16 @@
 package org.example.hansabal.domain.product.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.hansabal.common.jwt.UserAuth;
+import org.example.hansabal.domain.product.dto.request.CartCreateRequest;
 import org.example.hansabal.domain.product.dto.request.ChangeQuantityRequest;
+import org.example.hansabal.domain.product.dto.response.CartCreateResponse;
 import org.example.hansabal.domain.product.dto.response.ChangeQuantityResponse;
 import org.example.hansabal.domain.product.dto.response.ItemResponse;
 import org.example.hansabal.domain.product.service.CartItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +21,15 @@ import java.util.List;
 public class CartItemController {
 
     private final CartItemService cartItemService;
+
+    @PostMapping("/cart")
+    public ResponseEntity<CartCreateResponse> createCart(
+            @RequestBody CartCreateRequest request,
+            @AuthenticationPrincipal UserAuth userAuth) {
+
+        CartCreateResponse response = cartItemService.createCart(request, userAuth);
+        return ResponseEntity.ok(response);
+    }
 
     @PostMapping("/{cartId}")
     public ResponseEntity<ItemResponse> createItems(
@@ -37,7 +50,7 @@ public class CartItemController {
         return ResponseEntity.status(HttpStatus.OK).body(allItems);
     }
 
-    @DeleteMapping("/{cartItemId}")
+    @DeleteMapping("/cart/{cartItemId}")
     public ResponseEntity<Void> deleteItems(@PathVariable Long cartItemId){
 
         cartItemService.deleteItems(cartItemId);
@@ -46,14 +59,14 @@ public class CartItemController {
     }
 
     @PatchMapping("/{cartId}")
-    public ResponseEntity<Void> productPayment(@PathVariable Long cartId){
+    public ResponseEntity<Void> productPayment(@PathVariable Long cartId,UserAuth userAuth){
 
-        cartItemService.productPayment(cartId);
+        cartItemService.productPayment(cartId, userAuth);
 
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @PatchMapping("/{cartItemId}")
+    @PatchMapping("/cart/{cartItemId}")
     public ResponseEntity<ChangeQuantityResponse> changeQuantity(
             @RequestBody ChangeQuantityRequest request,
             @PathVariable Long cartItemId) {

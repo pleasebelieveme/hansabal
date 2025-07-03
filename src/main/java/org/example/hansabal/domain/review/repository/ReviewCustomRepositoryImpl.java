@@ -1,6 +1,5 @@
 package org.example.hansabal.domain.review.repository;
 
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -15,7 +14,6 @@ import org.example.hansabal.domain.review.exception.ReviewErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.expression.spel.ast.Projection;
 
 import java.util.List;
 import java.util.Optional;

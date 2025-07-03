@@ -18,6 +18,8 @@ public class SecurityUrlMatcher {
 		"/login",
 		"/logout",
 		"/login/oauth2/code/**",
+		"/api/auth/send-code",
+		"/api/auth/verify-code",
 
 		// 유저 회원가입/조회 등 공개 API
 		"/api/users",

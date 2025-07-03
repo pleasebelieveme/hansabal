@@ -32,7 +32,7 @@ public class TradeItemService {
 
 		for (CartItemResponse item : items) {
 
-			Product product = productRepository.findById(item.ProductId())
+			Product product = productRepository.findById(item.productId())
 					.orElseThrow(() -> new BizException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
 			TradeItem tradeItem = new TradeItem(item.quantity(), trade, product);

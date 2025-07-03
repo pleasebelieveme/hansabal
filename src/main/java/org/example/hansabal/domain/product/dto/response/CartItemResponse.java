@@ -1,20 +1,19 @@
 package org.example.hansabal.domain.product.dto.response;
 
-
-import org.example.hansabal.domain.product.entity.Cart;
+import org.example.hansabal.domain.product.entity.CartItem;
 
 public record CartItemResponse(
-	Long id,
-	Long ProductId,
-	String product,
-	int quantity
+		Long id,
+		Long productId,
+		String productName,
+		int quantity
 ) {
-	public static CartItemResponse from(Cart cart) {
+	public static CartItemResponse from(CartItem cartItem) {
 		return new CartItemResponse(
-			cart.getId(),
-			cart.getProduct().getId(),
-			cart.getProduct().getName(),
-			cart.getQuantity()
+				cartItem.getId(),
+				cartItem.getProduct().getId(),
+				cartItem.getProduct().getName(),
+				cartItem.getQuantity()
 		);
 	}
 }

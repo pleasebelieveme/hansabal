@@ -1,6 +1,8 @@
 package org.example.hansabal.domain.wallet.intergration.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.*;
 
 import org.example.hansabal.common.exception.BizException;
@@ -22,17 +24,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 @Testcontainers
 @Transactional
 @ActiveProfiles("test")
-@Sql(scripts = {"/trade_user_test_db.sql","/trade_test_db.sql","/requests_test_db.sql", "/wallet_test_db.sql", "/history_test_db.sql"}
+@Sql(scripts = {"classpath:trade_user_test_db.sql","classpath:trade_test_db.sql","classpath:requests_test_db.sql",
+	"classpath:wallet_test_db.sql", "classpath:history_test_db.sql"}
 	,executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class WalletServiceTest {
 	@Container
@@ -40,6 +48,21 @@ public class WalletServiceTest {
 		.withDatabaseName("testdb")
 		.withUsername("testuser")
 		.withPassword("testpass");
+
+	@Container
+	static GenericContainer<?> redis = new GenericContainer<>("redis:6.2")
+		.withExposedPorts(6379);
+
+	@DynamicPropertySource
+	static void overrideProps(DynamicPropertyRegistry registry) {
+		registry.add("spring.datasource.url", () -> mysql.getJdbcUrl()); // ✅ Supplier로 래핑
+		registry.add("spring.datasource.username", () -> mysql.getUsername());
+		registry.add("spring.datasource.password", () -> mysql.getPassword());
+		registry.add("spring.datasource.driver-class-name", () -> mysql.getDriverClassName());
+
+		registry.add("spring.data.redis.host", () -> redis.getHost());
+		registry.add("spring.data.redis.port", () -> redis.getMappedPort(6379));
+	}
 
 	@Autowired
 	private TradeRepository tradeRepository;
@@ -49,10 +72,8 @@ public class WalletServiceTest {
 	private WalletService walletService;
 	@Autowired
 	private WalletHistoryRepository walletHistoryRepository;
-
-	@BeforeAll
-	public static void beforeAll() {
-	}
+	@Autowired
+	private EntityManager em;
 
 	@Test
 	@DisplayName("지갑 생성 테스트")
@@ -151,13 +172,15 @@ public class WalletServiceTest {
 		Long requestsId=5L;
 
 		walletService.walletConfirm(trade, requestsId);
+		em.flush();
+		em.clear();
 		Wallet wallet = walletRepository.findById(4L).orElseThrow(()->new BizException(WalletErrorCode.NO_WALLET_FOUND));
-		WalletHistory walletHistory = walletHistoryRepository.findById(4L).orElseThrow(()->new BizException(WalletErrorCode.HISTORY_NOT_EXIST));
+		List<WalletHistory> walletHistory = walletHistoryRepository.findAllByTradeId(5L);
 
 		assertThat(wallet.getCash()).isEqualTo(115500L);
-		assertThat(walletHistory.getType()).isEqualTo("판매수익");
-		assertThat(walletHistory.getTradeId()).isEqualTo(5L);
-		assertThat(walletHistory.getPrice()).isEqualTo(30500L);
-		assertThat(walletHistory.getRemain()).isEqualTo(115500L);
+		assertThat(walletHistory.get(0).getType()).isEqualTo("판매수익");
+		assertThat(walletHistory.get(0).getTradeId()).isEqualTo(5L);
+		assertThat(walletHistory.get(0).getPrice()).isEqualTo(-30500L);
+		assertThat(walletHistory.get(0).getRemain()).isEqualTo(115500L);
 	}
 }

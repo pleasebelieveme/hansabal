@@ -23,6 +23,11 @@ spring:
         order_updates: true
     open-in-view: false
 
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+
   sql:
     init:
       mode: never

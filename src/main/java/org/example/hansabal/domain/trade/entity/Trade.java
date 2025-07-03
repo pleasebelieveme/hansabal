@@ -3,7 +3,6 @@ package org.example.hansabal.domain.trade.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.hansabal.common.base.BaseEntity;
-import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.users.entity.User;
 
 @Getter
@@ -25,8 +24,8 @@ public class Trade extends BaseEntity {
 
 	private Long price;
 
-	@Column(nullable = false)
-	private Integer totalPrice;
+	// @Column(nullable = false)
+	// private Integer totalPrice;
 
 	@Builder.Default
 	@Column(columnDefinition = "tinyint(1) default 0")
@@ -36,17 +35,17 @@ public class Trade extends BaseEntity {
 	@JoinColumn(name = "user_id")
 	private User trader;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private TradeStatus status;
+	// @Enumerated(EnumType.STRING)
+	// @Column(nullable = true)
+	// private TradeStatus status;
 
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private RequestStatus restatus;
+	// @Enumerated(EnumType.STRING)
+	// @Column(nullable = false)
+	// private RequestStatus restatus;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_id")
-	private Product product;
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "product_id")
+	// private Product product;
 
 	public void updateTrade(String title, String contents, Long price) {
 		this.title = title;

@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 @RequiredArgsConstructor
 @Getter
 public class BoardSimpleResponse {

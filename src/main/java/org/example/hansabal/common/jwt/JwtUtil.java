@@ -11,6 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtUtil {
 
 	@Value("${jwt.secret}")
@@ -55,6 +57,7 @@ public class JwtUtil {
 			extractUserAuth(token);
 			return true;
 		} catch (Exception e) {
+			log.error("❌ JWT 유효성 검사 실패: {}", e.getClass().getSimpleName(), e);
 			return false;
 		}
 	}
