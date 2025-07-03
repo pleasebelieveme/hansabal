@@ -28,18 +28,23 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private int price;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ProductStatus productStatus;
 
-    public Product(String name, int quantity,int price , ProductStatus productStatus) {
+    public Product(String name, int quantity,int price ,User user, ProductStatus productStatus) {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
+        this.user = user;
         this.productStatus = productStatus;
     }
-    public static Product of(String name, int quantity, int price) {
-        return new Product(name, quantity, price, ProductStatus.FOR_SALE);
+    public static Product of(String name, int quantity,User user, int price) {
+        return new Product(name, quantity, price, user, ProductStatus.FOR_SALE);
     }
 
     public void updateQuantity(int quantity) {
