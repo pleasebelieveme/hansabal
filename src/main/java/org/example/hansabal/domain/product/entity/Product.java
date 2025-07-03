@@ -40,6 +40,7 @@ public class Product extends BaseEntity {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
+        this.user = user;
         this.productStatus = productStatus;
     }
     public static Product of(String name, int quantity,User user, int price) {
