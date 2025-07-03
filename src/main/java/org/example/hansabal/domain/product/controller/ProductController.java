@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.product.dto.request.ProductRequestDto;
 import org.example.hansabal.domain.product.dto.response.ProductResponseDto;
 import org.example.hansabal.domain.product.service.ProductService;
+import org.example.hansabal.domain.users.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto request) {
-        ProductResponseDto product = productService.createProduct(request);
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto request, User user) {
+        ProductResponseDto product = productService.createProduct(request, user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(product);
     }
