@@ -14,8 +14,8 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    @Modifying(clearAutomatically = true)
-    void deleteAllByProductId(Long productId);
+  //  @Modifying(clearAutomatically = true)
+//    void deleteAllByProductId(Long productId);
 
     @EntityGraph(attributePaths = {"menu", "menuOption"})
     List<Cart> findByUserId(Long userId);
