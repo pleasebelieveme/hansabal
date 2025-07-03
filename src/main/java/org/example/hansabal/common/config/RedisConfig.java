@@ -1,11 +1,15 @@
 package org.example.hansabal.common.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.redisson.Redisson;
+import org.redisson.api.JsonType;
 import org.redisson.api.RedissonClient;
 import org.redisson.config.Config;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +25,7 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.time.Duration;
@@ -41,23 +46,54 @@ public class RedisConfig {
 		return new LettuceConnectionFactory(host, port);
 	}
 
+	// RedisSerializer 내부에 ObjectMapper 직접 생성 (전역 Bean 아님)
 	@Bean
-	public RedisTemplate<String, Object> redisTemplate() {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-		redisTemplate.setConnectionFactory(redisConnectionFactory());
+	public RedisSerializer<Object> redisSerializer() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper.registerModule(new JavaTimeModule());
+		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+		objectMapper.activateDefaultTyping(
+			LaissezFaireSubTypeValidator.instance,
+			ObjectMapper.DefaultTyping.NON_FINAL,
+			JsonTypeInfo.As.PROPERTY
+		);
 
-		// 일반적인 key:value의 경우 시리얼라이저
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(new StringRedisSerializer());
+		return new GenericJackson2JsonRedisSerializer(objectMapper);
+	}
 
-		// Hash를 사용할 경우 시리얼라이저
-		redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-		redisTemplate.setHashValueSerializer(new StringRedisSerializer());
+	@Bean
+	public RedisTemplate<String, Object> redisTemplate(
+		RedisConnectionFactory redisConnectionFactory,
+		RedisSerializer<Object> redisSerializer
+	) {
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
+		template.setConnectionFactory(redisConnectionFactory);
 
-		// 모든 경우
-		redisTemplate.setDefaultSerializer(new StringRedisSerializer());
+		RedisSerializer<String> stringSerializer = new StringRedisSerializer();
 
-		return redisTemplate;
+		template.setKeySerializer(stringSerializer);
+		template.setValueSerializer(redisSerializer);
+		template.setHashKeySerializer(stringSerializer);
+		template.setHashValueSerializer(redisSerializer);
+		template.setDefaultSerializer(redisSerializer);
+
+		return template;
+	}
+
+	@Bean
+	@Primary
+	public RedisCacheManager cacheManager(
+		RedisConnectionFactory redisConnectionFactory,
+		RedisSerializer<Object> redisSerializer
+	) {
+		RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+			.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+			.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer))
+			.entryTtl(Duration.ofMinutes(10));
+
+		return RedisCacheManager.builder(redisConnectionFactory)
+			.cacheDefaults(config)
+			.build();
 	}
 
 	@Bean
@@ -66,35 +102,10 @@ public class RedisConfig {
 	}
 
 	@Bean
-	@Primary
-	public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		objectMapper.registerModule(new JavaTimeModule());
-		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);  // ISO 포맷 유지
-		PolymorphicTypeValidator typeValidator  = BasicPolymorphicTypeValidator
-			.builder()
-			.allowIfBaseType(Object.class)
-			.build();
-		objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL);
-		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
-
-		RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-			.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
-			.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer))
-			.entryTtl(Duration.ofMinutes(10)); // 캐시 TTL 10분
-
-		return RedisCacheManager.builder(redisConnectionFactory)
-			.cacheDefaults(config)
-			.build();
-	}
-
-	// Reidsson 구현
-	@Bean
 	public RedissonClient redissonClient() {
 		Config config = new Config();
 		config.useSingleServer()
-			.setAddress(REDISSON_PREFIX + host + ":"+ port);
-
+			.setAddress(REDISSON_PREFIX + host + ":" + port);
 		return Redisson.create(config);
 	}
 }

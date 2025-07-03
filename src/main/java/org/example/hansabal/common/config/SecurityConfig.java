@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @EnableWebSecurity
@@ -53,6 +54,21 @@ public class SecurityConfig {
 					.logoutSuccessUrl("/home")                    // 로그아웃 성공 후 이동할 경로
 					.invalidateHttpSession(true)                  // 세션 무효화
 					.deleteCookies("accessToken")                 // accessToken 쿠키 삭제
+			)
+			.exceptionHandling(exception -> exception
+				.authenticationEntryPoint((request, response, authException) -> {
+					String accept = request.getHeader("Accept");
+					boolean isApiRequest = accept != null && accept.contains("application/json");
+
+					if (isApiRequest) {
+						response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+						response.setContentType("application/json");
+						response.setCharacterEncoding("UTF-8");
+						response.getWriter().write("{\"error\": \"인증이 필요합니다.\"}");
+					} else {
+						response.sendRedirect("/login?error");
+					}
+				})
 			)
 			.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

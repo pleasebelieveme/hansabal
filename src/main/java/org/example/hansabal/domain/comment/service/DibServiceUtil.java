@@ -9,6 +9,8 @@ import org.example.hansabal.domain.comment.entity.Dib;
 import org.example.hansabal.domain.comment.entity.DibType;
 import org.example.hansabal.domain.comment.exception.DibErrorCode;
 import org.example.hansabal.domain.comment.repository.CommentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,8 @@ import lombok.RequiredArgsConstructor;
 public class DibServiceUtil {
 	private final CommentRepository commentRepository;
 	private final BoardRepository boardRepository;
+	@Autowired
+	private final RedisTemplate<String, Object> redisTemplate;
 
 
 	@DistributedLock(key = "'DIB:' + #dibType.name() + ':' + #targetId")
@@ -32,6 +36,7 @@ public class DibServiceUtil {
 				} else {
 					comment.increaseDibs();
 				}
+				redisTemplate.delete("commentList::" + targetId);
 			}
 
 			case BOARD -> {
@@ -43,6 +48,7 @@ public class DibServiceUtil {
 				} else {
 					board.increaseDibs();
 				}
+				redisTemplate.delete("boardList::" + targetId);
 			}
 		}
 	}
