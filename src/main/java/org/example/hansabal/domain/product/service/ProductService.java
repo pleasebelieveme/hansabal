@@ -20,10 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-
     @Transactional
-    public ProductResponseDto createProduct(ProductRequestDto request, User user) {
-        Product product = Product.of(request.name(), request.price(),user, request.quantity());
+    public ProductResponseDto createProduct(ProductRequestDto request  ) {
+
+        Product product = Product.of(request.name(), request.price(), request.quantity());
         Product savedProduct = productRepository.save(product);
         return ProductResponseDto.from(savedProduct);
     }
