@@ -23,17 +23,19 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
 
-#      - name: Run tests with Gradle
-#        run: ./gradlew test --stacktrace --info
-#        env:
-#          TESTCONTAINERS_RYUK_DISABLED: true
+      #      - name: Run tests with Gradle
+      #        run: ./gradlew test --stacktrace --info
+      #        env:
+      #          TESTCONTAINERS_RYUK_DISABLED: true
 
       - name: Build JAR with Gradle
         run: ./gradlew bootJar --stacktrace --info
 
-      - name: Upload JAR to S3
+      - name: Rename and Upload JAR to S3
         run: |
-          aws s3 cp build/libs/*.jar s3://${{ secrets.S3_BUCKET_NAME }}/artifacts/app-latest.jar
+          JAR_NAME=$(ls build/libs/*.jar | grep -v plain | head -n 1)
+          mv "$JAR_NAME" build/libs/hansabal.jar
+          aws s3 cp build/libs/hansabal.jar s3://${{ secrets.S3_BUCKET_NAME }}/artifacts/hansabal.jar
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
