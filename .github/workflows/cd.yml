@@ -2,7 +2,7 @@
 name: Deploy to Server
 
 on:
-  workflow_dispatch:   # 수동 실행 버튼
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -49,16 +49,16 @@ jobs:
           username: ${{ secrets.AWS_EC2_USER }}
           key: ${{ secrets.AWS_EC2_SSH_KEY }}
           script: |
-            # 🛠 도커 미설치 시 자동 설치
+            # Docker & Compose 설치 (최초 1회)
             if ! command -v docker &> /dev/null; then
               echo "🛠 Installing Docker..."
               curl -fsSL https://get.docker.com | sh
-              sudo apt install -y docker-compose-plugin
+              sudo apt-get update
+              sudo apt-get install -y docker-compose-plugin
             fi
 
-            # 💻 프로젝트 디렉토리로 이동
+            # 프로젝트 디렉토리로 이동
             DEPLOY_DIR="/home/${{ secrets.AWS_EC2_USER }}/hansabal_backend"
-
             if [ ! -d "$DEPLOY_DIR" ]; then
               git clone https://github.com/${{ github.repository }} "$DEPLOY_DIR"
             fi
@@ -66,11 +66,11 @@ jobs:
             cd "$DEPLOY_DIR" || exit 1
             git pull origin main
 
-            # 🔐 환경변수 설정
+            # 환경 변수 파일 세팅
             echo "${{ secrets.ENV }}" > .env
             cp .env ./infra/.env
 
-            # 🐳 Docker 컨테이너 재배포
+            # Docker Compose 재시작
             docker compose -f docker-compose.yml pull
             docker compose -f docker-compose.yml down
             docker compose -f docker-compose.yml up -d
