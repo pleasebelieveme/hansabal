@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepositoryCustom{
@@ -28,5 +29,8 @@ public interface TradeRepository extends JpaRepository<Trade, Long> , TradeRepos
 	// @Query(value="SELECT t FROM Trade t WHERE t.deletedAt IS null And t.trader.id=:traderId ORDER BY t.id desc",
 	// 	countQuery= "SELECT COUNT(t) FROM Trade t WHERE t.trader.id=:traderId And t.deletedAt IS null")
 	// Page<Trade> findByTraderOrderByTradeIdDesc(@Param("traderId")Long traderId, Pageable pageable);
+
+	@Query("SELECT t FROM Trade t WHERE t.id = :id AND t.deletedAt IS NULL")
+	Optional<Trade> findByIdAndNotDeleted(@Param("id") Long id);
 
 }

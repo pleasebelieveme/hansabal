@@ -14,7 +14,7 @@ CREATE TABLE trade
     created_at  DATETIME(6),
     updated_at  DATETIME(6),
     deleted_at  DATETIME(6),
-    FOREIGN KEY (user_id) REFERENCES user (id)
+    FOREIGN KEY (user_id) REFERENCES users (id)
 ) ENGINE=InnoDB;
 
 INSERT INTO trade (id, title, contents, user_id, price, is_occupied, created_at, updated_at, deleted_at)

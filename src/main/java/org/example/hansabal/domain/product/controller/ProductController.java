@@ -1,5 +1,6 @@
 package org.example.hansabal.domain.product.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.product.dto.request.ProductRequestDto;
 import org.example.hansabal.domain.product.dto.response.ProductResponseDto;
@@ -16,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 public class ProductController {
     private final ProductService productService;
 
-    @PostMapping
-    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody ProductRequestDto request) {
-        ProductResponseDto product = productService.createProduct(request);
+        @PostMapping
+        public ResponseEntity<ProductResponseDto> createProduct(@Valid @RequestBody ProductRequestDto request) {
+            ProductResponseDto product = productService.createProduct(request);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);
-    }
+            return ResponseEntity.status(HttpStatus.CREATED).body(product);
+        }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProduct(@PathVariable Long id) {
@@ -43,7 +44,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductResponseDto> updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductRequestDto request) {
+            @RequestBody @Valid ProductRequestDto request) {
 
         ProductResponseDto responses = productService.updateProduct(id, request);
 

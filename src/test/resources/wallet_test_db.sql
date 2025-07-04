@@ -7,7 +7,7 @@ CREATE TABLE wallet
     id         BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     user_id    BIGINT NOT NULL,
     cash       BIGINT NOT NULL DEFAULT 0,
-    FOREIGN KEY (user_id) REFERENCES user (id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
     created_at DATETIME(6),
     updated_at DATETIME(6),
     deleted_at DATETIME(6)

@@ -38,11 +38,11 @@ public class UserService {
 		//  if (!isVerified) {
 		//  	throw new BizException(EmailErrorCode.EMAIL_NOT_VERIFIED);
 		//  }
-		//
-		// // 2) 이메일 중복 검사
-		// if (userRepository.existsByEmail(request.email())) {
-		// 	throw new BizException(UserErrorCode.DUPLICATE_USER_EMAIL);
-		// }
+
+		 // 2) 이메일 중복 검사
+		 if (userRepository.existsByEmail(request.email())) {
+		 	throw new BizException(UserErrorCode.DUPLICATE_USER_EMAIL);
+		 }
 
 		// 3) 비밀번호 암호화 및 회원 생성
 		String encodedPassword = passwordEncoder.encode(request.password());
