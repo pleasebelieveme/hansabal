@@ -6,6 +6,7 @@ import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.ReviewPageResult;
 import org.example.hansabal.domain.review.dto.response.ReviewSimpleResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.service.ReviewService;
@@ -33,13 +34,13 @@ public class ReviewController {
     }
 
     @GetMapping("products/{productId}") // 리뷰 페이징
-    public ResponseEntity<Page<ReviewSimpleResponse>> getReviews(
+    public ResponseEntity<ReviewPageResult> getReviews(
             @PathVariable Long productId,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        Page<ReviewSimpleResponse> reviewsList = reviewService.getReviews(productId, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(reviewsList);
+        ReviewPageResult reviews = reviewService.getReviews(productId, page, size);
+        return ResponseEntity.status(HttpStatus.OK).body(reviews);
     }
 
     @PutMapping("/{reviewId}") //리뷰 수정
