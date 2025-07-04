@@ -1,14 +1,14 @@
 spring:
   datasource:
-    url: jdbc:tc:mysql:8.0.29:///testdb
-    username: test
-    password: test
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:mysql://localhost:3307/testdb
+    username: testuser
+    password: testpass
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   data:
     redis:
-      host: localhost  # 임시값 (실제 테스트에서 override)
-      port: 6379
+      host: localhost
+      port: 6380
 
   jpa:
     show-sql: true
