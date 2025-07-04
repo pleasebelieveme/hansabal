@@ -64,8 +64,7 @@ public class User extends BaseEntity {
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Board> boards;
 	//
-	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	 private List<Product> products;
+
 	//
 	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
 	// private List<Review> reviews;
