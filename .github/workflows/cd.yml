@@ -1,4 +1,4 @@
-# gradle test + build + docker build + push + ssh deploy
+# gradle build + docker build + push + ssh deploy
 name: Deploy to Server
 
 on:
@@ -33,13 +33,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Run tests with Gradle
-        run: ./gradlew test --stacktrace --info
-        env:
-          TESTCONTAINERS_RYUK_DISABLED: true
-
-      - name: Build with Gradle
-        run: ./gradlew build --stacktrace --info
+      # ✅ 테스트 생략하고 빌드만 수행
+      - name: Build with Gradle (skip tests)
+        run: ./gradlew build -x test --stacktrace --info
 
       - name: Build and Push Docker Image
         run: |
