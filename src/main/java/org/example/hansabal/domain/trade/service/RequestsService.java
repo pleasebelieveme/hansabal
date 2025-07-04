@@ -90,7 +90,7 @@ public class RequestsService {
 		if(!requests.getRequester().getId().equals(user.getId()))
 			throw new BizException(TradeErrorCode.NOT_ALLOWED);
 		if(requests.getStatus()!=RequestStatus.PENDING)
-			throw new BizException(TradeErrorCode.WRONG_STAGE);
+			throw new BizException(TradeErrorCode.WRONG_STAGE);//잘못된 단계에서의 메서드 사용을 금지
 		Long price = trade.getPrice();
 		walletService.walletPay(user, trade.getId(), price);
 		requests.updateStatus(RequestStatus.PAID);
