@@ -1,19 +1,12 @@
 package org.example.hansabal.domain.trade.service;
 
 
-import org.example.hansabal.domain.product.repository.ProductRepository;
-import org.example.hansabal.domain.trade.dto.response.TradeDetailResponseDto;
-import org.example.hansabal.domain.trade.dto.response.TradeItemDetailResponseDto;
 import org.example.hansabal.domain.trade.dto.response.TradeResponse;
-import org.example.hansabal.domain.trade.entity.TradeItem;
-import org.example.hansabal.domain.trade.repository.TradeItemRepository;
-import org.example.hansabal.domain.users.entity.UserRole;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.hansabal.common.exception.BizException;
 import org.example.hansabal.common.jwt.UserAuth;
 import org.example.hansabal.domain.trade.dto.request.TradeRequest;
-import org.example.hansabal.domain.trade.dto.response.TradeResponseDto;
 import org.example.hansabal.domain.trade.entity.Trade;
 import org.example.hansabal.domain.trade.exception.TradeErrorCode;
 import org.example.hansabal.domain.trade.repository.TradeRepository;
@@ -23,21 +16,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.example.hansabal.domain.users.exception.UserErrorCode;
-
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TradeService {
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
-	private final ProductRepository productRepository;
-	private final TradeItemRepository tradeItemRepository;
-	private final TradeItemService tradeItemService;
 
 	@Transactional
 	public TradeResponse createTrade(TradeRequest request, UserAuth userAuth) {
@@ -96,90 +80,4 @@ public class TradeService {
 			throw new BizException(TradeErrorCode.UNAUTHORIZED);
 		trade.softDelete();
 	}
-
-	/**
-	 * 사용자 역할에 따른 주문 전체 조회
-	 * - 일반 사용자: 자신이 주문한 주문
-	 * - 사장님: 자신이 등록한 가게의 주문
-	 */
-	// public List<TradeResponseDto> findAllTrades(Long userId) {
-	// 	User user = validateUser(userId);
-	// 	List<Trade> trades = new ArrayList<>();
-	//
-	// 	if (user.getUserRole().equals(UserRole.USER)) {
-	// 		trades = tradeRepository.findByTrader(user);
-	// 	} else if (user.getUserRole().equals(UserRole.ADMIN)) {
-	// 		List<Long> productIds = productRepository.findIdByUser(user);
-	// 		trades = tradeRepository.findByProductIds(productIds);
-	// 	}
-	//
-	// 	return trades.stream()
-	// 			.map(trade -> new TradeResponseDto(
-	// 					trade.getId(),
-	// 					trade.getTrader().getId(),
-	// 					trade.getProduct().getId(),
-	// 					tradeItemService.getTradeItemIds(trade.getId()),
-	// 					trade.getTotalPrice(),
-	// 					trade.getStatus()
-	// 			))
-	// 			.collect(Collectors.toList());
-	// }
-	//
-	// private User validateUser(Long userId) {
-	//
-	// 	User user = userRepository.findById(userId)
-	// 			.orElseThrow(() -> new BizException(UserErrorCode.NOT_FOUND_USER));
-	//
-	// 	return user;
-	// }
-	//
-	// /**
-	//  * 특정 주문의 상세 정보 조회
-	//  * - 주문 항목(Menu, Option 등) 포함
-	//  * - 주문자가 직접 접근하거나 사장님이 접근 가능
-	//  */
-	// @Transactional
-	// public TradeDetailResponseDto findTradeDetails(Long userId, Long tradeId) {
-	// 	User user = validateUser(userId);
-	// 	Trade trade = validateDetailTrade(user, tradeId);
-	//
-	// 	List<TradeItem> tradeItems = tradeItemRepository.findByTradeId(tradeId);
-	//
-	// 	List<TradeItemDetailResponseDto> tradeItemDtos = tradeItems.stream()
-	// 			.map(tradeItem -> new TradeItemDetailResponseDto(
-	// 					tradeItem.getProduct().getId(),
-	// 					tradeItem.getProduct().getName(),
-	// 					List.of(),
-	// 					tradeItem.getQuantity()
-	// 			))
-	// 			.toList();
-	//
-	// 	return new TradeDetailResponseDto(
-	// 			trade.getId(),
-	// 			trade.getTrader().getId(),
-	// 			trade.getProduct().getId(),
-	// 			tradeItemDtos,
-	// 			trade.getTotalPrice(),
-	// 			trade.getStatus(),
-	// 			trade.getCreatedAt()
-	// 	);
-	// }
-	//
-	// /**
-	//  * 주문 상세 조회 접근 권한 확인
-	//  */
-	// private Trade validateDetailTrade(User user, Long TradeId) {
-	// 	Trade trade = tradeRepository.findById(TradeId)
-	// 			.orElseThrow(() -> new BizException(TradeErrorCode.TRADE_NOT_FOUND));
-	//
-	// 	if (trade.getTrader().getId().equals(user.getId()) ||
-	// 			trade.getProduct().getUser().getId().equals(user.getId())) {
-	// 		return trade;
-	// 	}
-	//
-	// 	throw new BizException(TradeErrorCode.NOT_ALLOWED);
-	// }
-
-
-
 }

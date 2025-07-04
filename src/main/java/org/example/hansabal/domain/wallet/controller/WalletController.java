@@ -43,7 +43,7 @@ public class WalletController {
 		return "wallet";  // resources/templates/wallet.html 로 렌더링됨
 	}
 
-	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션, header로 바로이동
+	@PostMapping("/load")//프론트로 전송 data 전송 및 리디렉션
 	public ResponseEntity<?> loadWallet(@RequestBody LoadRequest request, @AuthenticationPrincipal UserAuth userAuth){
 		if (userAuth == null) {
 			throw new BizException(WalletErrorCode.NO_WALLET_FOUND);
