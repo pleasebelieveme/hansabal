@@ -59,7 +59,7 @@ public class CartItemController {
     }
 
     @PatchMapping("/{cartId}")
-    public ResponseEntity<Void> productPayment(@PathVariable Long cartId,UserAuth userAuth){
+    public ResponseEntity<Void> productPayment(@PathVariable Long cartId,@AuthenticationPrincipal UserAuth userAuth){
 
         cartItemService.productPayment(cartId, userAuth);
 
