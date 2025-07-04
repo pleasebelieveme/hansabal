@@ -133,7 +133,7 @@ public class UserServiceTest {
         //when, then
         assertThatThrownBy(() -> userService.createUser(request))
                 .isInstanceOf(BizException.class)
-                .hasMessageContaining("이메일 인증이 완료되지 않았습니다.");
+                .hasMessageContaining("중복된 이메일입니다.");
 
     }
 
