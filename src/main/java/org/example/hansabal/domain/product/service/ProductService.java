@@ -7,7 +7,6 @@ import org.example.hansabal.domain.product.entity.Product;
 import org.example.hansabal.domain.product.exception.ProductErrorCode;
 import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.users.entity.User;
-import org.example.hansabal.domain.users.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto request  ) {
 
