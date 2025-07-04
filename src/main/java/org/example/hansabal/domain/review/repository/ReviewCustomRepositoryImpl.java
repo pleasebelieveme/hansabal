@@ -47,7 +47,7 @@ public class ReviewCustomRepositoryImpl implements ReviewCustomRepository {
                 .from(review)
                 .where(product.id.eq(productId))
                 .fetchOne()).orElse(0L) ;
-        //todo GPT로 공부
+
 
         return new PageImpl<>(results, pageable, total);
     }
