@@ -123,8 +123,8 @@ public class BoardService {
     // === 게시글 목록 조회 (카테고리 + 키워드 포함) ===
     @Transactional(readOnly = true)
     public BoardPageResult getPosts(BoardCategory category, String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
+       int pageIndex = Math.max(page - 1,0);
+        Pageable pageable = PageRequest.of(pageIndex, size);
         Page<BoardSimpleResponse> pageResult = boardRepository.searchByCategoryAndKeyword(category, keyword,
             pageable);
 

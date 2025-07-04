@@ -45,8 +45,8 @@ public class BoardPageController {
         model.addAttribute("categories", BoardCategory.values());
         model.addAttribute("selectedCategory", category);
         model.addAttribute("keyword", keyword);
-        model.addAttribute("currentPage", postsPage.page());
-        model.addAttribute("totalPages", (int) Math.ceil((double) postsPage.totalElements() / postsPage.size()));
+        model.addAttribute("currentPage", postsPage.getPage());
+        model.addAttribute("totalPages", (int) Math.ceil((double) postsPage.getTotalElements() / postsPage.getSize()));
 
         return "community"; // community.html 뷰 렌더링
     }
