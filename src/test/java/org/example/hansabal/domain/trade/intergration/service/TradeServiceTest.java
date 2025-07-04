@@ -92,6 +92,7 @@ public class TradeServiceTest {
 		list.forEach(h -> log.info("✅ history: tradeId={}, walletId={}", h.getTradeId(), h.getWallet().getId()));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	@Rollback(false)
 	void dumpHistory() {
@@ -251,6 +252,7 @@ public class TradeServiceTest {
 		assertThat(requests.getStatus()).isEqualTo(RequestStatus.PAID);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	@DisplayName("거래_요청_완료")
 	@Rollback(value = false)
