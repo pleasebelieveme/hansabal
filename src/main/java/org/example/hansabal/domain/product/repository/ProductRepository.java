@@ -19,12 +19,4 @@ public interface ProductRepository extends JpaRepository<Product, Long>, Product
     default Product findByIdOrElseThrow(long id) {
         return findById(id).orElseThrow(() -> new BizException(ReviewErrorCode.RIVIEW_NOT_FOUND_PRODUCT));
     }
-
-    @Query("SELECT s.id FROM Product s WHERE s.user = :user")
-    List<Long> findIdByUser(@Param("user") User user);
-
-    @Modifying(clearAutomatically = true,flushAutomatically = true)
-    @Query("UPDATE Product s SET s.deletedAt = CURRENT_TIMESTAMP WHERE s.user.id = :userId")
-    void deleteByUserId(@Param("userId") Long userId);
-
 }
