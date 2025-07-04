@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @RequiredArgsConstructor
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS,include = JsonTypeInfo.As.PROPERTY,property = "@class")
 public class BoardSimpleResponse {
