@@ -71,6 +71,6 @@ jobs:
             cp .env ./infra/.env
 
             # Docker Compose 재시작
-            docker compose -f infra/docker-compose.yml pull
-            docker compose -f infra/docker-compose.yml down
-            docker compose -f infra/docker-compose.yml up -d
+            sudo docker compose -f infra/docker-compose.yml pull
+            sudo docker compose -f infra/docker-compose.yml down
+            sudo docker compose -f infra/docker-compose.yml up -d
