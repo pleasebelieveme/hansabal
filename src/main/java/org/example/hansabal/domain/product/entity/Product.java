@@ -28,9 +28,6 @@ public class Product extends BaseEntity {
     @Column(nullable = false)
     private int price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
