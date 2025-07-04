@@ -10,7 +10,6 @@ import org.example.hansabal.domain.board.entity.BoardCategory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @RequiredArgsConstructor
-@NoArgsConstructor
 @Getter
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS,include = JsonTypeInfo.As.PROPERTY,property = "@class")
 public class BoardSimpleResponse {
