@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.hansabal.common.base.BaseEntity;
 import org.example.hansabal.domain.users.entity.User;
+import org.hibernate.annotations.DynamicUpdate;
 
 @Getter
 @Entity
@@ -11,6 +12,7 @@ import org.example.hansabal.domain.users.entity.User;
 @AllArgsConstructor
 @Builder
 @Table(name = "trade")
+@DynamicUpdate
 public class Trade extends BaseEntity {
 
 	@Id
