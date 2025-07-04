@@ -63,6 +63,7 @@ jobs:
             git pull origin main
 
             echo "${{ secrets.ENV }}" > .env
+            cp .env ./infra/.env
 
             docker compose -f docker-compose.yml pull
             docker compose -f docker-compose.yml down
