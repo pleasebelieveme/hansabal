@@ -1,31 +1,32 @@
 package org.example.hansabal.domain.board.dto.response;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.example.hansabal.domain.board.entity.BoardCategory;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@RequiredArgsConstructor
-@NoArgsConstructor
 @Getter
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS,include = JsonTypeInfo.As.PROPERTY,property = "@class")
 public class BoardSimpleResponse {
 
-    private String writer;
-    private BoardCategory category;
-    private String title;
-    private int viewCount;
-    private int dibCount;
-
-    public BoardSimpleResponse(String writer, BoardCategory category, String title, Integer viewCount, Integer dibCount) {
+    private final String writer;
+    private final BoardCategory category;
+    private final String title;
+    private final int viewCount;
+    private final int dibCount;
+    @JsonCreator
+    public BoardSimpleResponse(
+            @JsonProperty("writer") String writer,
+            @JsonProperty("category") BoardCategory category,
+            @JsonProperty("title") String title,
+            @JsonProperty("viewCount") int viewCount,
+            @JsonProperty("dibCount") int dibCount
+    ) {
         this.writer = writer;
         this.category = category;
         this.title = title;
         this.viewCount = viewCount;
         this.dibCount = dibCount;
     }
+
 }

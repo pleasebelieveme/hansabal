@@ -1,22 +1,20 @@
 package org.example.hansabal.domain.board.dto.response;
 
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS,include = JsonTypeInfo.As.PROPERTY,property = "@class")
-public class BoardPageResult{
+public class BoardPageResult {
 
 	private List<BoardSimpleResponse> contents;
 	private int page;
@@ -25,6 +23,19 @@ public class BoardPageResult{
 
 	public boolean isEmpty() {
 		return contents == null || contents.isEmpty();
+	}
+
+	@JsonCreator
+	public BoardPageResult(
+			@JsonProperty("contents") List<BoardSimpleResponse> contents,
+			@JsonProperty("page") int page,
+			@JsonProperty("size") int size,
+			@JsonProperty("totalElements") long totalElements
+	) {
+		this.contents = contents;
+		this.page = page;
+		this.size = size;
+		this.totalElements = totalElements;
 	}
 
 	public static BoardPageResult of(Page<BoardSimpleResponse> result) {
