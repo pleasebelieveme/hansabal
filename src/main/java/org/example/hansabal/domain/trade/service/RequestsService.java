@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -29,6 +30,7 @@ public class RequestsService {
 	private final TradeRepository tradeRepository;
 	private final UserRepository userRepository;
 	private final WalletService walletService;
+	private final EntityManager em;
 
 	@Transactional
 	public RequestsResponse createRequests(UserAuth userAuth, RequestsRequest request) {
@@ -109,6 +111,8 @@ public class RequestsService {
 		walletService.walletConfirm(trade,requestsId);
 		requests.updateStatus(RequestStatus.DONE);
 		trade.softDelete();
+		tradeRepository.save(trade); // ✅ 이거로 강제 변경 감지 트리거
+		em.flush();
 		return RequestsResponse.from(requests);
 	}
 }

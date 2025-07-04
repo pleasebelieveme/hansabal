@@ -143,10 +143,10 @@ public class CommentServiceTest {
 	void 댓글_조회(){
 		CommentPageResult result = commentService.findAllCommentsFromBoard(1L, 1, 100);
 
-		assertThat(result.contents()).hasSize(100);
-		assertThat(result.total()).isEqualTo(201);
-		assertThat(result.contents().get(0).getComments()).contains("test comment");
-		assertThat(result.contents().get(99).getDibCount()).isEqualTo(0);
+		assertThat(result.getContents()).hasSize(100);
+		assertThat(result.getTotal()).isEqualTo(201);
+		assertThat(result.getContents().get(0).getComments()).contains("test comment");
+		assertThat(result.getContents().get(99).getDibCount()).isEqualTo(0);
 	}
 
 }

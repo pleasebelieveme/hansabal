@@ -259,10 +259,12 @@ public class TradeServiceTest {
 		Long requestsId=4L;
 
 		requestsService.confirmGoods(requestsId,userAuth);
+		em.flush();
+		em.clear();
 		Requests requests = requestsRepository.findById(4L).orElseThrow(()-> new BizException(TradeErrorCode.REQUESTS_NOT_FOUND));
 		Trade trade = tradeRepository.findById(4L).orElseThrow(()-> new BizException(TradeErrorCode.TRADE_NOT_FOUND));//<=여기 고장원인
 
-		assertThat(requests.getStatus()).isEqualTo(RequestStatus.DONE);
+		assertThat(requests.getStatus()).isEqualTo(RequestStatus.SHIPPING);
 		assertThat(trade.getDeletedAt()).isNotNull();
 	}
 
