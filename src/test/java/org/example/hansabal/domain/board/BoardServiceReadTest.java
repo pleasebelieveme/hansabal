@@ -84,7 +84,7 @@ public class BoardServiceReadTest {
     void 게시글_목록조회_전체_키워드() {
         BoardPageResult result = boardService.getPosts(BoardCategory.ALL, "테스트", 0, 10);
 
-        assertThat(result.contents()).isNotEmpty();
+        assertThat(result.getContents()).isNotEmpty();
     }
 
     @Test
@@ -92,8 +92,8 @@ public class BoardServiceReadTest {
     void 게시글_목록조회_카테고리() {
         BoardPageResult result = boardService.getPosts(BoardCategory.DAILY, null, 0, 10);
 
-        assertThat(result.contents()).isNotEmpty();
-        assertThat(result.contents().get(0).getCategory()).isEqualTo(BoardCategory.DAILY);
+        assertThat(result.getContents()).isNotEmpty();
+        assertThat(result.getContents().get(0).getCategory()).isEqualTo(BoardCategory.DAILY);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class BoardServiceReadTest {
     void 게시글_목록조회_카테고리_키워드() {
         BoardPageResult result = boardService.getPosts(BoardCategory.DAILY, "테스트 내용", 0, 10);
 
-        assertThat(result.contents()).isNotEmpty();
+        assertThat(result.getContents()).isNotEmpty();
     }
 
     @Test
