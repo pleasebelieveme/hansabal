@@ -9,6 +9,7 @@ import org.example.hansabal.domain.product.repository.ProductRepository;
 import org.example.hansabal.domain.review.dto.request.CreateReviewRequest;
 import org.example.hansabal.domain.review.dto.request.UpdateReviewRequest;
 import org.example.hansabal.domain.review.dto.response.CreateReviewResponse;
+import org.example.hansabal.domain.review.dto.response.ReviewPageResult;
 import org.example.hansabal.domain.review.dto.response.ReviewSimpleResponse;
 import org.example.hansabal.domain.review.dto.response.UpdateReviewResponse;
 import org.example.hansabal.domain.review.entity.Review;
@@ -52,11 +53,13 @@ public class ReviewService {
             unless = "#result == null || #result.isEmpty()" //unless를 사용하면 지정된 조건이 참일 경우 해당 결과를 캐시에 저장하지 않는다.
     )
     @Transactional(readOnly = true) //페이징
-    public Page<ReviewSimpleResponse> getReviews(Long productId, int page, int size) {
+    public ReviewPageResult getReviews(Long productId, int page, int size) {
         int pageIndex = Math.max(page - 1, 0);
         //이 객체는 페이징 처리에 필요한 정보를 쿼리조건으로 전달한다.
         PageRequest pageRequest = PageRequest.of(pageIndex, size);
-        return reviewRepository.findByProductId(productId, pageRequest);
+        Page<ReviewSimpleResponse> pageResult = reviewRepository.findByProductId(productId, pageRequest);
+        return ReviewPageResult.of(pageResult);
+//        return reviewRepository.findByProductId(productId, pageRequest);
     }
 
     @Transactional
