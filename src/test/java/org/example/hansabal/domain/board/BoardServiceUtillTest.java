@@ -9,6 +9,7 @@ import org.example.hansabal.domain.board.entity.BoardCategory;
 import org.example.hansabal.domain.board.repository.BoardRepository;
 import org.example.hansabal.domain.board.service.BoardService;
 import org.example.hansabal.domain.board.service.BoardServiceUtill;
+import org.example.hansabal.domain.board.service.TestDataInitService;
 import org.example.hansabal.domain.users.dto.request.UserCreateRequest;
 import org.example.hansabal.domain.users.entity.UserRole;
 import org.example.hansabal.domain.users.service.UserService;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.CountDownLatch;
@@ -24,8 +26,11 @@ import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class BoardServiceUtillTest {
 
     @Autowired
@@ -40,37 +45,15 @@ public class BoardServiceUtillTest {
     @Autowired
     private BoardService boardService;
 
-
+    @Autowired
+    private TestDataInitService testDataInitService;
 
     @BeforeEach
-    @Transactional
     void setup() {
-        for (int i = 0; i < 10; i++) {
-            String email = "user" + i + "@exmaple.com";
-            String nickname = "nickname" + i;
-
-            UserCreateRequest request = new UserCreateRequest(
-                    email,
-                    "@Aa123456",
-                    "테스트이름",
-                    nickname,
-                    UserRole.USER
-            );
-
-            userService.createUser(request);
-            }
-        // 유저 조회 후 UserAuth 생성
-            UserAuth userAuth = new UserAuth(1L, UserRole.USER, "nickname0");
-            BoardRequest boardRequest = new BoardRequest(
-                   BoardCategory.DAILY,
-                    "테스트 제목",
-                    "테스트 내용"
-            );
-            boardService.createBoard(userAuth, boardRequest);
-
-
-
+        // 사용자 및 게시글 등록은 명시적으로 커밋 가능한 별도 트랜잭션으로 처리
+        testDataInitService.insertUsersAndBoard();
     }
+
     @Test
     @DisplayName("동시 요청에서도 조회수가 정확히 증가해야 한다")
     void viewCountShouldIncreaseCorrectlyUnderConcurrency() throws InterruptedException {

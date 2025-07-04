@@ -14,6 +14,7 @@ public class BoardSimpleResponse {
     private final String title;
     private final int viewCount;
     private final int dibCount;
+
     @JsonCreator
     public BoardSimpleResponse(
             @JsonProperty("writer") String writer,
