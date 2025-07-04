@@ -23,7 +23,11 @@ public class ProductService {
     @Transactional
     public ProductResponseDto createProduct(ProductRequestDto request  ) {
 
-        Product product = Product.of(request.name(), request.price(), request.quantity());
+        Product product = Product.of(
+                request.getName(),
+                request.getPrice(),
+                request.getQuantity()
+        );
         Product savedProduct = productRepository.save(product);
         return ProductResponseDto.from(savedProduct);
     }
@@ -47,7 +51,7 @@ public class ProductService {
     public ProductResponseDto updateProduct(Long id, ProductRequestDto request) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new BizException(ProductErrorCode.INVALID_PRODUCTSTATUS));
-        product.updateName(request.name());
+        product.updateName(request.getName());
         return ProductResponseDto.from(product);
     }
 
