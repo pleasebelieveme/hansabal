@@ -35,10 +35,12 @@ public class Board  extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer viewCount = 0;
 
     // 좋아요 필드 및 메서드
+    @Builder.Default
     @Column(nullable = false,columnDefinition = "int default 0")
     private int dibCount = 0;
 
