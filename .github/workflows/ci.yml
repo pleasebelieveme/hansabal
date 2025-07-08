@@ -45,7 +45,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Run Tests
-        run: ./gradlew clean test # -x :infra:buildDockerImage
+        run: ./gradlew clean test -x :infra:buildDockerImage
 
       - name: Build JAR
         run: ./gradlew bootJar
