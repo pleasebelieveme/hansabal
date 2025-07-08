@@ -16,6 +16,7 @@ infra/**
 !infra/prometheus/config/rule.yml
 !infra/config/
 !infra/config/init-exporter.sql
+!infra/build.gradle.kts
 
 ### 환경 변수 및 설정 파일 ###
 .env
