@@ -69,7 +69,7 @@ jobs:
           done
 
       - name: Run Tests
-        run: ./gradlew clean test
+        run: ./gradlew clean test -Dspring.profiles.active=test
 
       - name: Build JAR
         run: ./gradlew bootJar
