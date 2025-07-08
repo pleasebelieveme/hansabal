@@ -1,4 +1,3 @@
-# gradle test + build + upload jar to S3
 name: Continuous Integration
 
 on:
@@ -44,8 +43,30 @@ jobs:
       - name: Grant execute permission to Gradle
         run: chmod +x gradlew
 
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h 127.0.0.1 -P 3306 --silent; then
+              echo "MySQL is up!"
+              break
+            fi
+            echo "Waiting for MySQL..."
+            sleep 5
+          done
+
+      - name: Wait for Redis
+        run: |
+          for i in {1..30}; do
+            if redis-cli -h 127.0.0.1 -p 6379 ping | grep PONG; then
+              echo "Redis is up!"
+              break
+            fi
+            echo "Waiting for Redis..."
+            sleep 5
+          done
+
       - name: Run Tests
-        run: ./gradlew clean test # -x :infra:buildDockerImage
+        run: ./gradlew clean test
 
       - name: Build JAR
         run: ./gradlew bootJar
