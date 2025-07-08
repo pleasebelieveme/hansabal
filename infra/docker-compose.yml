@@ -1,0 +1,118 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: hansabal_mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: 'hansabal'
+      MYSQL_USER: 'testuser'
+      MYSQL_PASSWORD: 'testpass'
+      MYSQL_ROOT_PASSWORD: 'root'
+    volumes:
+      - mysql-data:/var/lib/mysql                          # ✅ bind mount 제거
+      - ./config/init-exporter.sql:/docker-entrypoint-initdb.d/init-exporter.sql
+    networks:
+      - promnet
+
+  redis:
+    image: redis:latest
+    container_name: hansabal_redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+    labels:
+      - "name=hansabal_redis"
+      - "mode=standalone"
+    restart: always
+    command: redis-server /usr/local/conf/redis.conf
+    networks:
+      - promnet
+
+  prometheus:
+    user: "root"
+    image: prom/prometheus
+    container_name: hansabal_prometheus
+    volumes:
+      - ./prometheus/config:/etc/prometheus
+      - ./prometheus/volume:/prometheus/data
+    ports:
+      - 9090:9090
+    command:
+      - '--web.enable-lifecycle'
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    restart: always
+    networks:
+      - promnet
+
+  grafana:
+    user: "root"
+    image: grafana/grafana
+    container_name: hansabal_grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana/volume:/var/lib/grafana
+    restart: always
+    networks:
+      - promnet
+
+  node-exporter:
+    image: prom/node-exporter
+    container_name: hansabal_node_exporter
+    restart: always
+    ports:
+      - 9100:9100
+    networks:
+      - promnet
+
+  mysql-exporter:
+    image: prom/mysqld-exporter
+    container_name: hansabal_mysql_exporter
+    ports:
+      - 9104:9104
+    command:
+      - "--mysqld.username=exporter:testpass"
+      - "--mysqld.address=hansabal_mysql:3306"
+    networks:
+      - promnet
+    depends_on:
+      - mysql
+
+  redis-exporter:
+    image: oliver006/redis_exporter
+    container_name: hansabal_redis_exporter
+    restart: always
+    ports:
+      - 9121:9121
+    networks:
+      - promnet
+    depends_on:
+      - redis
+    command:
+      - '--redis.addr=redis://hansabal_redis:6379'
+
+  spring:
+    build:
+      context: ..
+      dockerfile: ./infra/Dockerfile
+    container_name: hansabal-spring
+    env_file:
+      - ../.env
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - promnet
+
+networks:
+  promnet:
+    driver: bridge
+
+volumes:
+  mysql-data:   # ✅ 도커 내부에서 생성되는 안전한 볼륨
