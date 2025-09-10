@@ -47,28 +47,30 @@
 
 ## 📐 와이어프레임
 
-![wireframe.png](attachment:wireframe.png)
+<img width="1118" height="846" alt="image" src="https://github.com/user-attachments/assets/e57eed50-a48b-4c7b-a2ce-01a15a7235c0" />
 
 ---
 
 ## 🗂 ERD
 
-![erd.png](attachment:erd.png)
+<img width="967" height="582" alt="스크린샷 2025-07-03 오후 4 13 04" src="https://github.com/user-attachments/assets/0a03f2c9-0e13-498b-99c4-3d96b8e65dce" />
+
 
 ---
 
 ## 📑 API 명세서
 
-[포스트맨 API 문서 바로가기](https://documenter.getpostman.com/view/XXXXX)
+https://documenter.getpostman.com/view/38832238/2sB34cpNFk
 
 ---
 
 ## 🚀 CI/CD
 
-![cicd.png](attachment:cicd.png)
+<img width="635" height="312" alt="스크린샷 2025-07-07 오후 3 15 53" src="https://github.com/user-attachments/assets/83b0cdc1-6a47-4296-aef7-55c8cb45a1a7" />
 
 ---
 
 ## 🏗 시스템 아키텍처
 
-![architecture.png](attachment:architecture.png)
+<img width="829" height="479" alt="스크린샷 2025-07-07 오후 3 16 26" src="https://github.com/user-attachments/assets/4a6bf3c7-b806-4d4d-ad5a-6318695b7848" />
+
