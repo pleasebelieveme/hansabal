@@ -41,6 +41,34 @@
 
 ## 🛠 기술스택
 
-![스크린샷 2025-09-10 오후 3.58.47.png](../../../%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7%202025-09-10%20%EC%98%A4%ED%9B%84%203.58.47.png)
+![techstack.png](attachment:techstack.png)
 
 ---
+
+## 📐 와이어프레임
+
+![wireframe.png](attachment:wireframe.png)
+
+---
+
+## 🗂 ERD
+
+![erd.png](attachment:erd.png)
+
+---
+
+## 📑 API 명세서
+
+[포스트맨 API 문서 바로가기](https://documenter.getpostman.com/view/XXXXX)
+
+---
+
+## 🚀 CI/CD
+
+![cicd.png](attachment:cicd.png)
+
+---
+
+## 🏗 시스템 아키텍처
+
+![architecture.png](attachment:architecture.png)
