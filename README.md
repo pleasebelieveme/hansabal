@@ -84,3 +84,6 @@
 ## 🏗 시스템 아키텍처
 
 <img width="829" height="479" alt="시스템 아키텍처" src="https://github.com/user-attachments/assets/4a6bf3c7-b806-4d4d-ad5a-6318695b7848" />
+
+## 노션 링크
+https://www.notion.so/teamsparta/18-1fc2dc3ef51480e7be91f24197b15407
